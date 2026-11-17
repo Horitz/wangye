@@ -5,6 +5,7 @@ import { ArrowDown, ArrowRight, ArrowUpRight, BookOpen, Bookmark, Globe2, MapPin
 import { ClayStudent } from "@/components/clay-student";
 import { BoardingPass } from "@/components/boarding-pass";
 import { HeroGardenTitle } from "@/components/hero-garden-title";
+import { UniversityMarquee } from "@/components/university-marquee";
 import { useOrbitalMotion } from "@/lib/use-orbital-motion";
 import { getHomeRevealState } from "@/lib/home-reveal-state";
 import type { Locale } from "@/lib/home-store";
@@ -186,6 +187,7 @@ export function SpatialHome({ locale, onStart }: {
         </div>
       </section>
 
+      <UniversityMarquee locale={locale} />
       <section className="journey-story" ref={story} id="about" aria-label={t("探索留学生活", "Студенческая жизнь")}>
           <div className="page-container">
             {chapters.map((chapter, index) => (

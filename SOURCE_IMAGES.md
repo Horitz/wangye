@@ -1,5 +1,24 @@
 # 首页实拍图片来源
 
+## 首页校徽带
+
+以下图形取自学校公开页面，用于识别院校。图形等比存为本地 PNG；莫大和友大从校方组合标中提取独立图徽。
+
+| 文件（`public/images/universities/`） | 校方素材 |
+| --- | --- |
+| msu.png | [莫大视觉识别手册](https://brandbook.msu.ru/) · [原图](https://static.tildacdn.com/tild6332-3061-4333-a364-616266613963/znak1.png) |
+| rudn.png | [友大视觉识别](https://handbook.rudn.ru/about/style.html) · [原图](https://handbook.rudn.ru/img/logo_new.svg) |
+| spbu.png | [圣彼得堡国立大学标志](https://spbu.ru/themes/spbgu/markup/dist/android-chrome-192x192.png) |
+| kfu.png | [喀山联邦大学标志](https://eng.kpfu.ru/wp-content/themes/kpfu2/images/logo_white_mobile.svg) |
+| hse.png | [高等经济大学标志](https://www.hse.ru/f/src/global/i/favicon/favicon_ios_180x180.png) |
+| itmo.png | [ITMO 官网页脚白色字标](https://itmo.ru/) |
+| mipt.png | [莫斯科物理技术学院标志](https://mipt.ru/f/media/favicons/apple-touch-icon.png) |
+| spbpu.png | [圣彼得堡彼得大帝理工大学标志](https://www.spbstu.ru/local/templates/main/img/apple-touch-icon.png) |
+| misis.png | [MISIS 大学标志](https://misis.ru/f/src/images/icon-128.png) |
+| mephi.png | [莫斯科国立核能研究大学标志](https://mephi.ru/content/public/images/mephi-header-logo.png) |
+
+## 校园与城市摄影
+
 核对日期：2026-11-16。以下三幅为摄影师公开发布的真实照片，均在 Wikimedia Commons 文件说明页确认了作者、场景和 CC BY 4.0 许可。图片为历史实拍，不代表校园或城市的实时状态。
 
 统一署名：**© Vyacheslav Argenberg**。
