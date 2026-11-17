@@ -1,0 +1,121 @@
+/* A small landscape grows from the lettering itself. Tokens are local to the hero. */
+.landing-page .hero-garden-title {
+  --garden-grass: #9dc968;
+  --garden-grass-light: #c4df92;
+  --garden-grass-dark: #6c9b48;
+  --garden-earth: #c2926b;
+  --garden-earth-light: #ddb389;
+  --garden-earth-dark: #8b654e;
+  --garden-stone: #b7afd2;
+  --garden-stone-light: #d6cfee;
+  --garden-stone-dark: #807595;
+  --garden-crystal: var(--spatial-teal);
+  --garden-crystal-light: color-mix(in srgb, var(--spatial-teal) 38%, var(--spatial-paper));
+  --garden-type-depth: 2px;
+  --garden-type-rim: .7px;
+  --garden-ink-top: .14em;
+  font-family: var(--font-pixel-display);
+  font-size: inherit;
+  font-weight: 400;
+  font-style: normal;
+  font-synthesis: none;
+  letter-spacing: 0;
+}
+.landing-page .garden-line { white-space: nowrap; }
+.landing-page .garden-run {
+  --garden-face: var(--garden-earth);
+  --garden-edge: var(--garden-earth-dark);
+  position: relative;
+  display: inline-grid;
+  max-width: 100%;
+  vertical-align: baseline;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--garden-face);
+}
+.landing-page .garden-run--ore { --garden-face: var(--garden-stone); --garden-edge: var(--garden-stone-dark); }
+.landing-page .garden-run > .garden-run-depth,
+.landing-page .garden-run > .garden-run-face { grid-area: 1 / 1; min-width: 0; }
+.landing-page .garden-run-depth {
+  color: var(--garden-edge);
+  -webkit-text-stroke: var(--garden-type-rim) var(--garden-edge);
+  transform: translate(var(--garden-type-depth), var(--garden-type-depth));
+  pointer-events: none;
+  user-select: none;
+}
+.landing-page .garden-run-face { position: relative; color: var(--garden-face); }
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .landing-page .garden-run--earth > .garden-run-face {
+    background-image:
+      linear-gradient(to bottom, var(--garden-grass-light) 0 17%, var(--garden-grass) 17% 30%, var(--garden-grass-dark) 30% 36%, transparent 36%),
+      conic-gradient(from 90deg, transparent 0 25%, var(--garden-earth-light) 25% 50%, transparent 50%),
+      conic-gradient(from 90deg, transparent 0 25%, var(--garden-earth-dark) 25% 50%, transparent 50%),
+      linear-gradient(var(--garden-earth), var(--garden-earth));
+    background-size: 100% 100%, .23em .29em, .31em .37em, 100% 100%;
+    background-position: 0 0, .06em .07em, .19em .18em, 0 0;
+  }
+  .landing-page .garden-run--ore > .garden-run-face {
+    background-image:
+      linear-gradient(to bottom, var(--garden-stone-light) 0 18%, transparent 18%),
+      conic-gradient(from 90deg, transparent 0 25%, var(--garden-crystal-light) 25% 50%, transparent 50%),
+      conic-gradient(from 90deg, transparent 0 25%, var(--garden-crystal) 25% 50%, transparent 50%),
+      linear-gradient(to bottom, var(--garden-stone) 0 70%, var(--garden-stone-dark) 70%);
+    background-size: 100% 100%, .24em .28em, .34em .32em, 100% 100%;
+    background-position: 0 0, .04em .16em, .12em .08em, 0 0;
+  }
+  .landing-page .garden-run > .garden-run-face {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+}
+.landing-page .garden-growth {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  overflow: visible;
+  pointer-events: none;
+  user-select: none;
+}
+/* Optical anchor for the 12-cell letter cap; roots overlap the top stroke slightly. */
+.landing-page .garden-growth--meadow {
+  inset-inline-start: .06em;
+  bottom: calc(100% - var(--garden-ink-top));
+  width: .86em;
+  height: .37625em;
+}
+.landing-page .garden-growth--vine {
+  inset-inline-end: -.08em;
+  top: var(--garden-ink-top);
+  width: .18em;
+  height: .468em;
+}
+.landing-page .garden-growth--crystal {
+  inset-inline-end: .04em;
+  bottom: calc(100% - var(--garden-ink-top));
+  width: .25em;
+  height: .25em;
+}
+.landing-page .garden-growth-dark,
+.landing-page .garden-growth-stem { fill: var(--garden-grass-dark); }
+.landing-page .garden-growth-green { fill: var(--garden-grass); }
+.landing-page .garden-growth-light { fill: var(--garden-grass-light); }
+.landing-page .garden-growth-flower { fill: var(--spatial-pink); }
+.landing-page .garden-growth-gold { fill: var(--spatial-gold); }
+.landing-page .garden-growth-paper { fill: var(--spatial-paper); }
+.landing-page .garden-crystal-shadow { fill: var(--garden-stone-dark); }
+.landing-page .garden-crystal-front { fill: var(--garden-crystal); }
+.landing-page .garden-crystal-light { fill: var(--garden-crystal-light); }
+/* Cyrillic is word-based: a natural space can wrap, individual letters never split. */
+.landing-page .hero-garden-title--ru .garden-run { overflow-wrap: normal; word-break: normal; hyphens: none; }
+.landing-page .hero-garden-title--ru .garden-growth--meadow { inset-inline-start: .1em; width: .72em; height: .315em; }
+@media (max-width: 699px) {
+  .landing-page .hero-garden-title { --garden-type-depth: 1px; --garden-type-rim: .5px; }
+  .landing-page .garden-growth--meadow { height: .33em; }
+  .landing-page .hero-garden-title--ru .garden-growth--meadow { height: .3em; }
+}
+@media (forced-colors: active) {
+  .landing-page .garden-growth,
+  .landing-page .garden-run-depth { display: none; }
+  .landing-page .garden-run > .garden-run-face { color: CanvasText; background: none; -webkit-text-stroke: 0; }
+}

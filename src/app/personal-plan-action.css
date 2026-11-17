@@ -1,0 +1,13 @@
+.personal-plan-action { min-width: 0; }
+.personal-plan-action-controls { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); }
+.personal-plan-action .button { border-radius: var(--radius-pill); white-space: normal; text-align: center; }
+.personal-plan-action .button:disabled, .personal-plan-action .button[aria-disabled="true"] { opacity: 1; background: var(--brand-soft); color: var(--brand); cursor: default; }
+.personal-plan-action > p { font-size: var(--font-size-meta); margin-top: var(--space-2); color: var(--warning); }
+.admission-plan-footer { position: sticky; bottom: calc(-1 * var(--space-6)); z-index: 2; margin-top: var(--space-5); padding: var(--space-4); border-radius: var(--radius-card); }
+.guide-reader-footer .personal-plan-action { flex: 1; }
+.guide-reader-footer .guide-reader-save { flex-shrink: 0; }
+@media (max-width: 699px) {
+  .admission-plan-footer { bottom: calc(-1 * var(--space-5)); padding: var(--space-3); }
+  .personal-plan-action-controls { gap: var(--space-2); }
+  .personal-plan-action .button { padding-inline: var(--space-3); }
+}

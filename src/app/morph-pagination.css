@@ -1,0 +1,43 @@
+.morph-pagination {
+  --pagination-dot: 8px;
+  --pagination-active: 32px;
+  --pagination-duration: 320ms;
+  --pagination-ink: var(--spatial-lilac);
+  --pagination-rest: color-mix(in srgb, var(--spatial-paper) 50%, transparent);
+  display: flex;
+  align-items: center;
+  width: max-content;
+}
+.morph-pagination-button {
+  display: grid;
+  place-items: center;
+  flex: 0 0 var(--control-min-height);
+  width: var(--control-min-height);
+  height: var(--control-min-height);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  cursor: pointer;
+}
+.morph-pagination-marker {
+  width: var(--pagination-dot);
+  height: var(--pagination-dot);
+  border-radius: var(--radius-pill);
+  background: var(--pagination-rest);
+  box-shadow: inset 0 1px 1px color-mix(in srgb, var(--surface) 50%, transparent);
+  transition: width var(--pagination-duration) var(--ease), background-color var(--pagination-duration) var(--ease), box-shadow var(--pagination-duration) var(--ease);
+}
+.morph-pagination-button[aria-current="true"] .morph-pagination-marker {
+  width: var(--pagination-active);
+  background: var(--pagination-ink);
+  box-shadow: inset 0 1px 1px color-mix(in srgb, var(--surface) 75%, transparent), 0 2px 12px color-mix(in srgb, var(--pagination-ink) 36%, transparent);
+}
+.morph-pagination-button:hover .morph-pagination-marker { background: var(--pagination-ink); }
+.morph-pagination-button:focus-visible { outline: 2px solid var(--pagination-ink); outline-offset: -2px; }
+@media (prefers-reduced-motion: reduce) { .morph-pagination-marker { transition: none; } }
+@media (forced-colors: active) {
+  .morph-pagination-marker { background: ButtonText; box-shadow: none; forced-color-adjust: none; }
+  .morph-pagination-button[aria-current="true"] .morph-pagination-marker { background: Highlight; box-shadow: none; }
+  .morph-pagination-button:focus-visible { outline-color: Highlight; }
+}

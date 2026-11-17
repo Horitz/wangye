@@ -1,0 +1,38 @@
+.personal-library { margin-top: var(--space-7); min-width: 0; scroll-margin-top: var(--space-8); }
+.personal-library-heading, .personal-library-heading > div { display: flex; align-items: center; gap: var(--space-4); }
+.personal-library-heading { justify-content: space-between; flex-wrap: wrap; margin-bottom: var(--space-5); }
+.personal-library-heading > div { min-width: 0; }
+.personal-library-heading h2 { font-size: 26px; line-height: 1.3; }
+.personal-library-heading .guidance-illustration { --guidance-size: 80px; flex-shrink: 0; }
+.personal-library-tabs { display: flex; width: fit-content; max-width: 100%; gap: var(--space-1); padding: var(--space-1); border-radius: var(--radius-pill); margin-bottom: var(--space-6); }
+.personal-library-tabs > button { display: flex; align-items: center; justify-content: center; gap: var(--space-2); min-width: 0; min-height: var(--control-min-height); padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill); font-size: var(--font-size-control); color: var(--muted); line-height: 1.5; }
+.personal-library-tabs > button[aria-selected="true"] { color: var(--brand); background: var(--surface); box-shadow: inset 0 1px 0 var(--surface), var(--shadow-card); font-weight: 600; }
+.personal-library-tabs .personal-shortcut-count { flex-shrink: 0; }
+.personal-library-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: var(--space-6) var(--space-5); }
+.personal-library-empty { display: grid; justify-items: start; gap: var(--space-5); padding: var(--space-6); border-radius: var(--radius-card); }
+.personal-library-empty > svg { color: var(--brand); }
+.personal-library-empty h3 { font-size: 22px; line-height: 1.4; }
+.personal-note-actions { display: flex; flex-basis: 100%; flex-wrap: wrap; gap: var(--space-4); margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--border); }
+.personal-note-actions > button { min-height: var(--control-min-height); }
+.personal-note-delete { display: grid; gap: var(--space-5); }
+.personal-note-delete > div { display: flex; flex-wrap: wrap; gap: var(--space-4); }
+.personal-library .community-composer { margin: 0; border: 0; padding: 0; background: transparent; box-shadow: none; }
+.workspace-page.locale-ru .personal-library-heading h2 { line-height: 1.25; }
+.workspace-page.locale-ru .personal-library-tabs > button { line-height: 1.4; }
+@media (forced-colors: active) {
+  .personal-library-tabs > button[aria-selected="true"] { outline: 2px solid Highlight; outline-offset: -2px; }
+}
+@media (max-width: 1023px) {
+  .personal-library-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 699px) {
+  .personal-library { margin-top: var(--space-6); }
+  .personal-library-heading { gap: var(--space-5); }
+  .personal-library-heading h2 { font-size: 22px; }
+  .personal-library-heading .guidance-illustration { display: none; }
+  .personal-library-grid { grid-template-columns: minmax(0, 1fr); }
+  .personal-library-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; border-radius: var(--radius-card); }
+  .personal-library-tabs > button { flex-direction: column; padding: var(--space-2); border-radius: var(--radius-card); }
+  .personal-library-empty { padding: var(--space-5); }
+  .personal-library-empty h3 { font-size: 20px; }
+}

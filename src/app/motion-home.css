@@ -1,0 +1,85 @@
+/* 1.5: portraits and travel objects share a slow, coherent orbit. */
+.spatial-page { --orbit-duration: 64s; --motion-stagger: 120ms; --illustration-shadow: 0 18px 40px rgb(0 0 0 / .16); }
+.people-scene { position: absolute; inset: 0; isolation: isolate; transform: translateY(var(--scene-shift, 0px)); }
+.people-orbit-line { position: absolute; z-index: 1; width: 80%; height: 72%; top: 14%; left: 10%; border: 1px solid var(--spatial-line); border-radius: 50%; transform: rotate(-18deg); }
+.people-portrait { position: absolute; overflow: hidden; }
+.portrait-main { width: 62%; aspect-ratio: 1; top: 18%; left: 19%; overflow: visible; z-index: 4; }
+.main-disc { position: absolute; inset: 6% 0 0; border-radius: 50%; background: var(--spatial-blue); }
+.main-figure { position: absolute; inset: -8% 0 0; overflow: hidden; border-radius: 0 0 50% 50%; }
+.portrait-friend { width: 20.5%; aspect-ratio: .95; top: 50%; left: 50%; z-index: 5; border-radius: 28%; box-shadow: var(--illustration-shadow); will-change: transform; }
+.friend-glasses { background: var(--spatial-lilac); transform: translate(-225%, -150%) rotate(-6deg); }
+.friend-longhair { background: var(--spatial-teal); transform: translate(130%, -185%) rotate(6deg); }
+.friend-beanie { background: var(--spatial-pink); transform: translate(0%, 115%) rotate(-6deg); }
+.orbit-object { position: absolute; top: 50%; left: 50%; width: 10.5%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 28%; color: var(--spatial-ink); box-shadow: inset 2px 3px 2px rgb(248 247 242 / .35), inset -2px -3px 2px rgb(32 33 42 / .15), 0 10px 20px rgb(0 0 0 / .18); pointer-events: none; will-change: transform; }
+.orbit-object svg { width: 44%; height: 44%; stroke-width: 1.75px; }
+.orbit-book { background: var(--spatial-gold); transform: translate(-290%, -120%); }
+.orbit-pin { background: var(--spatial-pink); transform: translate(240%, -160%); }
+.orbit-plane-icon { background: var(--spatial-teal); border-radius: 50%; transform: translate(130%, 220%); }
+.people-spark { position: absolute; z-index: 6; color: var(--spatial-gold); }
+.people-spark-one { top: 3%; left: 47%; }.people-spark-one svg { width: 24px; height: 24px; }
+.people-spark-two { bottom: 3%; right: 12%; font-size: 26px; }
+.people-scene[data-running="false"] :is(.orbit-object, .portrait-friend) { will-change: auto; }
+
+.journey-story { background: var(--spatial-stage); border-top: 1px solid var(--spatial-line); border-radius: var(--space-7) var(--space-7) 0 0; padding-block: var(--space-6); scroll-margin-top: 0; }
+.journey-chapter { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-9); align-items: center; min-height: 680px; padding-block: var(--space-9); scroll-margin-top: 96px; }
+.journey-copy { min-width: 0; max-width: 500px; }
+.journey-copy h2 { font-size: var(--spatial-section-title); font-weight: 650; line-height: 1.35; }
+.journey-copy p { max-width: 450px; margin-top: var(--space-5); color: var(--spatial-muted); font-size: var(--font-size-body); line-height: 1.9; }
+.journey-copy .text-button { margin-top: var(--space-6); color: var(--spatial-gold); }
+.journey-copy .text-button:hover { color: var(--spatial-paper); }
+.journey-copy .text-button:focus-visible { outline-color: var(--spatial-gold); }
+.journey-chapter-1 .journey-copy { order: 2; justify-self: end; }
+.journey-chapter-1 .chapter-art { order: 1; }
+.chapter-art { position: relative; width: 100%; aspect-ratio: 1.13; min-width: 0; }
+.art-canvas { position: absolute; inset: 0; transform: translateY(var(--art-shift, 0px)) rotate(var(--art-turn, 0deg)) scale(var(--art-scale, 1)); }
+.art-circle { position: absolute; width: 78%; aspect-ratio: 1; top: 6%; left: 11%; border-radius: 50%; background: var(--spatial-blue); opacity: .2; }
+.art-person { position: absolute; overflow: hidden; border-radius: 50%; z-index: 3; box-shadow: var(--illustration-shadow); }
+.art-floating { position: absolute; z-index: 4; display: grid; place-items: center; border-radius: 24%; width: 18%; aspect-ratio: 1; color: var(--spatial-ink); box-shadow: inset 2px 2px 3px rgb(248 247 242 / .3), var(--illustration-shadow); }
+.art-floating svg { width: 45%; height: 45%; stroke-width: 1.5px; }
+.arrival-ticket { position: absolute; z-index: 2; top: 24%; left: 0; width: 100%; transform: rotate(-7deg); filter: drop-shadow(0 18px 20px rgb(0 0 0 / .16)); }
+.arrival-person { width: 36%; aspect-ratio: 1; right: 2%; bottom: -3%; background: var(--spatial-gold); }
+.arrival-globe { right: 7%; top: -1%; background: var(--spatial-teal); transform: rotate(12deg); }
+.art-spark { position: absolute; width: 28px; height: 28px; color: var(--spatial-gold); top: 0; left: 16%; }
+.art-dot { position: absolute; left: 9%; bottom: 5%; width: 12px; height: 12px; border-radius: 50%; background: var(--spatial-lilac); }
+.art-1 .art-circle { background: var(--spatial-pink); }
+.guide-sheet { position: absolute; width: 49%; height: 74%; top: 8%; left: 22%; border-radius: var(--radius-card); box-shadow: var(--illustration-shadow); }
+.sheet-back { background: var(--spatial-lilac); transform: rotate(-12deg) translate(-11%, -1%); }
+.sheet-front { padding: 8%; background: var(--spatial-paper); color: var(--brand); transform: rotate(7deg); }
+.sheet-front > svg { width: 40%; height: auto; margin-bottom: 18%; }.sheet-front > span { display: block; height: 5%; margin-top: 11%; border-radius: 999px; background: var(--border); }.sheet-front > span:nth-of-type(2) { width: 75%; }.sheet-front > span:nth-of-type(4) { width: 60%; }
+.sheet-front i { position: absolute; display: grid; place-items: center; width: 22%; height: 20%; right: 9%; top: -2%; background: var(--spatial-gold); color: var(--spatial-ink); border-radius: 0 0 40% 40%; }.sheet-front i svg { width: 52%; }
+.settle-person { width: 42%; aspect-ratio: 1; left: 0; bottom: 0; background: var(--spatial-blue); }
+.settle-pin { right: 1%; bottom: 16%; background: var(--spatial-pink); transform: rotate(-10deg); }
+.art-1 .art-spark { left: auto; right: 9%; top: 2%; }
+.art-1 .art-dot { left: auto; right: 22%; bottom: 1%; background: var(--spatial-teal); }
+.art-2 .art-circle { background: var(--spatial-teal); }
+.portrait-fan { position: absolute; width: 42%; aspect-ratio: .82; top: 20%; overflow: hidden; border-radius: 28% 28% 20% 20%; box-shadow: var(--illustration-shadow); }
+.fan-left { left: 0; background: var(--spatial-pink); transform: rotate(-16deg) translateY(8%); }
+.fan-right { right: 0; background: var(--spatial-blue); transform: rotate(16deg) translateY(8%); }
+.fan-center { z-index: 3; left: 29%; background: var(--spatial-lilac); transform: translateY(-8%); }
+.continue-bookmark { bottom: 0; right: 5%; background: var(--spatial-gold); transform: rotate(10deg); }
+.art-2 .art-spark { top: 3%; left: 11%; }
+.spatial-page[data-motion="enabled"] .journey-chapter[data-reveal] { opacity: 1; transform: none; transition: none; }
+.spatial-page[data-motion="enabled"] .journey-chapter :is(.journey-copy, .chapter-art) { transition: opacity var(--spatial-reveal-time) var(--ease), transform var(--spatial-reveal-time) var(--ease); }
+.spatial-page[data-motion="enabled"] .journey-chapter[data-in-view] .chapter-art { transition-delay: var(--motion-stagger); }
+.spatial-page[data-motion="enabled"] .journey-chapter:not([data-in-view]):not(:focus-within) :is(.journey-copy, .chapter-art) { opacity: 0; transform: translateY(var(--reveal-offset, 24px)); }
+.spatial-page[data-motion="enabled"] .journey-chapter:focus-within :is(.journey-copy, .chapter-art) { opacity: 1; transform: none; transition: none; }
+@media (max-width: 1199px) { .journey-chapter { gap: var(--space-7); min-height: 600px; } }
+@media (max-width: 1023px) {
+  .journey-chapter { gap: var(--space-6); min-height: 560px; padding-block: var(--space-8); }
+}
+@media (max-width: 699px) {
+  .hero-stage { margin-bottom: var(--space-5); }
+  .journey-story { border-radius: var(--space-6) var(--space-6) 0 0; padding-block: var(--space-5); }
+  .journey-chapter { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-height: 0; padding-block: 56px; }
+  .journey-chapter-1 .journey-copy, .journey-chapter-1 .chapter-art { order: initial; }
+  .journey-copy { max-width: 100%; }
+  .chapter-art { max-width: 440px; margin-inline: auto; }
+  .guide-sheet { border-radius: var(--radius-control); }
+  .art-floating { width: 18%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .people-scene, .art-canvas { transform: none; }
+  .orbit-object, .portrait-friend { will-change: auto; }
+  .spatial-page[data-motion="enabled"] .journey-chapter :is(.journey-copy, .chapter-art),
+  .spatial-page[data-motion="enabled"] .journey-chapter:not([data-in-view]):not(:focus-within) :is(.journey-copy, .chapter-art) { opacity: 1; transform: none; transition: none; }
+}

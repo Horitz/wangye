@@ -1,0 +1,46 @@
+.personal-space { --personal-sidebar-width: 320px; padding-top: var(--space-7); }
+.personal-space-heading { margin-bottom: var(--space-6); }
+.personal-space-heading p { margin-top: var(--space-3); }
+.personal-space-grid { display: grid; grid-template-columns: var(--personal-sidebar-width) minmax(0, 1fr); align-items: start; gap: var(--space-6); }
+.personal-space-sidebar, .personal-space-content { display: grid; min-width: 0; gap: var(--space-5); }
+.personal-shortcuts { display: grid; padding: var(--space-3) var(--space-5); border-radius: var(--radius-card); }
+.personal-shortcuts a { display: flex; align-items: center; gap: var(--space-3); min-height: var(--space-8); font-size: var(--font-size-control); font-weight: 600; }
+.personal-shortcuts a + a { border-top: 1px solid var(--border); }
+.personal-shortcuts a > span:nth-of-type(2) { flex: 1; min-width: 0; }
+.personal-shortcut-sticker { display: block; flex: 0 0 var(--space-7); width: var(--space-7); height: var(--space-7); pointer-events: none; }
+.personal-shortcut-sticker > svg { display: block; width: 100%; height: 100%; }
+.personal-shortcuts a > svg:first-child { color: var(--brand); }
+.personal-shortcuts a:hover { color: var(--brand); }
+.personal-shortcut-count { display: inline-grid; place-items: center; min-width: var(--space-6); min-height: var(--space-6); padding-inline: var(--space-2); background: var(--brand-soft); color: var(--brand); border-radius: var(--radius-pill); font-size: var(--font-size-meta); font-weight: 600; }
+.personal-saved { min-width: 0; padding: var(--space-6); border-radius: var(--radius-card); }
+.personal-saved-heading, .personal-saved-heading > div { display: flex; align-items: center; gap: var(--space-3); }
+.personal-saved-heading { justify-content: space-between; }
+.personal-saved-heading > div { min-width: 0; }
+.personal-saved-heading > .personal-shortcut-count { flex-shrink: 0; }
+.personal-saved-heading svg { color: var(--brand); }
+.personal-saved h2 { font-size: 22px; line-height: 1.4; }
+.personal-guide-list { margin-top: var(--space-5); }
+.personal-guide-list a { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding-block: var(--space-4); min-height: var(--space-8); border-top: 1px solid var(--border); font-weight: 600; }
+.personal-guide-list a:hover { color: var(--brand); }
+.personal-guide-list a svg { flex-shrink: 0; }
+.personal-saved-empty { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-5); margin-top: var(--space-5); padding-bottom: var(--sticker-depth); }
+.personal-saved-empty p { flex: 1 1 240px; color: var(--muted); }
+.personal-storage-note { margin-top: var(--space-6); color: var(--muted); font-size: var(--font-size-meta); }
+.personal-account-dialog .account-panel { margin-top: 0; padding-bottom: 0; border-bottom: 0; }
+@media (max-width: 1023px) {
+  .personal-space-grid { grid-template-columns: minmax(0, 1fr); }
+  .personal-space-sidebar { gap: var(--space-4); }
+  .personal-shortcuts { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-5); }
+  .personal-shortcuts a + a { border-top: 0; }
+}
+@media (max-width: 699px) {
+  .personal-space { padding-top: var(--space-5); }
+  .personal-space-grid { gap: var(--space-5); }
+  .personal-saved { padding: var(--space-5); }
+  .personal-saved h2 { font-size: 20px; }
+  .personal-saved-heading .personal-shortcut-sticker { display: none; }
+  .personal-saved-empty { gap: var(--space-4); }
+  .personal-shortcuts { grid-template-columns: minmax(0, 1fr); }
+  .personal-shortcuts a + a { border-top: 1px solid var(--border); }
+}
+

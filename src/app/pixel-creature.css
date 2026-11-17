@@ -1,0 +1,115 @@
+/* Original block wildlife. Materials are shared; each creature has its own silhouette. */
+.pixel-creature {
+  --creature-ink: var(--spatial-ink);
+  --creature-outline: color-mix(in srgb, var(--spatial-ink) 76%, var(--spatial-lilac));
+  --creature-coat: var(--spatial-lilac);
+  --creature-shade: color-mix(in srgb, var(--creature-coat) 68%, var(--spatial-ink));
+  --creature-highlight: color-mix(in srgb, var(--creature-coat) 68%, var(--spatial-paper));
+  --creature-cream: var(--spatial-paper);
+  --creature-orange: color-mix(in srgb, var(--spatial-gold) 56%, var(--spatial-pink));
+  --creature-grass: color-mix(in srgb, var(--spatial-teal) 74%, var(--spatial-gold));
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+  user-select: none;
+}
+.pixel-creature--fox { --creature-coat: var(--creature-orange); }
+.pixel-creature--frog { --creature-coat: var(--creature-grass); }
+.pixel-creature--bee { --creature-coat: var(--spatial-gold); --creature-shade: var(--creature-outline); }
+.pixel-creature--axolotl { --creature-coat: color-mix(in srgb, var(--spatial-pink) 44%, var(--spatial-paper)); }
+.pixel-creature__outline { fill: var(--creature-outline); }
+.pixel-creature__coat { fill: var(--creature-coat); }
+.pixel-creature__shade { fill: var(--creature-shade); }
+.pixel-creature__highlight { fill: var(--creature-highlight); }
+.pixel-creature__cream { fill: var(--creature-cream); }
+.pixel-creature__ink { fill: var(--creature-ink); }
+.pixel-creature__pink { fill: var(--spatial-pink); }
+.pixel-creature__gill-fill { fill: color-mix(in srgb, var(--spatial-pink) 80%, var(--spatial-lilac)); }
+.pixel-creature__glint { fill: var(--spatial-paper); }
+.pixel-creature__wing-fill { fill: color-mix(in srgb, var(--spatial-paper) 78%, var(--spatial-teal)); }
+
+/* Keep the attachment fixed at the border. At this offset SVG y=64 meets the top edge. */
+.frame-creature {
+  --frame-creature-size: 72px;
+  --ambient-motion: paused;
+  --creature-duration: 7.6s;
+  --creature-delay: -1.2s;
+  position: absolute;
+  z-index: 2;
+  inset-block-start: calc(var(--frame-creature-size) * -.666667);
+  inset-inline-end: var(--space-5);
+  width: var(--frame-creature-size);
+  max-width: calc(100% - var(--space-6));
+  aspect-ratio: 6 / 5;
+  pointer-events: none;
+  user-select: none;
+}
+.frame-creature[data-motion="running"] { --ambient-motion: running; }
+.frame-creature--top-left { inset-inline-end: auto; inset-inline-start: var(--space-6); --creature-delay: -3.6s; }
+.frame-creature--side-right {
+  inset-block-start: var(--frame-creature-side-top, 40%);
+  inset-inline-end: calc(var(--frame-creature-size) * -.75);
+  transform: rotate(90deg);
+  --creature-delay: -5.2s;
+}
+body:has(dialog[open]) .frame-creature { --ambient-motion: paused; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .pixel-creature[data-animated="true"] :is(.pixel-creature__head, .pixel-creature__tail, .pixel-creature__eyes, .pixel-creature__wing, .pixel-creature__gill) {
+    animation-duration: var(--creature-duration, 7.6s);
+    animation-delay: var(--creature-delay, 0s);
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-play-state: var(--ambient-motion, paused);
+    transform-box: fill-box;
+  }
+  .pixel-creature[data-animated="true"] .pixel-creature__head { transform-origin: center bottom; animation-name: creature-peek; }
+  .pixel-creature[data-animated="true"] .pixel-creature__tail { transform-origin: left bottom; animation-name: creature-tail; }
+  .pixel-creature[data-animated="true"] .pixel-creature__eyes { transform-origin: center; animation-name: creature-blink; }
+  .pixel-creature[data-animated="true"] .pixel-creature__wing { transform-origin: center bottom; animation-name: creature-wing; animation-duration: 1.8s; }
+  .pixel-creature[data-animated="true"] .pixel-creature__wing--right { animation-direction: reverse; }
+  .pixel-creature[data-animated="true"] .pixel-creature__gill { transform-origin: right center; animation-name: creature-gill; }
+  .pixel-creature[data-animated="true"] .pixel-creature__gill--right { transform-origin: left center; animation-direction: reverse; }
+}
+@keyframes creature-peek {
+  0%, 25%, 100% { transform: translateY(0); }
+  40%, 52% { transform: translateY(-3px) rotate(-2deg); }
+  70%, 82% { transform: translateY(1px); }
+}
+@keyframes creature-tail {
+  0%, 30%, 100% { transform: rotate(0); }
+  45% { transform: rotate(-7deg); }
+  60% { transform: rotate(3deg); }
+  75% { transform: rotate(-4deg); }
+}
+@keyframes creature-blink {
+  0%, 36%, 40%, 78%, 82%, 100% { transform: scaleY(1); }
+  38%, 80% { transform: scaleY(.14); }
+}
+@keyframes creature-wing {
+  0%, 30%, 100% { transform: rotate(-8deg) scaleY(.9); }
+  60% { transform: rotate(12deg) scaleY(1); }
+}
+@keyframes creature-gill {
+  0%, 30%, 100% { transform: rotate(0); }
+  50%, 70% { transform: rotate(6deg); }
+}
+@media (max-width: 1439px) {
+  .frame-creature--side-right {
+    inset-block-start: calc(var(--frame-creature-size) * -.666667);
+    inset-inline-end: var(--space-5);
+    transform: none;
+  }
+}
+@media (max-width: 699px) {
+  .frame-creature { --frame-creature-size: 56px; inset-inline-end: var(--space-4); }
+  .frame-creature--top-left { inset-inline-end: auto; inset-inline-start: var(--space-5); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pixel-creature[data-animated="true"] * { animation: none; }
+}
+@media (forced-colors: active) {
+  .pixel-creature, .frame-creature { display: none; }
+}

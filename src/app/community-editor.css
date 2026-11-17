@@ -1,0 +1,12 @@
+/* Published posts share the guide editor's paper, gallery and glass controls. */
+.guide-dialog .published-community-editor { height: 100%; overflow-y: auto; overscroll-behavior: contain; scrollbar-gutter: stable; }
+.published-community-editor .editorial-fields { margin: 0 auto; max-width: 960px; }
+.published-community-editor .editorial-language { max-width: 100%; }
+.published-community-editor :is(input, textarea)[lang="zh-CN"] { line-height: 1.8; }
+.published-community-editor :is(input, textarea)[lang="ru"] { line-height: 1.65; }
+.community-detail-edit-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-4); }
+.community-detail-edit-feedback { margin-top: var(--space-3); color: var(--brand); font-size: var(--font-size-meta); line-height: 1.6; }
+@media (max-width: 699px) {
+  .community-detail-edit-actions > .button { width: 100%; }
+  .published-community-editor .editorial-editor-footer > div { grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); }
+}

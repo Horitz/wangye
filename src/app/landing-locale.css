@@ -1,0 +1,92 @@
+/* Language-specific reading rhythm, independent of the scene's motion. */
+.landing-page {
+  --landing-display-size: var(--spatial-display-size);
+  --landing-display-leading: 1.3;
+  --landing-title-tracking: 0;
+  --landing-section-size: var(--spatial-section-title);
+  --landing-section-leading: 1.35;
+  --landing-copy-size: var(--font-size-body);
+  --landing-copy-leading: 1.9;
+  --landing-copy-measure: 27em;
+  --landing-copy-gap: var(--space-5);
+}
+.landing-page.locale-ru {
+  --landing-display-size: 72px;
+  --landing-display-leading: 1.16;
+  --landing-title-tracking: -.02em;
+  --landing-section-size: 44px;
+  --landing-section-leading: 1.2;
+  --landing-copy-size: 18px;
+  --landing-copy-leading: 1.65;
+  --landing-copy-measure: 42ch;
+  --landing-copy-gap: var(--space-6);
+}
+.landing-page .spatial-copy h1 {
+  font-size: var(--landing-display-size);
+  line-height: var(--landing-display-leading);
+  letter-spacing: var(--landing-title-tracking);
+}
+.landing-page :is(.journey-copy, .finale-copy) h2 {
+  font-size: var(--landing-section-size);
+  line-height: var(--landing-section-leading);
+  letter-spacing: var(--landing-title-tracking);
+  text-wrap: balance;
+}
+.landing-page :is(.spatial-description, .journey-copy p, .finale-copy p) {
+  max-width: var(--landing-copy-measure);
+  margin-top: var(--landing-copy-gap);
+  font-size: var(--landing-copy-size);
+  line-height: var(--landing-copy-leading);
+  text-wrap: pretty;
+}
+.landing-page.locale-zh :is(.spatial-copy, .journey-copy, .finale-copy) {
+  line-break: strict;
+  word-break: normal;
+}
+.landing-page.locale-ru :is(.spatial-copy, .journey-copy, .finale-copy) {
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+.landing-page.locale-ru .spatial-kicker { letter-spacing: 0; line-height: 1.5; }
+.landing-page.locale-ru .hero-actions { gap: var(--space-5); margin-top: var(--space-6); }
+.landing-page.locale-ru .pixel-button { line-height: 1.5; padding-inline: var(--space-5); }
+.landing-page.locale-ru .journey-copy { max-width: 32em; }
+.landing-page.locale-ru .footer-note { max-width: 55ch; line-height: 1.6; }
+
+@media (min-width: 1600px) {
+  .landing-page.locale-ru { --landing-display-size: 80px; --landing-section-size: 48px; }
+}
+@media (max-width: 1199px) {
+  .landing-page.locale-ru { --landing-display-size: 64px; --landing-section-size: 40px; }
+  .landing-page.locale-ru .journey-chapter { gap: var(--space-7); }
+}
+@media (max-width: 1023px) {
+  .landing-page.locale-ru { --landing-display-size: 56px; --landing-section-size: 36px; }
+  .landing-page.locale-ru .finale-inner { flex-wrap: wrap; gap: var(--space-6); }
+}
+/* Cyrillic sentences need a wider measure before the Chinese layout stacks. */
+@media (max-width: 899px) {
+  .landing-page.locale-ru .hero-grid,
+  .landing-page.locale-ru .journey-chapter { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); }
+  .landing-page.locale-ru .spatial-copy { max-width: 36em; padding-block: 0; }
+  .landing-page.locale-ru .hero-stage { max-width: 480px; margin-inline: auto; }
+  .landing-page.locale-ru .journey-copy { max-width: 36em; }
+  .landing-page.locale-ru .journey-chapter-1 .journey-copy,
+  .landing-page.locale-ru .journey-chapter-1 .chapter-art { order: initial; justify-self: auto; }
+  .landing-page.locale-ru .chapter-art { max-width: 480px; margin-inline: auto; }
+}
+@media (max-width: 699px) {
+  .landing-page { --landing-display-leading: 1.24; }
+  .landing-page.locale-ru {
+    --landing-display-size: 42px;
+    --landing-display-leading: 1.16;
+    --landing-section-size: 30px;
+    --landing-copy-size: var(--font-size-body);
+    --landing-copy-leading: 1.7;
+    --landing-copy-gap: var(--space-5);
+  }
+  .landing-page.locale-ru .hero-grid { gap: var(--space-6); }
+  .landing-page.locale-ru .hero-actions { flex-direction: column; align-items: stretch; gap: var(--space-5); }
+  .landing-page.locale-ru .hero-actions .pixel-button { width: calc(100% - var(--space-2)); padding-inline: var(--space-4); }
+  .landing-page.locale-ru .journey-chapter { gap: var(--space-6); }
+}

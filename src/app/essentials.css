@@ -1,0 +1,151 @@
+/* The welcome sheet shares the same glass surfaces as the personal space. */
+.workspace-page {
+  --essentials-dialog-height: 900px;
+  --essentials-tabs-width: 560px;
+  --essentials-icon-size: 48px;
+  --essentials-motion: 200ms;
+}
+.workspace-dialog.essentials-dialog {
+  height: min(var(--essentials-dialog-height), calc(100svh - 64px));
+  overflow: hidden;
+  --material-wash: radial-gradient(ellipse at 0% 0%, var(--material-accent-glow), transparent 65%), radial-gradient(ellipse at 100% 90%, var(--material-teal-glow), transparent 65%);
+}
+.essentials-dialog[open] { display: flex; flex-direction: column; }
+.essentials-dialog .workspace-dialog-header {
+  position: relative;
+  flex: 0 0 auto;
+  border-width: 0 0 1px;
+  --material-depth: none;
+  padding-block: var(--space-4);
+}
+.essentials-dialog .workspace-dialog-header > div > span {
+  font-family: var(--font-manrope), sans-serif;
+  font-size: var(--font-size-eyebrow);
+  font-weight: 600;
+}
+.essentials-dialog .workspace-dialog-actions { gap: var(--space-2); }
+.essentials-dialog .workspace-dialog-actions > .icon-button {
+  border-radius: var(--radius-pill);
+  color: var(--text);
+}
+.essentials-dialog .workspace-dialog-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+.essentials-content { position: relative; min-width: 0; }
+.essentials-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-1);
+  width: min(100%, var(--essentials-tabs-width));
+  padding: var(--space-1);
+  margin: 0 auto var(--space-6);
+}
+.essentials-tabs button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-width: 0;
+  min-height: 48px;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--font-size-control);
+  font-weight: 600;
+  transition: color var(--essentials-motion) var(--ease), background var(--essentials-motion) var(--ease), box-shadow var(--essentials-motion) var(--ease);
+}
+.essentials-tabs button svg { flex-shrink: 0; }
+.essentials-tabs button[aria-selected="true"] {
+  background: var(--surface);
+  color: var(--brand);
+  border-color: var(--material-border);
+  box-shadow: inset 0 1px 0 var(--surface), var(--shadow-card);
+}
+.essentials-tabs button:hover:not([aria-selected="true"]) { background: var(--brand-soft); color: var(--brand); }
+.essentials-tabs button:focus-visible,
+.admission-section summary:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; }
+.admission-intro { min-width: 0; }
+.admission-intro h3 { font-size: 26px; font-weight: 650; line-height: 1.3; }
+.admission-intro > p { margin-top: var(--space-3); color: var(--muted); }
+.admission-heading-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--space-3) var(--space-4); margin-bottom: var(--space-5); }
+.admission-guidance { --guidance-size: 128px; }
+.admission-heading-row .admission-intro { min-width: 0; }
+.admission-edit { grid-column: 1 / -1; justify-self: start; border-radius: var(--radius-pill); }
+.admission-feedback { margin-bottom: var(--space-4); color: var(--brand); }
+.admission-section-heading { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-5); }
+.admission-section-heading h4 { font-size: var(--font-size-body); font-weight: 600; line-height: 1.5; }
+.admission-section--simple .admission-section-body { white-space: pre-line; }
+.admission-section--simple .admission-section-body > p { color: var(--text); }
+.admission-reading > .guide-gallery { margin-bottom: var(--space-5); }
+.admission-sources { display: grid; gap: var(--space-2); margin-top: var(--space-4); }
+.admission-school-link, .admission-guide-link {
+  display: inline-flex; align-items: center; gap: var(--space-2);
+  min-height: var(--control-min-height); color: var(--brand);
+  font-size: var(--font-size-control); font-weight: 600;
+}
+.admission-school-link { margin-top: var(--space-3); }
+.admission-school-link svg, .admission-guide-link svg { flex-shrink: 0; }
+.admission-school-link:hover, .admission-guide-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.admission-sections { display: grid; gap: var(--space-4); }
+.admission-section { border-radius: var(--radius-card); }
+.admission-section summary {
+  display: flex; align-items: center; gap: var(--space-4); list-style: none;
+  cursor: pointer; padding: var(--space-5); font-weight: 600;
+  border-radius: inherit;
+}
+.admission-section summary::-webkit-details-marker { display: none; }
+.admission-section summary > svg { flex-shrink: 0; color: var(--brand); transition: transform var(--essentials-motion) var(--ease); }
+.admission-section-title { flex: 1; min-width: 0; }
+.admission-icon {
+  display: grid; place-items: center; flex-shrink: 0;
+  width: var(--essentials-icon-size); height: var(--essentials-icon-size);
+  border-radius: var(--radius-control); color: var(--brand);
+  --material-wash: radial-gradient(ellipse at 0 0, var(--material-accent-glow), transparent);
+}
+.admission-icon--sketch { transform: rotate(-5deg); }
+.admission-icon--sketch > svg { width: 100%; height: 100%; }
+.admission-section:nth-child(2) .admission-icon--sketch { transform: rotate(4deg); }
+.admission-section:nth-child(2) .admission-icon { --material-wash: radial-gradient(ellipse at 0 0, var(--material-teal-glow), transparent); }
+.admission-section[open] summary > svg:last-child { transform: rotate(180deg); }
+.admission-section-body { padding: 0 var(--space-5) var(--space-5); }
+.admission-section-body > p { color: var(--muted); }
+.admission-section-body ul { margin-block: var(--space-4); padding-left: var(--space-5); display: grid; gap: var(--space-3); }
+.admission-section-body li::marker { color: var(--brand); }
+.admission-guide-link { padding: var(--space-2) var(--space-4); border-radius: var(--radius-pill); --material-depth: var(--shadow-card); }
+.admission-section::details-content { transition: opacity var(--essentials-motion) var(--ease); }
+.admission-section:not([open])::details-content { opacity: 0; }
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .essentials-tabs button[aria-selected="true"] { background: var(--material-sheen), var(--material-light-raised); }
+}
+@media (max-width: 699px) {
+  .workspace-page { --essentials-icon-size: 40px; }
+  .workspace-dialog.essentials-dialog { height: calc(100svh - 24px); }
+  .essentials-dialog .workspace-dialog-header { padding: var(--space-4); }
+  .essentials-dialog .workspace-dialog-body { padding: var(--space-5) var(--space-4); }
+  .essentials-dialog .workspace-dialog-header h2 { font-size: 22px; }
+  .essentials-tabs { margin-bottom: var(--space-5); }
+  .essentials-tabs button { flex-direction: column; gap: var(--space-1); padding-inline: var(--space-1); font-size: var(--font-size-meta); white-space: nowrap; }
+  .admission-intro h3 { font-size: 22px; }
+  .admission-heading-row { gap: var(--space-3); }
+  .admission-guidance { --guidance-size: 80px; }
+  .admission-heading-row .admission-intro { margin-bottom: 0; }
+  .admission-section-heading { padding: var(--space-4); gap: var(--space-3); }
+  .admission-section summary { padding: var(--space-4); gap: var(--space-3); }
+  .admission-section-body { padding-inline: var(--space-4); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .essentials-tabs button, .admission-section summary > svg, .admission-section::details-content { transition: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .essentials-tabs button[aria-selected="true"] { background: var(--surface); }
+}
+@media (forced-colors: active) {
+  .essentials-tabs button[aria-selected="true"] { background: Highlight; color: HighlightText; border-color: Highlight; }
+  .admission-icon, .admission-guide-link { color: LinkText; }
+}

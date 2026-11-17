@@ -1,0 +1,112 @@
+.student-hub, .essentials-page, .my-space { padding-top: var(--space-7); }
+.hub-editor-toolbar { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: var(--space-3); margin-bottom: var(--space-4); }
+.hub-editor-toolbar .button { border-radius: var(--radius-pill); gap: var(--space-2); }
+.hub-editor-toolbar > span, .hub-content-error { color: var(--muted); font-size: var(--font-size-meta); }
+.hub-content-error { margin-bottom: var(--space-4); }
+.hub-welcome-copy, .hub-destination { min-width: 0; overflow-wrap: anywhere; }
+.hub-welcome-copy p, .hub-destination > p { white-space: pre-line; }
+.hub-welcome { --hub-portrait-size: 320px; display: grid; grid-template-columns: minmax(0, 1fr) var(--hub-portrait-size); align-items: center; gap: var(--space-6); min-height: 360px; padding: var(--space-7); background: var(--spatial-stage); color: var(--spatial-paper); border-radius: var(--radius-feature); overflow: hidden; }
+.hub-city { color: var(--spatial-muted); font-size: var(--font-size-meta); letter-spacing: .08em; }
+.hub-welcome h1 { margin-top: var(--space-5); font-size: 40px; line-height: 1.3; font-weight: 700; }
+.hub-welcome h1 span { color: var(--spatial-gold); }
+.hub-welcome-copy > p { margin-top: var(--space-5); color: var(--spatial-muted); max-width: 560px; }
+.hub-character { --hub-motion-play-state: paused; --hub-float-rise: var(--space-2); --hub-float-duration: 6.8s; --hub-star-duration: 4.8s; --hub-star-rise: var(--space-1); position: relative; width: var(--hub-portrait-size); max-width: 100%; aspect-ratio: 1; isolation: isolate; pointer-events: none; }
+.hub-character[data-motion="running"] { --hub-motion-play-state: running; }
+.hub-character-disc { position: absolute; inset: 20% 10% 0; background: var(--spatial-lilac); border-radius: 50%; }
+/* The lowered disc sits behind the head; only the lower body has a curved crop. */
+.hub-character-figure { position: absolute; inset: 0 4%; border-radius: 0 0 50% 50%; overflow: hidden; }
+.hub-character-portrait { position: absolute; inset: -8% -5% 0; transform-origin: 50% 80%; animation: hub-portrait-float var(--hub-float-duration) ease-in-out infinite; animation-play-state: var(--hub-motion-play-state); }
+.hub-character-star { position: absolute; width: var(--space-6); height: var(--space-6); animation: hub-star-drift var(--hub-star-duration) ease-in-out infinite; animation-play-state: var(--hub-motion-play-state); }
+.hub-character-star--gold { left: 0; top: 24%; color: var(--spatial-gold); }
+.hub-character-star--teal { right: 0; top: 54%; width: var(--space-5); height: var(--space-5); color: var(--spatial-teal); animation-delay: -2.4s; }
+.hub-character-dot { position: absolute; top: 8%; right: 16%; width: var(--space-2); height: var(--space-2); border-radius: 50%; background: var(--spatial-pink); animation: hub-star-drift var(--hub-float-duration) ease-in-out infinite; animation-delay: -1.6s; animation-play-state: var(--hub-motion-play-state); }
+@keyframes hub-portrait-float {
+  0%, 100% { transform: translateY(0) rotate(-1.5deg); }
+  50% { transform: translateY(calc(-1 * var(--hub-float-rise))) rotate(1.5deg); }
+}
+@keyframes hub-star-drift {
+  0%, 100% { transform: translateY(0) rotate(-6deg) scale(.95); }
+  50% { transform: translateY(calc(-1 * var(--hub-star-rise))) rotate(6deg) scale(1.05); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hub-character-portrait, .hub-character-star, .hub-character-dot { animation: none; transform: none; }
+}
+.hub-destinations { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5); margin-top: var(--space-6); }
+.hub-destination { display: flex; flex-direction: column; padding: var(--space-6); border: 1px solid var(--border); border-radius: var(--radius-card); background: var(--surface); box-shadow: var(--shadow-card); }
+.hub-destination-icon { display: grid; place-items: center; width: 64px; height: 64px; border-radius: var(--radius-card); margin-bottom: var(--space-5); color: var(--spatial-ink); }
+.hub-tone-lilac .hub-destination-icon { background: var(--brand-soft); }
+.hub-tone-yellow .hub-destination-icon { background: var(--spatial-gold); }
+.hub-tone-teal .hub-destination-icon { background: var(--spatial-teal); }
+.hub-destination h2, .my-space h2 { font-size: 22px; font-weight: 600; line-height: 1.4; }
+.hub-destination > p { margin-top: var(--space-2); margin-bottom: var(--space-6); color: var(--muted); }
+.hub-action { position: relative; overflow: hidden; isolation: isolate; align-self: flex-start; margin-top: auto; border: 1px solid var(--brand); border-radius: var(--radius-pill); background: var(--brand); color: var(--spatial-paper); transition: transform 180ms var(--ease), box-shadow 180ms var(--ease), background 180ms var(--ease); }
+.hub-action::before { content: ""; position: absolute; z-index: -1; inset: 0; border-radius: inherit; background: var(--brand-hover); transform: translateX(-101%); transition: transform 220ms var(--ease); }
+.hub-action:hover::before, .hub-action:focus-visible::before { transform: translateX(0); }
+.hub-action:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.hub-action svg { flex-shrink: 0; transition: transform 220ms var(--ease); }
+.hub-action:hover svg, .hub-action:focus-visible svg { transform: rotate(-10deg) scale(1.1); }
+.hub-action:active { transform: scale(.98); }
+.essentials-page .workspace-heading h1 { margin-top: var(--space-3); }
+.essentials-chapters { display: flex; flex-wrap: wrap; gap: var(--space-3); margin-block: var(--space-6); }
+.essentials-chapters button { display: flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: 48px; padding: var(--space-3) var(--space-5); border: 1px solid var(--border); border-radius: var(--radius-pill); background: var(--surface); color: var(--muted); font-size: var(--font-size-control); font-weight: 600; }
+.essentials-chapters button[aria-pressed="true"] { border-color: var(--brand); color: var(--brand); background: var(--brand-soft); }
+.essentials-section { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: var(--space-7); padding-top: var(--space-5); }
+.essentials-symbol { display: grid; place-items: center; width: 96px; height: 96px; background: var(--brand-soft); color: var(--brand); border-radius: var(--radius-feature); margin-bottom: var(--space-5); }
+.essentials-intro h2 { font-size: 32px; line-height: 1.3; font-weight: 650; }
+.essentials-intro > p { margin-top: var(--space-4); color: var(--muted); }
+.essentials-reading { display: grid; gap: var(--space-4); align-content: start; }
+.essentials-guide { display: flex; align-items: flex-start; gap: var(--space-4); border: 1px solid var(--border); padding: var(--space-5); background: var(--surface); border-radius: var(--radius-card); transition: border-color 180ms var(--ease); }
+.essentials-guide:hover { border-color: var(--brand); }
+.essentials-guide > svg { flex-shrink: 0; margin-top: var(--space-1); color: var(--brand); }
+.essentials-guide > div { flex: 1; min-width: 0; }
+.essentials-guide h3 { font-size: 22px; line-height: 1.4; font-weight: 600; }
+.essentials-guide p { margin-top: var(--space-2); color: var(--muted); }
+.essentials-guide span { display: block; margin-top: var(--space-3); color: var(--muted); font-size: var(--font-size-meta); }
+.essentials-more { margin-top: var(--space-6); }
+.my-space { max-width: 960px; }
+.my-profile { display: flex; align-items: center; gap: var(--space-5); margin-top: var(--space-6); }
+.my-profile-icon { flex-shrink: 0; display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--brand-soft); color: var(--brand); }
+.my-profile > div { flex: 1; min-width: 0; }
+.my-profile p { margin-top: var(--space-2); color: var(--muted); }
+.my-saved { margin-top: var(--space-7); }
+.my-section-heading { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-5); }
+.my-section-heading > svg { color: var(--brand); }
+.my-empty { padding: var(--space-6); border: 1px dashed var(--border); border-radius: var(--radius-card); color: var(--muted); }
+.my-empty .workspace-skip { margin-top: var(--space-3); }
+.my-guide-list { border-top: 1px solid var(--border); }
+.my-guide-list > a, .my-community-link { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); min-height: 64px; padding-block: var(--space-4); border-bottom: 1px solid var(--border); font-weight: 600; }
+.my-guide-list > a:hover, .my-community-link:hover { color: var(--brand); }
+.my-guide-list svg, .my-community-link svg { flex-shrink: 0; }
+.my-community-link { margin-top: var(--space-6); }
+.my-local-note { margin-top: var(--space-5); font-size: var(--font-size-meta); color: var(--muted); }
+@media (max-width: 1023px) {
+  .hub-welcome { --hub-portrait-size: 224px; padding: var(--space-6); min-height: 320px; }
+  .hub-welcome h1 { font-size: 32px; }
+  .hub-destinations { gap: var(--space-4); }
+  .hub-destination { padding: var(--space-5); }
+  .essentials-section { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
+  .essentials-intro { max-width: 720px; }
+  .essentials-symbol { width: 64px; height: 64px; }
+}
+@media (max-width: 699px) {
+  .student-hub, .essentials-page, .my-space { padding-top: var(--space-5); }
+  .hub-welcome { --hub-portrait-size: 192px; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); padding: var(--space-5); min-height: 0; }
+  .hub-welcome h1 { font-size: 30px; }
+  .hub-character { --hub-float-rise: var(--space-1); justify-self: center; }
+  .hub-destinations { grid-template-columns: minmax(0, 1fr); margin-top: var(--space-5); }
+  .hub-destination { display: grid; grid-template-columns: 48px minmax(0, 1fr); column-gap: var(--space-4); }
+  .hub-destination-icon { grid-row: 1 / 4; width: 48px; height: 48px; margin: 0; border-radius: var(--radius-control); }
+  .hub-destination h2 { font-size: 20px; }
+  .hub-destination > p { margin-bottom: var(--space-4); }
+  .hub-action { grid-column: 2; justify-content: center; padding-inline: var(--space-4); }
+  .essentials-chapters { gap: var(--space-2); }
+  .essentials-chapters button { padding-inline: var(--space-4); }
+  .essentials-intro h2 { font-size: 26px; }
+  .essentials-guide { gap: var(--space-3); }
+  .essentials-guide > svg:first-child { display: none; }
+  .essentials-guide h3 { font-size: 20px; }
+  .my-profile { flex-wrap: wrap; }
+  .my-profile > div { flex-basis: calc(100% - 88px); }
+  .my-profile > .button { width: 100%; }
+  .my-empty { padding: var(--space-5); }
+}

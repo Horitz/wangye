@@ -1,0 +1,6 @@
+.community-post-tags { padding: var(--space-4) var(--space-5) 0; }
+.community-detail-tags { margin-top: var(--space-4); }
+.community-tag-filter { margin-bottom: var(--space-5); }
+@media (max-width: 699px) {
+  .community-post-tags { padding-inline: var(--page-gutter); }
+}

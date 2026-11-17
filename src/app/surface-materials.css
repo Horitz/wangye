@@ -1,0 +1,160 @@
+/* Shared, opt-in surfaces. Page themes and readable foregrounds remain explicit. */
+.workspace-page {
+  --surface-hover-scale: 1.035;
+  --surface-hover-duration: 220ms;
+  --material-blur: 24px;
+  --material-saturation: 145%;
+  --material-light-fill: color-mix(in srgb, var(--surface) 72%, transparent);
+  --material-light-raised: color-mix(in srgb, var(--surface) 88%, transparent);
+  --material-dark-fill: color-mix(in srgb, var(--spatial-stage) 88%, transparent);
+  --material-border: color-mix(in srgb, var(--surface) 82%, var(--border));
+  --material-border-dark: color-mix(in srgb, var(--spatial-paper) 24%, transparent);
+  --material-shadow: 0 12px 32px color-mix(in srgb, var(--spatial-ink) 7%, transparent);
+  --material-shadow-dark: 0 16px 40px color-mix(in srgb, var(--spatial-night) 16%, transparent);
+  --material-accent-glow: color-mix(in srgb, var(--spatial-lilac) 18%, transparent);
+  --material-teal-glow: color-mix(in srgb, var(--spatial-teal) 14%, transparent);
+  --material-sheen: linear-gradient(125deg, color-mix(in srgb, var(--surface) 68%, transparent), transparent 42%, color-mix(in srgb, var(--surface) 16%, transparent));
+  --material-liquid-light: color-mix(in srgb, var(--surface) 60%, transparent);
+  --material-liquid-dark: color-mix(in srgb, var(--spatial-stage) 52%, transparent);
+  --material-liquid-rim: linear-gradient(135deg, var(--surface), color-mix(in srgb, var(--surface) 12%, transparent) 32%, transparent 52%, color-mix(in srgb, var(--surface) 56%, transparent) 78%, color-mix(in srgb, var(--spatial-lilac) 40%, transparent));
+  --material-liquid-shadow: inset 0 2px 2px color-mix(in srgb, var(--surface) 65%, transparent), inset 0 -2px 4px color-mix(in srgb, var(--surface) 24%, transparent), 0 16px 40px color-mix(in srgb, var(--spatial-night) 16%, transparent);
+}
+
+/* Separate scale from transform so carousel translation can run independently. */
+.motion-enlarge {
+  --surface-rest-scale: 1;
+  --surface-highlight-opacity: 0;
+  scale: var(--surface-rest-scale);
+  transition: scale var(--surface-hover-duration) var(--ease);
+}
+.motion-enlarge:focus-visible {
+  scale: var(--surface-hover-scale);
+  --surface-highlight-opacity: 1;
+}
+@media (hover: hover) and (pointer: fine) {
+  .motion-enlarge:hover {
+    scale: var(--surface-hover-scale);
+    --surface-highlight-opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-enlarge, .motion-enlarge:hover, .motion-enlarge:focus-visible { scale: var(--surface-rest-scale); transition: none; }
+}
+
+.material-glass {
+  --material-fill: var(--material-light-fill);
+  --material-solid: var(--surface);
+  --material-edge: var(--material-border);
+  --material-depth: var(--material-shadow);
+  --material-ink: var(--text);
+  --material-muted: var(--muted);
+  --material-highlight: color-mix(in srgb, var(--surface) 92%, transparent);
+  --material-wash: linear-gradient(transparent, transparent);
+  --material-local-sheen: var(--material-sheen);
+  border: 1px solid var(--material-edge);
+  background: var(--material-solid);
+  color: var(--material-ink);
+  box-shadow: inset 0 1px 0 var(--material-highlight), inset 0 -1px 0 color-mix(in srgb, var(--material-edge) 50%, transparent), var(--material-depth);
+}
+
+.material-glass--dark {
+  --material-fill: var(--material-dark-fill);
+  --material-solid: var(--spatial-stage);
+  --material-edge: var(--material-border-dark);
+  --material-depth: var(--material-shadow-dark);
+  --material-ink: var(--spatial-paper);
+  --material-muted: color-mix(in srgb, var(--spatial-paper) 78%, var(--spatial-muted));
+  --material-highlight: color-mix(in srgb, var(--spatial-paper) 24%, transparent);
+  --material-local-sheen: linear-gradient(125deg, color-mix(in srgb, var(--spatial-paper) 8%, transparent), transparent 44%, color-mix(in srgb, var(--spatial-paper) 3%, transparent));
+  --material-wash: radial-gradient(ellipse at 90% 0%, var(--material-accent-glow), transparent 65%), radial-gradient(ellipse at 0% 100%, var(--material-teal-glow), transparent 60%);
+}
+
+.material-glass--raised { --material-fill: var(--material-light-raised); }
+
+/* Compact controls use a shallow glass edge, without the panel-sized shadow. */
+.material-glass.material-glass--chip {
+  --material-fill: color-mix(in srgb, var(--brand-soft) 20%, transparent);
+  --material-solid: var(--surface);
+  --material-edge: color-mix(in srgb, var(--border) 80%, transparent);
+  --material-depth: var(--shadow-card);
+  --material-ink: var(--muted);
+  --material-local-sheen: var(--material-sheen);
+  transition: border-color 180ms var(--ease), background-color 180ms var(--ease), color 180ms var(--ease);
+}
+.material-glass.material-glass--chip:is(:hover, .is-active) {
+  --material-fill: color-mix(in srgb, var(--brand-soft) 72%, transparent);
+  --material-solid: var(--brand-soft);
+  --material-edge: color-mix(in srgb, var(--brand) 52%, var(--border));
+  --material-ink: var(--brand);
+  border-color: var(--material-edge);
+  background-color: var(--material-solid);
+  color: var(--material-ink);
+}
+
+/* A bevelled glass lens: content stays sharp while the scene behind it diffuses. */
+.material-glass--liquid {
+  position: relative;
+  --material-fill: var(--material-liquid-light);
+  --material-depth: var(--material-liquid-shadow);
+  --material-local-sheen: linear-gradient(120deg, color-mix(in srgb, var(--surface) 32%, transparent), transparent 36%, color-mix(in srgb, var(--surface) 12%, transparent) 78%, transparent);
+}
+.material-glass--liquid.material-glass--dark { --material-fill: var(--material-liquid-dark); }
+.material-glass--liquid::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: var(--material-liquid-rim);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.material-scene { position: relative; isolation: isolate; }
+.material-scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 38% 400px at 32% 420px, var(--material-accent-glow), transparent 85%), radial-gradient(ellipse 30% 400px at 70% 620px, var(--material-teal-glow), transparent 85%);
+}
+
+.material-switch {
+  border: 1px solid var(--material-edge, var(--border));
+  border-radius: var(--radius-pill);
+  background: var(--brand-soft);
+  padding: var(--space-2);
+  box-shadow: inset 0 1px 0 var(--surface);
+}
+
+@supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .material-glass {
+    background-color: var(--material-fill);
+    background-image: var(--material-wash), var(--material-local-sheen);
+    -webkit-backdrop-filter: blur(var(--material-blur)) saturate(var(--material-saturation));
+    backdrop-filter: blur(var(--material-blur)) saturate(var(--material-saturation));
+  }
+  .material-switch { background: linear-gradient(135deg, var(--material-light-fill), transparent 70%), color-mix(in srgb, var(--brand-soft) 72%, transparent); }
+  .material-glass.material-glass--chip:is(:hover, .is-active) { background-color: var(--material-fill); }
+}
+@media (max-width: 699px) { .workspace-page { --material-blur: 16px; } }
+@media (prefers-reduced-transparency: reduce) {
+  .material-glass { background: var(--material-solid); -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .material-scene::before { display: none; }
+  .material-switch { background: var(--brand-soft); }
+  .material-glass--liquid::after { display: none; }
+  .material-glass.material-glass--chip,
+  .material-glass.material-glass--chip:is(:hover, .is-active) { background: var(--material-solid); }
+}
+@media (forced-colors: active) {
+  .material-glass, .material-switch { color: CanvasText; background: Canvas; border-color: ButtonText; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+  .material-scene::before { display: none; }
+  .material-glass--liquid::after { display: none; }
+  .material-glass.material-glass--chip,
+  .material-glass.material-glass--chip:hover { color: ButtonText; background: Canvas; border-color: ButtonText; box-shadow: none; }
+  .material-glass.material-glass--chip.is-active { color: HighlightText; background: Highlight; border-color: Highlight; }
+}
+@media (prefers-reduced-motion: reduce) { .material-glass.material-glass--chip { transition: none; } }

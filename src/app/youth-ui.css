@@ -1,0 +1,73 @@
+/* Youthful accents share the site's palette; reading controls keep their glass surface. */
+.workspace-page {
+  --sketch-ink: var(--spatial-ink);
+  --sketch-paper: var(--spatial-paper);
+  --sketch-line: 2px;
+  --sticker-depth: 4px;
+  --sticker-motion: 180ms;
+  --sketch-scene-width: 440px;
+}
+.button.button-sticker {
+  position: relative;
+  border: var(--sketch-line) solid var(--sketch-ink);
+  border-radius: var(--radius-pill);
+  background: var(--brand);
+  color: var(--spatial-paper);
+  box-shadow: 0 var(--sticker-depth) 0 var(--sketch-ink);
+  transition: transform var(--sticker-motion) var(--ease), box-shadow var(--sticker-motion) var(--ease), background-color var(--sticker-motion) var(--ease);
+}
+.button.button-sticker:not(:disabled):not([aria-disabled="true"]):hover, .button.button-sticker:not(:disabled):not([aria-disabled="true"]):focus-visible {
+  background: var(--brand-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 calc(var(--sticker-depth) + 2px) 0 var(--sketch-ink);
+}
+.button.button-sticker:not(:disabled):not([aria-disabled="true"]):active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--sketch-ink);
+}
+.hub-welcome.hub-welcome--sketch { grid-template-columns: minmax(0, 1fr) minmax(0, var(--sketch-scene-width)); }
+.hub-character.hub-character--sketch { width: 100%; aspect-ratio: 520 / 360; }
+.hub-sketch-paper {
+  position: relative;
+  width: 100%;
+  background: var(--sketch-paper);
+  border-radius: var(--radius-feature);
+  color: var(--sketch-ink);
+  transform: rotate(-2deg);
+  box-shadow: var(--space-2) var(--space-2) 0 color-mix(in srgb, var(--spatial-lilac) 70%, var(--spatial-stage));
+}
+.hub-sketch-paper::before {
+  content: "";
+  position: absolute;
+  width: var(--space-8);
+  height: var(--space-5);
+  left: var(--space-6);
+  top: calc(-1 * var(--space-3));
+  transform: rotate(-8deg);
+  background: color-mix(in srgb, var(--spatial-gold) 85%, transparent);
+}
+.sketch-highlight { display: inline-block; position: relative; padding-bottom: var(--space-2); }
+.sketch-highlight > svg { position: absolute; bottom: 0; left: 0; width: 100%; height: var(--space-3); fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; opacity: .65; pointer-events: none; }
+.hub-destination.hub-destination--sketch .hub-sketch-icon { background: transparent; transform: rotate(-5deg); }
+.hub-sketch-icon svg { width: 100%; height: 100%; }
+.hub-destination.hub-tone-yellow .hub-sketch-icon { transform: rotate(5deg); }
+.hub-destination.hub-tone-teal .hub-sketch-icon { transform: rotate(-3deg); }
+.hub-destination-action { align-self: flex-start; margin-top: auto; margin-bottom: var(--sticker-depth); }
+@media (max-width: 1023px) {
+  .workspace-page { --sketch-scene-width: 288px; }
+  .hub-welcome.hub-welcome--sketch { gap: var(--space-5); }
+}
+@media (max-width: 699px) {
+  .hub-welcome.hub-welcome--sketch { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
+  .hub-character.hub-character--sketch { max-width: 360px; margin-bottom: var(--space-2); }
+  .hub-destination-action { grid-column: 2; justify-self: start; max-width: 100%; padding-inline: var(--space-4); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .button.button-sticker { transition: none; }
+  .button.button-sticker:not(:disabled):not([aria-disabled="true"]):hover, .button.button-sticker:not(:disabled):not([aria-disabled="true"]):focus-visible, .button.button-sticker:not(:disabled):not([aria-disabled="true"]):active { transform: none; }
+}
+@media (forced-colors: active) {
+  .button.button-sticker { background: ButtonFace; color: ButtonText; border-color: ButtonText; box-shadow: none; }
+  .hub-sketch-paper { background: Canvas; color: CanvasText; box-shadow: none; }
+  .hub-sketch-paper::before, .sketch-highlight > svg { display: none; }
+}

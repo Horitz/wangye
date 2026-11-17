@@ -1,0 +1,96 @@
+.voxel-decoration {
+  --voxel-material: var(--spatial-lilac);
+  --voxel-shade: var(--spatial-ink);
+  --voxel-highlight: var(--spatial-paper);
+  --voxel-shadow: color-mix(in srgb, var(--spatial-ink) 10%, transparent);
+  --voxel-face-light: 70%;
+  --voxel-face-dark: 78%;
+  --voxel-duration: 6.8s;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 6 / 7;
+  overflow: visible;
+  pointer-events: none;
+  user-select: none;
+}
+
+.landing-page .voxel-decoration {
+  --voxel-shadow: color-mix(in srgb, var(--spatial-lilac) 15%, transparent);
+  --voxel-face-dark: 84%;
+}
+
+.voxel-decoration .voxel-material--grass { --voxel-material: var(--spatial-teal); }
+.voxel-decoration .voxel-material--crystal { --voxel-material: var(--spatial-lilac); }
+.voxel-decoration .voxel-material--rose { --voxel-material: var(--spatial-pink); }
+.voxel-decoration .voxel-material--light { --voxel-material: var(--spatial-gold); }
+.voxel-decoration .voxel-material--wood { --voxel-material: color-mix(in srgb, var(--spatial-gold) 48%, var(--spatial-ink)); }
+.voxel-decoration .voxel-material--soil {
+  --voxel-material: color-mix(in srgb, var(--spatial-pink) 55%, var(--spatial-lilac));
+}
+.voxel-decoration .voxel-material--stone {
+  --voxel-material: color-mix(in srgb, var(--spatial-lilac) 38%, var(--spatial-ink));
+}
+
+.voxel-decoration .voxel-face--top {
+  fill: color-mix(in srgb, var(--voxel-material) var(--voxel-face-light), var(--voxel-highlight));
+}
+.voxel-decoration .voxel-face--front { fill: var(--voxel-material); }
+.voxel-decoration .voxel-face--side {
+  fill: color-mix(in srgb, var(--voxel-material) var(--voxel-face-dark), var(--voxel-shade));
+}
+.voxel-decoration .voxel-texture--light {
+  fill: color-mix(in srgb, var(--voxel-material) 50%, var(--voxel-highlight));
+}
+.voxel-decoration .voxel-texture--dark {
+  fill: color-mix(in srgb, var(--voxel-material) 68%, var(--voxel-shade));
+}
+.voxel-decoration__shadow { fill: var(--voxel-shadow); }
+.voxel-decoration__gold,
+.voxel-decoration__sparkle { fill: var(--spatial-gold); }
+.voxel-decoration__paper,
+.voxel-decoration__wick { fill: var(--spatial-paper); }
+
+.voxel-decoration__sprout,
+.voxel-decoration__sparkle,
+.voxel-decoration__wick {
+  animation-duration: var(--voxel-duration);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-play-state: var(--ambient-motion, paused);
+}
+.voxel-decoration__sprout {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation-name: voxel-sprout-sway;
+}
+.voxel-decoration__sparkle { animation-name: voxel-sparkle-soft; }
+.voxel-decoration__sparkle--late { animation-delay: -3.4s; }
+.voxel-decoration__wick { animation-name: voxel-wick-soft; }
+
+@keyframes voxel-sprout-sway {
+  0%, 30%, 100% { transform: rotate(0deg); }
+  55%, 70% { transform: rotate(4deg); }
+}
+
+@keyframes voxel-sparkle-soft {
+  0%, 100% { opacity: .45; }
+  50% { opacity: 1; }
+}
+
+@keyframes voxel-wick-soft {
+  0%, 100% { opacity: .7; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .voxel-decoration__sprout,
+  .voxel-decoration__sparkle,
+  .voxel-decoration__wick {
+    animation: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .voxel-decoration { visibility: hidden; }
+}

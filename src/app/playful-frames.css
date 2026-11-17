@@ -1,0 +1,25 @@
+/* A few deliberately chosen ledges, never one creature per repeated content card. */
+.workspace-page .creature-frame { position: relative; }
+.student-hub .hub-destinations { margin-top: var(--space-8); }
+.hub-destination.creature-frame > .frame-creature { inset-inline-end: var(--space-6); }
+.city-map.creature-frame > .frame-creature { --frame-creature-side-top: 58%; }
+.community-featured-scene.creature-frame { margin-top: var(--space-8); }
+.community-featured-scene.creature-frame > .frame-creature { z-index: 4; inset-inline-end: 12%; }
+.explore-search-panel.creature-frame { margin-top: var(--space-7); }
+.explore-search-panel.creature-frame > .frame-creature { inset-inline-start: var(--space-8); }
+.personal-task-summary.creature-frame > .frame-creature { inset-inline-start: 40%; }
+@media (min-width: 1024px) {
+  .personal-space .personal-space-heading { margin-bottom: var(--space-8); }
+}
+@media (max-width: 1439px) {
+  .city-map.creature-frame > .frame-creature { inset-inline-end: 18%; }
+}
+@media (max-width: 1023px) {
+  .personal-space .personal-space-content { margin-top: var(--space-5); }
+}
+@media (max-width: 699px) {
+  .student-hub .hub-destinations { margin-top: var(--space-7); }
+  .city-map.creature-frame { margin-top: var(--space-7); }
+  .community-featured-scene.creature-frame { margin-top: var(--space-7); }
+  .explore-search-panel.creature-frame > .frame-creature { inset-inline-start: var(--space-6); }
+}

@@ -1,0 +1,77 @@
+.campus-sketch,
+.sketch-sticker {
+  --sketch-ink: var(--spatial-ink);
+  --sketch-paper: var(--spatial-paper);
+  --sketch-board: color-mix(in srgb, var(--spatial-gold) 22%, var(--spatial-paper));
+  --sketch-board-edge: color-mix(in srgb, var(--spatial-gold) 12%, var(--spatial-paper));
+  --sketch-stroke: 2.3;
+  --sketch-detail-stroke: 1.6;
+  --sketch-motion-duration: 6.8s;
+  --sketch-accent-duration: 4.8s;
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  pointer-events: none;
+  user-select: none;
+  color: var(--sketch-ink);
+}
+.sketch-lines,
+.sketch-sticker-line { stroke: var(--sketch-ink); stroke-width: var(--sketch-stroke); stroke-linecap: round; stroke-linejoin: round; }
+.sketch-paper { fill: var(--sketch-paper); }
+.sketch-board { fill: var(--sketch-board); }
+.sketch-board-frame { fill: var(--sketch-board); }
+.sketch-board-edge { fill: var(--sketch-board-edge); stroke-width: var(--sketch-detail-stroke); }
+.sketch-gold { fill: var(--spatial-gold); }
+.sketch-teal { fill: var(--spatial-teal); }
+.sketch-lilac { fill: var(--spatial-lilac); }
+.sketch-pink { fill: var(--spatial-pink); }
+.sketch-ink { fill: var(--sketch-ink); stroke-width: 0; }
+.sketch-shirt { fill: color-mix(in srgb, var(--spatial-teal) 68%, var(--sketch-paper)); }
+.sketch-trousers { fill: color-mix(in srgb, var(--spatial-lilac) 24%, var(--sketch-paper)); }
+.sketch-map-fill { fill: color-mix(in srgb, var(--spatial-teal) 23%, var(--sketch-paper)); stroke: none; }
+.sketch-map-fold { stroke-opacity: .4; }
+.sketch-fine { stroke-width: var(--sketch-detail-stroke); }
+.sketch-route { stroke: var(--brand); stroke-width: var(--sketch-detail-stroke); stroke-dasharray: 3 5; }
+.sketch-glasses { fill: none; }
+.sketch-pin { fill: var(--spatial-pink); stroke-width: var(--sketch-detail-stroke); }
+.sketch-hair-line { stroke: var(--sketch-paper); stroke-width: var(--sketch-detail-stroke); stroke-opacity: .7; }
+.sketch-blush { stroke: var(--spatial-pink); stroke-width: 4; }
+.sketch-ground { stroke-width: var(--sketch-detail-stroke); stroke-opacity: .25; }
+.sketch-scribble { stroke-opacity: .5; }
+.campus-sketch-arm,
+.campus-sketch-dog-tail,
+.campus-sketch-star {
+  animation-duration: var(--sketch-motion-duration);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-play-state: var(--hub-motion-play-state, paused);
+}
+.campus-sketch-arm { transform-origin: 354px 180px; animation-name: campus-sketch-point; }
+.campus-sketch-dog-tail { transform-origin: 264px 295px; animation-name: campus-sketch-wag; }
+.campus-sketch-star { transform-origin: 451px 106px; animation-name: campus-sketch-spark; animation-duration: var(--sketch-accent-duration); }
+.sketch-sticker { --sketch-stroke: 1.8; }
+.sketch-sticker-paper { fill: var(--sketch-sticker-tint, var(--brand-soft)); stroke: color-mix(in srgb, var(--sketch-ink) 32%, transparent); stroke-width: 1; }
+.sketch-sticker--compass { --sketch-sticker-tint: color-mix(in srgb, var(--spatial-gold) 65%, var(--sketch-paper)); }
+.sketch-sticker--chat { --sketch-sticker-tint: color-mix(in srgb, var(--spatial-teal) 45%, var(--sketch-paper)); }
+@keyframes campus-sketch-point {
+  0%, 100% { transform: rotate(-1deg); }
+  50% { transform: rotate(1deg); }
+}
+@keyframes campus-sketch-wag {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+}
+@keyframes campus-sketch-spark {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-4px) rotate(3deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .campus-sketch-arm,
+  .campus-sketch-dog-tail,
+  .campus-sketch-star { animation: none; transform: none; }
+}
+@media (forced-colors: active) {
+  .campus-sketch,
+  .sketch-sticker { --sketch-ink: CanvasText; --sketch-paper: Canvas; --sketch-board: Canvas; --sketch-board-edge: Canvas; }
+}

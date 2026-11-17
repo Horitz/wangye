@@ -1,0 +1,30 @@
+.account-center { display: grid; gap: var(--space-5); min-width: 0; }
+.social-auth.member-auth-compact { grid-template-columns: minmax(0, 1fr); }
+.member-auth-compact .social-auth-form { padding: 0; border: 0; background: none; box-shadow: none; backdrop-filter: none; }
+.member-account-summary { display: grid; justify-items: start; gap: var(--space-4); }
+.member-account-summary h3 { font-size: 22px; overflow-wrap: anywhere; }
+.member-account-summary p, .onboarding-member { color: var(--muted); overflow-wrap: anywhere; }
+.onboarding-member { margin-bottom: var(--space-5); font-size: var(--font-size-meta); }
+.onboarding-member > span { margin-inline-start: var(--space-2); }
+.member-logout:empty { display: none; }
+.member-logout .text-button { display: inline-flex; align-items: center; gap: var(--space-2); min-height: var(--control-min-height); color: var(--brand); }
+.member-logout p { font-size: var(--font-size-meta); }
+.onboarding-form .onboarding-stepper { gap: var(--space-4); }
+@media (max-width: 699px) { .onboarding-form .onboarding-stepper { gap: var(--space-2); justify-content: space-between; } .onboarding-form .onboarding-stepper li { gap: var(--space-1); } }
+.account-administration { border-top: 1px solid var(--border); padding-top: var(--space-4); }
+.account-administration > summary { display: flex; align-items: center; gap: var(--space-2); min-height: var(--control-min-height); cursor: pointer; color: var(--brand); font-size: var(--font-size-control); font-weight: 600; }
+.account-administration > summary::after { content: "+"; margin-inline-start: auto; font-size: 22px; }
+.account-administration[open] > summary::after { content: "−"; }
+.account-administration > summary:focus-visible { outline: 3px solid var(--brand); outline-offset: 4px; border-radius: var(--radius-control); }
+.community-heading-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-3); max-width: 100%; }
+.community-heading-actions > button { white-space: normal; }
+.community-detail-topbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4); margin-bottom: var(--space-5); }
+.community-detail-topbar .workspace-back { margin-bottom: 0; }
+.personal-social-entry { display: grid; gap: var(--space-3); padding: var(--space-5); border-radius: var(--radius-card); }
+.personal-social-entry h2 { font-size: 20px; }
+.personal-social-entry p { color: var(--muted); font-size: var(--font-size-meta); }
+.personal-social-entry > button { justify-content: center; }
+@media (max-width: 699px) {
+  .community-heading-actions { justify-content: flex-start; width: 100%; }
+  .community-heading-actions > button { flex: 1 1 auto; }
+}

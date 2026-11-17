@@ -1,0 +1,50 @@
+/* Local pixel type and controls complement the original clay illustrations. */
+@font-face {
+  font-family: "StudentPath Pixel";
+  src: url("/fonts/fusion-pixel/fusion-pixel-12px-proportional-zh_hans.otf.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+.landing-page {
+  --font-pixel-display: "StudentPath Pixel", var(--font-heading);
+  --pixel-unit: 4px;
+  --pixel-depth: 6px;
+  --pixel-feedback: 180ms;
+  --pixel-edge: color-mix(in srgb, var(--spatial-lilac) 45%, var(--spatial-night));
+}
+.landing-page .hero-pixel-accent {
+  font-family: var(--font-pixel-display);
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: 0;
+}
+.landing-page .pixel-button {
+  position: relative; isolation: isolate; border: 0; border-radius: 0;
+  min-height: 56px; padding: var(--space-4) var(--space-5); margin: 0 var(--pixel-unit) var(--space-2);
+  background: var(--spatial-gold); color: var(--spatial-ink);
+  box-shadow: calc(-1 * var(--pixel-unit)) 0 0 var(--spatial-gold), var(--pixel-unit) 0 0 var(--spatial-gold), 0 calc(-1 * var(--pixel-unit)) 0 var(--spatial-gold), 0 var(--pixel-depth) 0 color-mix(in srgb, var(--spatial-gold) 55%, var(--spatial-ink));
+  transition: transform var(--pixel-feedback) var(--ease), box-shadow var(--pixel-feedback) var(--ease), background var(--pixel-feedback) var(--ease);
+}
+.landing-page .pixel-button--secondary {
+  background: var(--spatial-stage); color: var(--spatial-paper);
+  box-shadow: calc(-1 * var(--pixel-unit)) 0 0 var(--pixel-edge), var(--pixel-unit) 0 0 var(--pixel-edge), 0 calc(-1 * var(--pixel-unit)) 0 var(--pixel-edge), 0 var(--pixel-depth) 0 var(--pixel-edge);
+}
+.landing-page .pixel-button:focus-visible { outline: 3px solid var(--spatial-paper); outline-offset: 8px; }
+@media (hover: hover) and (pointer: fine) {
+  .landing-page .pixel-button:hover { transform: translateY(-2px); background: var(--spatial-gold); color: var(--spatial-ink); }
+  .landing-page .pixel-button--secondary:hover { background: var(--pixel-edge); color: var(--spatial-paper); }
+}
+.landing-page .pixel-button:active { transform: translateY(var(--pixel-unit)); --pixel-depth: 2px; }
+@media (max-width: 699px) {
+  .landing-page .hero-actions { gap: var(--space-5); }
+  .landing-page .pixel-button { max-width: calc(100% - var(--space-2)); padding-inline: var(--space-4); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-page .pixel-button:is(:hover, :active) { transform: none; }
+  .landing-page .pixel-button { transition: none; }
+}
+@media (forced-colors: active) {
+  .landing-page .pixel-button { color: ButtonText; background: ButtonFace; border: 2px solid ButtonText; box-shadow: none; }
+  .landing-page .pixel-button:focus-visible { outline-color: Highlight; }
+}

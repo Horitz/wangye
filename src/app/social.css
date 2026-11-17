@@ -1,0 +1,125 @@
+.social-panel {
+  --social-rail: 240px;
+  --social-avatar: 44px;
+  --social-history-height: 384px;
+  padding: var(--space-6);
+  min-width: 0;
+  color: var(--text);
+}
+/* A standalone chat owns its inset; the dialog must not add a second one. */
+.workspace-dialog-body:has(> .social-panel) { padding: 0; scrollbar-gutter: auto; }
+.account-center > .social-panel { padding: 0; }
+
+/* Keep the account, conversation heading and composer in view. Only messages
+   scroll, and their height comes from the remaining dialog space. */
+.essentials-dialog > .workspace-dialog-body:has(> .social-panel .has-conversation) { display: flex; overflow: hidden; }
+.workspace-dialog-body > .social-panel:has(.has-conversation) { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.workspace-dialog-body > .social-panel:has(.has-conversation) > .social-member { display: flex; flex-direction: column; flex: 1; min-height: 0; }
+.workspace-dialog-body > .social-panel .has-conversation { flex: 1; min-height: 0; align-items: stretch; }
+.workspace-dialog-body > .social-panel .has-conversation .social-friend-list { max-height: none; min-height: 0; }
+.workspace-dialog-body > .social-panel .has-conversation .social-conversation { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+.workspace-dialog-body > .social-panel .has-conversation .social-message-scroll { flex: 1; height: auto; min-height: 0; }
+.workspace-dialog-body > .social-panel:has(.has-conversation) :is(.social-account, .social-switch, .social-feedback, .social-conversation-header, .social-compose) { flex-shrink: 0; }
+.workspace-dialog-body > .social-panel .has-conversation .social-compose textarea { resize: none; }
+.social-panel :is(input, textarea), .social-auth input { width: 100%; min-width: 0; min-height: var(--space-7); padding: var(--space-3); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--surface); color: var(--text); font: inherit; font-size: var(--font-size-body); }
+.social-panel textarea { resize: vertical; line-height: 1.8; }
+.social-panel label, .social-auth label { display: grid; gap: var(--space-2); font-size: var(--font-size-control); font-weight: 600; }
+.social-panel h3 { font-size: 22px; line-height: 1.4; overflow-wrap: anywhere; }
+.social-panel .text-button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: var(--control-min-height); font-size: var(--font-size-control); color: var(--brand); }
+.social-panel .button, .social-auth .button { max-width: 100%; white-space: normal; }
+.social-meta, .social-person-copy > span, .social-empty-copy { color: var(--muted); font-size: var(--font-size-meta); line-height: 1.5; }
+.social-error { color: var(--error); font-size: var(--font-size-meta); line-height: 1.5; }
+.social-feedback { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); padding: var(--space-3) var(--space-4); border: 1px solid var(--border); border-radius: var(--radius-control); background: var(--brand-soft); font-size: var(--font-size-meta); }
+.social-feedback > :first-child { flex: 1 1 200px; }
+.social-panel > .social-feedback { margin-bottom: var(--space-5); }
+.social-auth { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); align-items: center; gap: var(--space-6); }
+.social-auth-intro { display: grid; justify-items: start; gap: var(--space-5); }
+.social-auth-intro .guidance-illustration { --guidance-size: 176px; }
+.social-auth-intro p { color: var(--muted); }
+.social-auth-form { display: grid; gap: var(--space-4); padding: var(--space-5); border-radius: var(--radius-card); min-width: 0; }
+.social-auth-form .social-meta { margin-top: calc(-1 * var(--space-2)); }
+.social-auth-form > label:has(+ .social-password) { margin-bottom: calc(-1 * var(--space-3)); }
+.social-password { display: flex; gap: var(--space-2); align-items: center; }
+.social-password input { flex: 1; }
+.social-password button { flex: 0 0 var(--control-min-height); }
+.social-switch { display: flex; align-items: stretch; gap: var(--space-1); padding: var(--space-1); border-radius: var(--radius-pill); width: fit-content; max-width: 100%; }
+.social-switch button { display: inline-flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: var(--space-2); min-height: var(--space-7); padding: var(--space-2) var(--space-4); border: 1px solid transparent; border-radius: var(--radius-pill); font-size: var(--font-size-control); color: var(--muted); transition: background-color 180ms var(--ease), color 180ms var(--ease); }
+.social-switch button[aria-pressed="true"] { color: var(--brand); border-color: var(--material-border); background: var(--surface); box-shadow: var(--shadow-card); }
+.social-switch button > span { font-size: var(--font-size-meta); }
+.social-member { display: grid; gap: var(--space-5); }
+.social-account { display: flex; align-items: center; gap: var(--space-3); padding-bottom: var(--space-5); border-bottom: 1px solid var(--border); }
+.social-avatar { display: grid; place-items: center; flex: 0 0 var(--social-avatar); width: var(--social-avatar); height: var(--social-avatar); border-radius: 50%; background: var(--brand-soft); color: var(--brand); font-weight: 600; font-size: var(--font-size-body); }
+.social-person-copy { display: grid; flex: 1; min-width: 0; gap: var(--space-1); overflow-wrap: anywhere; text-align: start; }
+.social-person-copy strong { font-size: var(--font-size-control); line-height: 1.5; }
+.social-account > .text-button { flex: 0 1 auto; }
+.social-chat-layout { display: grid; grid-template-columns: minmax(0, var(--social-rail)) minmax(0, 1fr); gap: var(--space-4); align-items: start; }
+.social-friend-list { display: grid; align-content: start; max-height: calc(var(--social-history-height) + 160px); overflow-y: auto; padding: var(--space-2); border-radius: var(--radius-card); }
+.social-friend-list > button { display: flex; align-items: center; gap: var(--space-3); min-height: var(--space-8); padding: var(--space-3); border-radius: var(--radius-control); border: 1px solid transparent; text-align: start; }
+.social-friend-list > button[aria-pressed="true"] { background: var(--brand-soft); border-color: var(--brand); }
+.social-friend-list > button > svg { flex-shrink: 0; color: var(--brand); }
+.social-conversation { min-width: 0; border-radius: var(--radius-card); }
+.social-conversation-header { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); border-bottom: 1px solid var(--border); }
+.social-panel .social-conversation-header h3 { font-size: var(--font-size-control); line-height: 1.5; }
+.social-chat-back { display: none; }
+.social-conversation > .social-feedback { margin: var(--space-3); }
+.social-chat-empty { display: grid; justify-items: center; gap: var(--space-5); padding: var(--space-6) var(--space-4); text-align: center; }
+.social-chat-empty .guidance-illustration { --guidance-size: 160px; }
+.social-chat-empty p { color: var(--muted); }
+.social-message-scroll { height: var(--social-history-height); overflow-y: auto; overscroll-behavior: contain; padding: var(--space-4); scrollbar-gutter: stable; }
+.social-messages { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-4); }
+.social-messages li { max-width: 88%; padding: var(--space-3) var(--space-4); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card) var(--radius-card) var(--radius-card) var(--space-1); overflow-wrap: anywhere; }
+.social-messages li.is-own { align-self: flex-end; background: var(--brand-soft); border-color: var(--brand-soft); border-radius: var(--radius-card) var(--radius-card) var(--space-1) var(--radius-card); }
+.social-messages p { white-space: pre-wrap; font-size: var(--font-size-body); line-height: 1.8; }
+.social-messages time { display: block; margin-top: var(--space-2); color: var(--muted); font-size: var(--font-size-meta); line-height: 1.5; }
+.social-older { display: flex; margin: 0 auto var(--space-4); }
+.social-compose { display: grid; gap: var(--space-2); padding: var(--space-4); border-top: 1px solid var(--border); }
+.social-compose > div { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
+.social-compose textarea { max-height: 240px; }
+.social-discovery { display: grid; gap: var(--space-4); }
+.social-discovery h3:not(:first-child) { margin-top: var(--space-4); }
+.social-search { display: grid; gap: var(--space-3); }
+.social-search > div { display: flex; align-items: flex-start; gap: var(--space-3); }
+.social-search input { flex: 1; }
+.social-search button { flex-shrink: 0; }
+.social-person { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); padding: var(--space-4) 0; border-bottom: 1px solid var(--border); }
+.social-person-actions { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-4); }
+.social-empty-copy { padding-block: var(--space-4); }
+.workspace-page.locale-ru .social-panel h3 { line-height: 1.3; letter-spacing: -.015em; }
+.workspace-page.locale-ru .social-panel :is(textarea, .social-messages p) { line-height: 1.65; }
+@media (max-width: 1023px) {
+  .social-auth { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+  .social-auth-intro { grid-template-columns: minmax(0, 1fr) 96px; column-gap: var(--space-4); row-gap: var(--space-3); }
+  .social-auth-intro .guidance-illustration { grid-column: 2; grid-row: 1 / span 2; --guidance-size: 96px; }
+  .social-auth-intro h3, .social-auth-intro p { grid-column: 1; }
+  .social-auth-form { width: min(100%, 520px); justify-self: center; }
+  .social-panel { --social-rail: 192px; }
+}
+@media (min-width: 700px) and (max-width: 1023px) {
+  .social-friend-list { --social-avatar: 32px; }
+  .social-friend-list > button { gap: var(--space-2); padding: var(--space-2); }
+  .social-friend-list > button > svg { display: none; }
+}
+@media (max-width: 699px) {
+  .social-panel { padding: var(--space-4); --social-history-height: 320px; }
+  .social-panel h3 { font-size: 20px; }
+  .social-switch { width: 100%; }
+  .social-switch button { flex: 1 1 0; min-width: 0; padding-inline: var(--space-2); gap: var(--space-1); }
+  .social-member { gap: var(--space-4); }
+  .social-chat-layout { grid-template-columns: minmax(0, 1fr); }
+  .social-chat-layout:not(.has-conversation) .social-conversation, .social-chat-layout.has-conversation .social-friend-list { display: none; }
+  .social-chat-back { display: inline-flex; flex-shrink: 0; }
+  .social-conversation-header { padding: var(--space-3); gap: var(--space-2); }
+  .social-conversation-header > .text-button { max-width: 96px; }
+  .social-message-scroll, .social-compose { padding: var(--space-3); }
+  .social-messages li { max-width: 96%; padding: var(--space-3); }
+  .social-auth-form { padding: var(--space-4); }
+  .social-auth-intro { grid-template-columns: minmax(0, 1fr) 64px; }
+  .social-auth-intro .guidance-illustration { --guidance-size: 64px; }
+  .social-person-actions { width: 100%; padding-left: calc(var(--social-avatar) + var(--space-3)); }
+  .social-search > div { flex-wrap: wrap; }
+  .social-search input { flex-basis: 160px; }
+  .social-account > .text-button { max-width: 96px; }
+  .workspace-page.locale-ru .social-switch button { flex-direction: column; }
+}
+@media (prefers-reduced-motion: reduce) { .social-switch button { transition: none; } }
+@media (forced-colors: active) { .social-switch button[aria-pressed="true"], .social-friend-list > button[aria-pressed="true"] { border-color: Highlight; } .social-avatar, .social-messages li { background: Canvas; color: CanvasText; border: 1px solid CanvasText; } }

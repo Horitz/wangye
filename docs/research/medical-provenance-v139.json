@@ -1,0 +1,115 @@
+{
+  "checkedAt": "2026-11-17",
+  "visibility": "internal-research-only",
+  "original": [
+    {
+      "id": "guide-4b40a6fe-c3d8-4db8-9161-62f0cd1a7611",
+      "title": {
+        "zh": "莫斯科 131 医院：预约与体检",
+        "ru": "Медосмотр в поликлинике № 131"
+      },
+      "summary": {
+        "zh": "从预约、到院到领取结果，整理 22^thy 的就诊经历。",
+        "ru": "Запись, посещение и получение результатов — по опыту 22^thy."
+      },
+      "sources": [
+        {
+          "label": {
+            "zh": "原笔记 · 22^thy",
+            "ru": "Исходная заметка · 22^thy"
+          },
+          "url": "https://xhslink.cn/o/4zjbC4X3dXq"
+        }
+      ]
+    },
+    {
+      "id": "guide-74efc02a-5bab-4e52-b476-84f6f7d2f8c0",
+      "title": {
+        "zh": "8 号门诊 3 分院：一次体检经历",
+        "ru": "Медосмотр в филиале № 3 поликлиники № 8"
+      },
+      "summary": {
+        "zh": "a兔 分享了当次未被索要居住登记的体检经历。",
+        "ru": "a兔 рассказывает о посещении, при котором регистрацию не запрашивали."
+      },
+      "sources": [
+        {
+          "label": {
+            "zh": "原笔记 · a兔",
+            "ru": "Исходная заметка · a兔"
+          },
+          "url": "https://xhslink.cn/o/4it1jD0wlty"
+        }
+      ]
+    },
+    {
+      "id": "guide-0cf2f4c7-6f74-4f22-8bc4-35d6ce7b29a0",
+      "title": {
+        "zh": "萨哈罗沃：体检与指纹办理路线",
+        "ru": "Сахарово: маршрут на медосмотр и дактилоскопию"
+      },
+      "summary": {
+        "zh": "整理 海边猫一只 的乘车、分区办理和取件经历。",
+        "ru": "Поездка, зоны обслуживания и получение документов — по опыту 海边猫一只."
+      },
+      "sources": [
+        {
+          "label": {
+            "zh": "原笔记 · 海边猫一只",
+            "ru": "Исходная заметка · 海边猫一只"
+          },
+          "url": "https://xhslink.cn/o/106hyux0mzm"
+        }
+      ]
+    },
+    {
+      "id": "guide-7755eb99-1c21-4dc2-b8de-7b059635321d",
+      "title": {
+        "zh": "市区指纹卡：ОКО 与莫大办理点",
+        "ru": "Дактилоскопия: ОКО и пункт МГУ"
+      },
+      "summary": {
+        "zh": "整理 三三六的笔记本📓（俄罗斯倒计时版） 的市区办卡经历，并补充莫大校内入口。",
+        "ru": "Опыт 三三六的笔记本📓（俄罗斯倒计时版） в ОКО и ссылка на оформление в МГУ."
+      },
+      "sources": [
+        {
+          "label": {
+            "zh": "原笔记 · 三三六的笔记本📓（俄罗斯倒计时版）",
+            "ru": "Исходная заметка · 三三六的笔记本📓（俄罗斯倒计时版）"
+          },
+          "url": "https://xhslink.cn/o/AqKCHkPhVk0"
+        }
+      ]
+    },
+    {
+      "id": "guide-e56e9518-e0b8-4c1a-b825-d2c5721c7df1",
+      "title": {
+        "zh": "校外居住登记：和房东一起准备",
+        "ru": "Регистрация вне общежития: вместе с хозяином жилья"
+      },
+      "summary": {
+        "zh": "整理 小姐姐好怪喔 于 2022 年 9 月 17 日编辑的经验，重点是房东配合与材料交接。",
+        "ru": "Опыт 小姐姐好怪喔, обновлённый 17.09.2022: участие хозяина жилья и подготовка документов."
+      },
+      "sources": [
+        {
+          "label": {
+            "zh": "原笔记 · 小姐姐好怪喔 · 2022-09-17",
+            "ru": "Исходная заметка · 小姐姐好怪喔 · 17.09.2022"
+          },
+          "url": "https://xhslink.cn/o/8WFwHlkrzvO"
+        }
+      ]
+    }
+  ],
+  "supplemental": {
+    "documentId": "guide-7755eb99-1c21-4dc2-b8de-7b059635321d",
+    "url": "https://xhslink.cn/o/7rnRuatTWbo",
+    "title": "经验贴——莫斯科指纹卡（小绿卡）办理",
+    "author": null,
+    "verifiedVia": "Parent agent read publicly accessible browser page",
+    "route": "ОКО: main entrance, corridor, revolving door, left to migration-centre entrance and security, second floor, ticket, service window, collection receipt",
+    "materialsDifference": "Note 6 includes medical certificate and student card; site checklist follows MSU official requirements."
+  }
+}

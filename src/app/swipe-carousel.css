@@ -1,0 +1,24 @@
+.swipe-carousel {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  touch-action: pan-y pinch-zoom;
+}
+.swipe-carousel[data-swipe-enabled="true"] { cursor: grab; }
+.swipe-carousel[data-dragging="true"] { cursor: grabbing; }
+.swipe-carousel:focus-visible { outline: 3px solid var(--brand); outline-offset: -4px; }
+.swipe-carousel-track {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+  transition: transform var(--guide-motion, 220ms) cubic-bezier(.2, .7, .2, 1);
+}
+.swipe-carousel[data-dragging="true"] .swipe-carousel-track { transition: none; }
+.swipe-carousel-slide { position: relative; flex: 0 0 100%; min-width: 0; height: 100%; }
+.swipe-carousel img { -webkit-user-drag: none; user-select: none; }
+.swipe-carousel[data-swipe-enabled="true"] .swipe-carousel-track { user-select: none; }
+@media (prefers-reduced-motion: reduce) { .swipe-carousel-track { transition: none; } }
+@media (forced-colors: active) { .swipe-carousel:focus-visible { outline-color: Highlight; } }

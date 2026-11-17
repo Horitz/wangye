@@ -1,0 +1,83 @@
+/* This cartoon ticket is decorative; its type scales with the illustration. */
+.boarding-pass {
+  --ticket-red: #c8313d;
+  --ticket-paper: var(--spatial-paper);
+  --ticket-ink: var(--spatial-ink);
+  --ticket-muted: color-mix(in srgb, var(--ticket-ink), var(--ticket-paper) 32%);
+  --ticket-map: color-mix(in srgb, var(--spatial-teal), var(--ticket-paper) 79%);
+  --ticket-rule: color-mix(in srgb, var(--ticket-ink), var(--ticket-paper) 78%);
+  --ticket-edge: color-mix(in srgb, var(--ticket-paper), var(--ticket-ink) 15%);
+  container-type: inline-size;
+  width: 100%;
+  color: var(--ticket-ink);
+  font-family: var(--font-body);
+  line-height: 1.25;
+  pointer-events: none;
+}
+.boarding-pass-paper {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 73fr) minmax(0, 27fr);
+  grid-template-rows: 7.5cqw minmax(0, 1fr) 2.6cqw;
+  width: 100%;
+  aspect-ratio: 2.55;
+  overflow: hidden;
+  border: .5cqw solid var(--ticket-edge);
+  border-radius: 4.5cqw;
+  background: var(--ticket-paper);
+  box-shadow: 0 1cqw 0 color-mix(in srgb, var(--ticket-edge), var(--ticket-ink) 12%), 0 2.8cqw 5cqw color-mix(in srgb, var(--ticket-ink), transparent 82%);
+}
+.boarding-pass-paper::after {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset .3cqw .4cqw .5cqw color-mix(in srgb, var(--ticket-paper), transparent 45%), inset -.3cqw -.4cqw .6cqw color-mix(in srgb, var(--ticket-ink), transparent 88%);
+  content: "";
+  pointer-events: none;
+}
+.boarding-pass-header, .boarding-pass-stub-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2cqw;
+  min-width: 0;
+  padding-inline: 3.5cqw;
+  background: linear-gradient(175deg, color-mix(in srgb, var(--ticket-red), var(--ticket-paper) 12%), var(--ticket-red) 65%);
+  color: var(--ticket-paper);
+  font-size: 1.7cqw;
+  font-weight: 650;
+  letter-spacing: .03em;
+}
+.boarding-pass-brand { display: inline-flex; align-items: center; gap: 1.8cqw; font-family: var(--font-heading); font-size: 3.2cqw; font-weight: 750; letter-spacing: -.025em; }
+.boarding-pass-brand svg { width: 4.3cqw; height: 4.3cqw; stroke-width: 2px; transform: rotate(45deg); }
+.boarding-pass-stub-header { justify-content: center; padding-inline: 1.5cqw; border-left: .4cqw dashed color-mix(in srgb, var(--ticket-paper), transparent 65%); }
+.boarding-pass-main { position: relative; isolation: isolate; display: grid; grid-template-columns: 5cqw minmax(0, 1fr); align-items: center; gap: 3.2cqw; min-height: 0; padding: 4cqw 3.5cqw 4cqw 3cqw; }
+.boarding-pass-map { position: absolute; z-index: -1; width: 89%; height: 96%; top: 2%; left: 9%; fill: var(--ticket-map); }
+.boarding-pass-barcode { display: flex; flex-direction: column; justify-content: space-between; gap: .5cqw; height: 20cqw; }
+.boarding-pass-barcode i, .boarding-pass-stub-barcode i { display: block; border-radius: 1cqw; background: var(--ticket-ink); opacity: .8; }
+.boarding-pass-barcode i { flex: 1; min-height: .4cqw; }
+.boarding-pass-barcode i:nth-child(3n) { flex: 2; }
+.boarding-pass-barcode i:nth-child(4n) { width: 83%; }
+.boarding-pass-details { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 3.4cqw; min-width: 0; }
+.boarding-pass-route { display: flex; align-items: center; justify-content: space-between; gap: 1cqw; width: 100%; }
+.boarding-pass-route > div:not(.boarding-pass-flightline) { flex: 0 1 auto; min-width: 0; }
+.boarding-pass-route > div:last-child { text-align: right; }
+.boarding-pass-route span, .boarding-pass-stub > span { display: block; color: var(--ticket-muted); font-size: 1.9cqw; font-weight: 500; }
+.boarding-pass-route strong { display: block; margin-top: .9cqw; font-family: var(--font-heading); font-size: 4.1cqw; font-weight: 800; line-height: 1.1; }
+.boarding-pass-flightline { flex: 1 1 auto; display: flex; align-items: center; gap: .6cqw; min-width: 5cqw; padding-top: 3cqw; color: var(--ticket-red); }
+.boarding-pass-flightline > i { flex: 1; border-top: .35cqw dotted var(--ticket-rule); }
+.boarding-pass-flightline svg { flex-shrink: 0; width: 4.5cqw; height: 4.5cqw; stroke-width: 2px; transform: rotate(45deg); }
+.boarding-pass-journey { display: inline-flex; align-items: center; gap: 1.2cqw; padding: 1cqw 1.8cqw; border-radius: 2cqw; background: color-mix(in srgb, var(--spatial-gold), var(--ticket-paper) 28%); box-shadow: inset 0 .25cqw .3cqw color-mix(in srgb, var(--ticket-paper), transparent 40%), 0 .35cqw 0 color-mix(in srgb, var(--spatial-gold), var(--ticket-ink) 10%); font-size: 1.9cqw; font-weight: 650; }
+.boarding-pass-journey svg { width: 2.8cqw; height: 2.8cqw; stroke-width: 1.75px; }
+.boarding-pass-stub { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .8cqw; min-width: 0; padding: 2.3cqw 2.5cqw; border-left: .4cqw dashed var(--ticket-rule); background: color-mix(in srgb, var(--ticket-paper), var(--spatial-gold) 5%); }
+.boarding-pass-city-icon { display: grid; place-items: center; width: 7cqw; height: 7cqw; margin-bottom: .5cqw; border-radius: 2.4cqw; background: color-mix(in srgb, var(--ticket-red), var(--ticket-paper) 88%); color: var(--ticket-red); box-shadow: inset 0 .3cqw .4cqw var(--ticket-paper), 0 .4cqw .1cqw color-mix(in srgb, var(--ticket-red), var(--ticket-paper) 75%); transform: rotate(7deg); }
+.boarding-pass-city-icon svg { width: 4.5cqw; height: 4.5cqw; stroke-width: 2px; }
+.boarding-pass-stub > strong { color: var(--ticket-red); font-family: var(--font-heading); font-size: 3.5cqw; font-weight: 800; line-height: 1.15; }
+.boarding-pass-stub-barcode { display: flex; gap: .6cqw; width: 16cqw; height: 2.7cqw; margin-top: 1cqw; }
+.boarding-pass-stub-barcode i { flex: 1; }
+.boarding-pass-stub-barcode i:nth-child(3n) { flex: 2; }
+.boarding-pass-stub-barcode i:nth-child(4n) { height: 78%; }
+.boarding-pass-footer, .boarding-pass-stub-footer { background: var(--ticket-red); }
+.boarding-pass-stub-footer { border-left: .4cqw dashed color-mix(in srgb, var(--ticket-paper), transparent 65%); }

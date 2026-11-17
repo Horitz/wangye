@@ -1,0 +1,78 @@
+.pixel-campus {
+  --pixel-campus-width: 600px;
+  --pixel-campus-cloud-travel: 8px;
+  --pixel-campus-motion-duration: 6.8s;
+  --pixel-campus-cloud-duration: 8.8s;
+  --pixel-campus-sky: var(--spatial-lilac);
+  --pixel-campus-sky-light: color-mix(in srgb, var(--spatial-paper) 22%, var(--spatial-lilac));
+  --pixel-campus-ground-depth: color-mix(in srgb, var(--spatial-blue) 40%, var(--spatial-teal));
+  --pixel-campus-ground-shadow: color-mix(in srgb, var(--spatial-ink) 23%, var(--spatial-teal));
+  --pixel-campus-teal-dark: color-mix(in srgb, var(--spatial-ink) 26%, var(--spatial-teal));
+  --pixel-campus-teal-light: color-mix(in srgb, var(--spatial-paper) 28%, var(--spatial-teal));
+  --pixel-campus-blue-shade: color-mix(in srgb, var(--spatial-ink) 23%, var(--spatial-blue));
+  --pixel-campus-gold-shade: color-mix(in srgb, var(--spatial-pink) 24%, var(--spatial-gold));
+  --pixel-campus-pink-light: color-mix(in srgb, var(--spatial-paper) 30%, var(--spatial-pink));
+  --pixel-campus-lilac-light: color-mix(in srgb, var(--spatial-paper) 30%, var(--spatial-lilac));
+  --pixel-campus-cloud-shade: color-mix(in srgb, var(--spatial-lilac) 24%, var(--spatial-paper));
+  --pixel-campus-path-shade: color-mix(in srgb, var(--spatial-gold) 35%, var(--spatial-paper));
+  width: min(100%, var(--pixel-campus-width));
+  aspect-ratio: 600 / 448;
+  flex: 0 1 var(--pixel-campus-width);
+  pointer-events: none;
+  user-select: none;
+}
+
+.pixel-campus > svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.pixel-campus__sky { fill: var(--pixel-campus-sky); }
+.pixel-campus__sky-light { fill: var(--pixel-campus-sky-light); }
+.pixel-campus__paper { fill: var(--spatial-paper); }
+.pixel-campus__paper-soft { fill: var(--spatial-paper); opacity: .5; }
+.pixel-campus__ink { fill: var(--spatial-ink); }
+.pixel-campus__lilac { fill: var(--spatial-lilac); }
+.pixel-campus__lilac-light { fill: var(--pixel-campus-lilac-light); }
+.pixel-campus__gold { fill: var(--spatial-gold); }
+.pixel-campus__gold-shade { fill: var(--pixel-campus-gold-shade); }
+.pixel-campus__pink { fill: var(--spatial-pink); }
+.pixel-campus__pink-light { fill: var(--pixel-campus-pink-light); }
+.pixel-campus__teal { fill: var(--spatial-teal); }
+.pixel-campus__teal-dark { fill: var(--pixel-campus-teal-dark); }
+.pixel-campus__teal-light { fill: var(--pixel-campus-teal-light); }
+.pixel-campus__blue { fill: var(--spatial-blue); }
+.pixel-campus__blue-shade { fill: var(--pixel-campus-blue-shade); }
+.pixel-campus__ground-depth { fill: var(--pixel-campus-ground-depth); }
+.pixel-campus__ground-shadow { fill: var(--pixel-campus-ground-shadow); }
+.pixel-campus__cloud-shade { fill: var(--pixel-campus-cloud-shade); }
+.pixel-campus__path-shade { fill: var(--pixel-campus-path-shade); }
+.pixel-campus__skin { fill: var(--mascot-skin); }
+.pixel-campus__skin-light { fill: var(--mascot-skin-light); }
+.pixel-campus__skin-shadow { fill: var(--mascot-skin-shadow); }
+.pixel-campus__hair { fill: var(--mascot-hair); }
+
+.pixel-campus__moving { animation-play-state: paused; }
+.pixel-campus__cloud { animation: pixel-campus-cloud var(--pixel-campus-cloud-duration) steps(2, end) infinite paused; }
+.pixel-campus__star { animation: pixel-campus-star var(--pixel-campus-motion-duration) steps(1, end) infinite paused; }
+.pixel-campus__tail { animation: pixel-campus-tail var(--pixel-campus-motion-duration) steps(1, end) infinite paused; transform-box: fill-box; transform-origin: left bottom; }
+.pixel-campus[data-motion="running"] .pixel-campus__moving { animation-play-state: running; }
+
+@keyframes pixel-campus-cloud {
+  0%, 22%, 100% { transform: translateX(0); }
+  44%, 72% { transform: translateX(var(--pixel-campus-cloud-travel)); }
+}
+
+@keyframes pixel-campus-star {
+  0%, 58%, 74%, 100% { opacity: 1; }
+  62%, 70% { opacity: .4; }
+}
+
+@keyframes pixel-campus-tail {
+  0%, 64%, 82%, 100% { transform: skewX(0deg); }
+  68%, 78% { transform: skewX(-12deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-campus .pixel-campus__moving { animation: none; transform: none; opacity: 1; }
+}
+
+@media (forced-colors: active) {
+  .pixel-campus { display: none; }
+}

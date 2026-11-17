@@ -1,0 +1,123 @@
+/* Illustration-only colours and geometry. UI colours remain in spatial.css. */
+.clay-student {
+  --clay-skin: #efb995;
+  --clay-skin-light: #ffdab6;
+  --clay-skin-shadow: #ce8a70;
+  --clay-hair: #493748;
+  --clay-hair-light: #73536c;
+  --clay-shirt: var(--spatial-gold);
+  --clay-shirt-light: color-mix(in srgb, var(--clay-shirt), var(--spatial-paper) 45%);
+  --clay-shirt-shadow: color-mix(in srgb, var(--clay-shirt), var(--spatial-ink) 20%);
+  --clay-accessory: var(--spatial-lilac);
+  --clay-shadow: color-mix(in srgb, var(--spatial-ink), transparent 82%);
+  --clay-highlight: color-mix(in srgb, var(--spatial-paper), transparent 70%);
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+  container-type: inline-size;
+  pointer-events: none;
+}
+.clay-figure { position: absolute; width: 72%; height: 98%; bottom: -3%; left: 14%; }
+.clay-figure span, .clay-hair, .clay-hair i, .clay-glasses, .clay-beanie { position: absolute; display: block; }
+.clay-body { bottom: -5%; left: 1%; width: 98%; height: 41%; border-radius: 46% 46% 14% 14%; background: linear-gradient(115deg, var(--clay-shirt-light), var(--clay-shirt) 30% 65%, var(--clay-shirt-shadow)); box-shadow: inset 0 1.8cqw 2.6cqw var(--clay-highlight); }
+.clay-backpack { bottom: 0; inset-inline: -3%; height: 41%; background: var(--clay-accessory); border-radius: 30% 30% 12% 12%; }
+.clay-neck { top: 58%; left: 39%; width: 24%; height: 17%; border-radius: 0 0 40% 40%; background: linear-gradient(var(--clay-skin-shadow), var(--clay-skin)); }
+.clay-ear { top: 35%; width: 13%; height: 17%; border-radius: 50%; background: var(--clay-skin); box-shadow: inset .7cqw 0 1.2cqw var(--clay-skin-shadow); }
+.clay-ear--left { left: 8%; transform: rotate(-12deg); }
+.clay-ear--right { right: 6%; transform: rotate(12deg); }
+.clay-face { position: absolute; top: 16%; left: 16%; width: 70%; height: 49%; border-radius: 44% 44% 46% 46%; background: radial-gradient(ellipse at 36% 30%, var(--clay-skin-light), var(--clay-skin) 60%, var(--clay-skin-shadow)); box-shadow: inset -1.4cqw -1.6cqw 2.8cqw var(--clay-shadow), 0 2cqw 2.8cqw var(--clay-shadow); }
+.clay-eye { top: 43%; width: 6%; height: 10%; background: var(--clay-hair); border-radius: 50%; }
+.clay-eye::after { content: ''; position: absolute; width: 28%; height: 24%; background: var(--spatial-paper); border-radius: 50%; top: 18%; left: 22%; }
+.clay-eye--left { left: 28%; }
+.clay-eye--right { right: 25%; }
+.clay-brow { top: 33%; width: 16%; height: 4%; background: var(--clay-hair); border-radius: 50%; }
+.clay-brow--left { left: 20%; transform: rotate(-8deg); }
+.clay-brow--right { right: 18%; transform: rotate(8deg); }
+.clay-nose { top: 46%; left: 44%; width: 16%; height: 20%; border-radius: 45%; background: linear-gradient(125deg, var(--clay-skin-light), var(--clay-skin)); box-shadow: .45cqw .7cqw .7cqw color-mix(in srgb, var(--clay-skin-shadow), transparent 45%); }
+.clay-smile { top: 72%; left: 35%; width: 33%; height: 15%; border-radius: 15% 15% 50% 50%; background: var(--clay-hair); overflow: hidden; }
+.clay-smile::before { content: ''; position: absolute; inset: -5% 5% 58%; border-radius: 0 0 40% 40%; background: var(--spatial-paper); }
+.clay-smile::after { content: ''; position: absolute; inset: 64% 20% -10%; border-radius: 50%; background: var(--spatial-pink); }
+.clay-cheek { top: 62%; width: 15%; height: 9%; border-radius: 50%; background: var(--spatial-pink); opacity: .4; filter: blur(.4cqw); }
+.clay-cheek--left { left: 13%; }
+.clay-cheek--right { right: 10%; }
+.clay-hair { top: 8%; left: 13%; width: 76%; height: 25%; }
+.clay-hair i { border-radius: 48%; background: radial-gradient(ellipse at 35% 25%, var(--clay-hair-light), var(--clay-hair) 75%); box-shadow: 0 1.1cqw 1.4cqw var(--clay-shadow); }
+.clay-hair i:nth-child(1) { left: 0; top: 35%; width: 35%; height: 80%; transform: rotate(14deg); }
+.clay-hair i:nth-child(2) { left: 7%; top: 7%; width: 48%; height: 90%; transform: rotate(-24deg); }
+.clay-hair i:nth-child(3) { left: 30%; top: 0; width: 45%; height: 96%; transform: rotate(10deg); }
+.clay-hair i:nth-child(4) { right: 0; top: 25%; width: 42%; height: 89%; transform: rotate(-20deg); }
+.clay-hair i:nth-child(5) { left: 26%; top: 23%; width: 45%; height: 86%; transform: rotate(-25deg); }
+.clay-strap { bottom: -2%; width: 10%; height: 36%; border-radius: 30% 30% 0 0; background: linear-gradient(90deg, var(--clay-accessory), color-mix(in srgb, var(--clay-accessory), var(--spatial-ink) 25%)); }
+.clay-strap--left { left: 16%; transform: rotate(4deg); }
+.clay-strap--right { right: 13%; transform: rotate(-4deg); }
+.clay-collar { top: 67%; left: 34%; width: 34%; height: 8%; border: 1.4cqw solid var(--clay-shirt); border-top: 0; border-radius: 0 0 50% 50%; }
+.clay-emblem { bottom: 10%; left: 45%; width: 15%; aspect-ratio: 1; border: .45cqw solid var(--spatial-ink); border-radius: 50%; color: var(--spatial-ink); font: 750 4.6cqw/1.7 var(--font-heading); text-align: center; }
+
+/* Close-cropped curls, warm dark skin and sculpted round glasses. */
+.clay-student--glasses { --clay-skin: #a96e4d; --clay-skin-light: #c18e69; --clay-skin-shadow: #75492f; --clay-hair: #312b31; --clay-hair-light: #564350; --clay-shirt: var(--spatial-teal); --clay-accessory: var(--spatial-gold); }
+.clay-student--glasses .clay-face { top: 18%; left: 15%; width: 72%; height: 48%; border-radius: 40% 40% 44% 44%; }
+.clay-student--glasses .clay-hair { top: 9%; left: 12%; width: 78%; height: 22%; }
+.clay-student--glasses .clay-hair i { border-radius: 42%; }
+.clay-student--glasses .clay-hair i:nth-child(1) { top: 34%; left: 0; width: 31%; height: 72%; transform: rotate(5deg); }
+.clay-student--glasses .clay-hair i:nth-child(2) { top: 3%; left: 9%; width: 40%; height: 90%; transform: rotate(-12deg); }
+.clay-student--glasses .clay-hair i:nth-child(3) { top: 0; left: 33%; width: 40%; height: 92%; transform: rotate(5deg); }
+.clay-student--glasses .clay-hair i:nth-child(4) { top: 22%; right: 0; width: 38%; height: 80%; transform: rotate(-2deg); }
+.clay-student--glasses .clay-hair i:nth-child(5) { top: 39%; left: 27%; width: 40%; height: 58%; transform: rotate(-6deg); }
+.clay-student--glasses .clay-brow { top: 29%; }
+.clay-student--glasses .clay-smile { left: 32%; top: 75%; width: 39%; height: 12%; border-radius: 12% 12% 50% 50%; }
+.clay-student--glasses .clay-cheek { opacity: .2; }
+.clay-glasses { top: 34%; left: 8%; width: 86%; height: 30%; }
+.clay-lens { top: 0; width: 43%; height: 100%; border: 1.2cqw solid var(--clay-accessory); border-radius: 50%; box-shadow: 0 .7cqw 0 color-mix(in srgb, var(--clay-accessory), var(--spatial-ink) 30%); background: linear-gradient(130deg, transparent 10%, var(--clay-highlight) 12%, transparent 30% 100%); }
+.clay-lens--left { left: 0; }
+.clay-lens--right { right: 0; }
+.clay-glasses-bridge { top: 35%; left: 42%; width: 16%; height: 24%; border-top: 1.1cqw solid var(--clay-accessory); border-radius: 50%; }
+.clay-jacket-seam { bottom: -2%; left: 51%; height: 26%; width: 1.1%; background: var(--clay-shirt-shadow); border-radius: 50%; }
+.clay-jacket-pocket { bottom: 11%; right: 16%; width: 18%; height: 8%; border: .6cqw solid var(--clay-shirt-shadow); border-top: 0; border-radius: 0 0 30% 30%; }
+
+/* Smooth long hair and a defined fringe silhouette, with a softer closed smile. */
+.clay-student--longhair { --clay-skin: #e7b291; --clay-skin-light: #ffdbbc; --clay-skin-shadow: #c08067; --clay-hair: #39303e; --clay-hair-light: #655064; --clay-shirt: var(--spatial-pink); }
+.clay-student--longhair .clay-figure { width: 74%; left: 13%; }
+.clay-hair-back { top: 13%; left: 8%; width: 86%; height: 72%; border-radius: 45% 45% 21% 21%; background: linear-gradient(105deg, var(--clay-hair-light), var(--clay-hair) 30% 73%, var(--clay-hair-light)); }
+.clay-student--longhair .clay-face { top: 19%; left: 20%; width: 62%; height: 48%; border-radius: 42% 42% 47% 47%; }
+.clay-student--longhair .clay-body { width: 92%; left: 4%; height: 38%; }
+.clay-student--longhair .clay-neck { left: 41%; width: 20%; }
+.clay-student--longhair .clay-ear--left { left: 13%; }
+.clay-student--longhair .clay-ear--right { right: 11%; }
+.clay-student--longhair .clay-hair { top: 10%; left: 13%; width: 76%; height: 25%; }
+.clay-student--longhair .clay-hair i { border-radius: 55% 55% 35% 35%; box-shadow: 0 .7cqw 1cqw var(--clay-shadow); }
+.clay-student--longhair .clay-hair i:nth-child(1) { left: 0; top: 17%; width: 27%; height: 120%; transform: rotate(14deg); }
+.clay-student--longhair .clay-hair i:nth-child(2) { left: 13%; top: 3%; width: 38%; height: 100%; transform: rotate(-8deg); }
+.clay-student--longhair .clay-hair i:nth-child(3) { left: 39%; top: 0; width: 35%; height: 98%; transform: rotate(-8deg); }
+.clay-student--longhair .clay-hair i:nth-child(4) { right: 0; top: 14%; width: 26%; height: 122%; transform: rotate(-13deg); }
+.clay-student--longhair .clay-hair i:nth-child(5) { left: 28%; top: 26%; width: 42%; height: 76%; transform: rotate(-8deg); }
+.clay-hair-lock { top: 31%; width: 15%; height: 47%; border-radius: 35% 35% 48% 48%; background: linear-gradient(90deg, var(--clay-hair-light), var(--clay-hair)); box-shadow: .7cqw .7cqw 1.2cqw var(--clay-shadow); }
+.clay-hair-lock--left { left: 10%; transform: rotate(-3deg); }
+.clay-hair-lock--right { right: 8%; transform: rotate(3deg); }
+.clay-student--longhair .clay-eye { height: 9%; }
+.clay-student--longhair .clay-eye::before { content: ''; position: absolute; top: 5%; right: 50%; width: 90%; height: 15%; border-radius: 50%; background: var(--clay-hair); transform: rotate(30deg); }
+.clay-student--longhair .clay-eye--right::before { right: auto; left: 50%; transform: rotate(-30deg); }
+.clay-student--longhair .clay-nose { width: 14%; height: 18%; left: 45%; }
+.clay-student--longhair .clay-smile { top: 74%; left: 39%; width: 27%; height: 9%; border: 0; border-bottom: .8cqw solid var(--clay-skin-shadow); border-radius: 0 0 50% 50%; background: transparent; transform: rotate(-4deg); }
+.clay-student--longhair .clay-smile::before, .clay-student--longhair .clay-smile::after { display: none; }
+.clay-student--longhair .clay-collar { top: 68%; left: 36%; width: 30%; border-color: var(--spatial-paper); }
+
+/* Ribbed beanie, ginger side hair, hood and a distinct narrow face. */
+.clay-student--beanie { --clay-skin: #f0c6a6; --clay-skin-light: #ffe1c2; --clay-skin-shadow: #d39c7f; --clay-hair: #9a5542; --clay-hair-light: #c5835e; --clay-shirt: var(--spatial-paper); --clay-accessory: var(--spatial-blue); }
+.clay-student--beanie .clay-figure { bottom: -5%; }
+.clay-student--beanie .clay-face { top: 20%; left: 19%; width: 64%; height: 48%; border-radius: 39% 39% 44% 44%; }
+.clay-student--beanie .clay-ear { top: 39%; }
+.clay-student--beanie .clay-ear--left { left: 12%; }
+.clay-student--beanie .clay-ear--right { right: 10%; }
+.clay-student--beanie .clay-hair { top: 16%; left: 15%; width: 72%; height: 23%; }
+.clay-student--beanie .clay-hair i:nth-child(1) { left: 0; top: 26%; width: 25%; height: 112%; transform: rotate(6deg); }
+.clay-student--beanie .clay-hair i:nth-child(4) { right: 0; top: 26%; width: 24%; height: 110%; transform: rotate(-6deg); }
+.clay-beanie { top: 4%; left: 12%; width: 78%; height: 31%; border-radius: 50% 50% 15% 15%; background: radial-gradient(ellipse at 36% 25%, var(--spatial-lilac), var(--clay-accessory) 72%); box-shadow: inset -1cqw -1cqw 2cqw var(--clay-shadow); }
+.clay-beanie-rim { inset: 66% -2% -2%; border-radius: 20%; background: repeating-linear-gradient(90deg, transparent 0 5%, var(--clay-highlight) 5.5% 6.5%, transparent 7% 10%), linear-gradient(100deg, var(--spatial-lilac), var(--clay-accessory)); box-shadow: 0 1.1cqw 1.2cqw var(--clay-shadow); }
+.clay-beanie-pom { width: 25%; height: 50%; top: -25%; left: 39%; border-radius: 50%; background: radial-gradient(circle at 30% 25%, var(--spatial-lilac), var(--clay-accessory)); }
+.clay-student--beanie .clay-brow { top: 36%; }
+.clay-student--beanie .clay-eye { top: 45%; height: 8%; }
+.clay-student--beanie .clay-smile { top: 75%; left: 35%; width: 34%; height: 10%; }
+.clay-student--beanie .clay-smile::after { display: none; }
+.clay-hood { top: 66%; left: 26%; width: 51%; height: 17%; border: 3.1cqw solid var(--clay-shirt); border-top: 0; border-radius: 0 0 50% 50%; box-shadow: 0 1.1cqw 1.1cqw var(--clay-shadow); }
+.clay-student--beanie .clay-collar { top: 70%; left: 36%; width: 30%; height: 22%; border: 0; border-inline: .65cqw solid var(--clay-shirt-shadow); border-radius: 0; }

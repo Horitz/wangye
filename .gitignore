@@ -1,0 +1,35 @@
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+*.log
+.env*
+!.env.example
+.data/
+.vercel/
+.deploy/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# Local research archives and generated browser / preview artifacts.
+# Published content is migrated from SQLite to Supabase, not committed here.
+content/imports/
+.qa/
+.playwright-cli/
+output/
+tmp/
+test-results/
+playwright-report/
+coverage/
+.DS_Store
+Thumbs.db
+
+# Local credentials and agent configuration never belong in the public repository.
+.aws/
+.codex/
+.agents/
+*.pem
+*.key
+*.p12
+*.pfx

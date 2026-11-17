@@ -1,0 +1,58 @@
+/* The sky spans the page; the original rocket and grass block stay in the first screen. */
+.landing-page .page-ambience[data-scene="landing"] {
+  height: calc(100% - var(--ambient-header-height));
+  --sky-star-color: var(--spatial-paper);
+  --sky-planet-body: var(--spatial-lilac);
+  --sky-planet-light: color-mix(in srgb, var(--spatial-lilac) 50%, var(--spatial-paper));
+  --sky-planet-shadow: color-mix(in srgb, var(--spatial-lilac) 55%, var(--spatial-night));
+  --sky-planet-ring: var(--spatial-teal);
+}
+.landing-first-sky { position: absolute; inset: 0 0 auto; height: min(calc(100svh - var(--ambient-header-height)), 100%); }
+.landing-night-sky { position: absolute; inset: 0; pointer-events: none; user-select: none; }
+.landing-sky-rail { position: absolute; inset-block: 0; width: var(--ambient-rail); overflow: hidden; container: night-sky-rail / inline-size; }
+.landing-sky-rail--left { left: 0; }
+.landing-sky-rail--right { right: 0; }
+.landing-page .landing-sky-mark {
+  left: var(--sky-x);
+  top: var(--sky-y);
+  width: var(--sky-star-size);
+  height: var(--sky-star-size);
+  transform: translate(-50%, -50%);
+  opacity: .78;
+  color: var(--sky-star-color);
+}
+.landing-sky-mark[data-tone="gold"] { --sky-star-color: var(--spatial-gold); }
+.landing-sky-mark[data-tone="lilac"] { --sky-star-color: var(--spatial-lilac); }
+.landing-sky-mark[data-tone="teal"] { --sky-star-color: var(--spatial-teal); }
+.landing-sky-star { display: block; width: 100%; height: 100%; border-radius: 50%; background: currentColor; opacity: .65; }
+.landing-sky-star--spark { border-radius: 0; clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); }
+.landing-sky-planet { position: absolute; display: block; width: 176px; opacity: .64; transform: translate(-50%, -50%); }
+.landing-sky-planet svg { display: block; width: 100%; height: auto; }
+.landing-sky-planet--ringed { left: 62%; top: 5%; transform: translate(-50%, -50%) rotate(-8deg); }
+.landing-sky-planet--moon {
+  left: 30%; top: 18%; width: 160px;
+  --sky-planet-body: color-mix(in srgb, var(--spatial-gold) 55%, var(--spatial-paper));
+  --sky-planet-light: var(--spatial-paper);
+  --sky-planet-shadow: color-mix(in srgb, var(--spatial-gold) 40%, var(--spatial-night));
+}
+.landing-sky-planet--striped {
+  left: 53%; top: 64%; transform: translate(-50%, -50%) rotate(6deg);
+  --sky-planet-body: var(--spatial-teal);
+  --sky-planet-light: color-mix(in srgb, var(--spatial-teal) 55%, var(--spatial-paper));
+  --sky-planet-shadow: color-mix(in srgb, var(--spatial-teal) 50%, var(--spatial-night));
+}
+@container night-sky-rail (max-width: 239px) {
+  .landing-sky-planet { left: 50%; width: 96px; opacity: .5; }
+}
+@container night-sky-rail (max-width: 127px) {
+  .landing-sky-planet { display: none; }
+  .landing-sky-mark[data-tier="2"] { display: none; }
+  .landing-page .landing-sky-mark { width: min(var(--sky-star-size), 4px); height: min(var(--sky-star-size), 4px); opacity: .55; }
+}
+@media (max-width: 699px) {
+  .landing-sky-mark:not([data-tier="0"]) { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .landing-sky-star { animation: landing-sky-twinkle var(--sky-star-duration) ease-in-out var(--sky-star-delay) infinite; animation-play-state: var(--ambient-motion); }
+}
+@keyframes landing-sky-twinkle { 0%, 100% { opacity: .25; } 45% { opacity: 1; } 72% { opacity: .5; } }

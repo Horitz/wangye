@@ -1,0 +1,48 @@
+.published-step-details {
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+  color: var(--text);
+  font-size: var(--font-size-body);
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+.published-step-details > section {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+}
+.published-step-details h4 {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--text);
+  font-size: var(--font-size-body);
+  font-weight: 600;
+}
+.published-step-details h4 > svg { flex-shrink: 0; color: var(--brand); }
+.published-step-details p,
+.published-step-details dd { margin: 0; white-space: pre-wrap; }
+.published-step-details ul { margin: 0; padding-inline-start: var(--space-5); }
+.published-step-details li { padding-block: var(--space-1); white-space: pre-wrap; }
+.published-step-details dl { display: grid; gap: var(--space-2); margin: 0; }
+.published-step-details dl > div { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: baseline; gap: var(--space-4); }
+.published-step-details dt { color: var(--muted); font-size: var(--font-size-meta); }
+.published-step-map-link { justify-self: start; max-width: 100%; gap: var(--space-2); white-space: normal; }
+.published-step-map-link > svg { flex-shrink: 0; }
+.published-step-sources { display: grid; gap: var(--space-2); }
+.published-step-sources a { display: inline-flex; align-items: center; gap: var(--space-2); justify-self: start; min-height: var(--control-min-height); color: var(--brand); font-size: var(--font-size-control); }
+.published-step-sources a > svg { flex-shrink: 0; }
+.published-step-sources a:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; border-radius: var(--radius-control); }
+@media (max-width: 699px) {
+  .published-step-details { gap: var(--space-4); }
+  .published-step-details dl > div { gap: var(--space-3); }
+}
+@media (forced-colors: active) {
+  .published-step-details,
+  .published-step-details h4,
+  .published-step-details dt { color: CanvasText; }
+  .published-step-details h4 > svg,
+  .published-step-sources a { color: LinkText; }
+}

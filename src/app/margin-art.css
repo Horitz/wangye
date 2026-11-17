@@ -1,0 +1,86 @@
+/* Shared artwork only: the host controls route, space and visible playback. */
+.page-ambience[data-density="illustrated"] {
+  --margin-art-stroke: 2.3;
+  --margin-art-detail-stroke: 1.6;
+  --margin-art-duration: 6.8s;
+  --margin-art-accent-duration: 5.6s;
+}
+
+.page-ambience[data-density="illustrated"] :is(.margin-drawing, .pixel-margin-drawing) {
+  display: block;
+  width: 100%;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+}
+.page-ambience[data-density="illustrated"] .margin-drawing {
+  fill: none;
+  stroke: var(--spatial-ink);
+  stroke-width: var(--margin-art-stroke);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.page-ambience[data-density="illustrated"] .margin-line { fill: none; stroke-width: var(--margin-art-detail-stroke); }
+.page-ambience[data-density="illustrated"] .margin-soft { fill: color-mix(in srgb, var(--spatial-lilac) 12%, transparent); stroke: none; }
+.page-ambience[data-density="illustrated"] .margin-paper { fill: var(--spatial-paper); }
+.page-ambience[data-density="illustrated"] .margin-ink { fill: var(--spatial-ink); stroke: none; }
+.page-ambience[data-density="illustrated"] .margin-gold { fill: var(--spatial-gold); }
+.page-ambience[data-density="illustrated"] .margin-lilac { fill: var(--spatial-lilac); }
+.page-ambience[data-density="illustrated"] .margin-teal { fill: var(--spatial-teal); }
+.page-ambience[data-density="illustrated"] .margin-pink { fill: var(--spatial-pink); }
+
+.page-ambience[data-density="illustrated"] .pixel-margin-drawing { stroke: none; }
+.page-ambience[data-density="illustrated"] .pixel-margin-soft { fill: color-mix(in srgb, var(--spatial-ink) 12%, transparent); }
+.page-ambience[data-density="illustrated"] .pixel-margin-ink { fill: var(--spatial-ink); }
+.page-ambience[data-density="illustrated"] .pixel-margin-paper { fill: var(--spatial-paper); }
+.page-ambience[data-density="illustrated"] .pixel-margin-gold { fill: var(--spatial-gold); }
+.page-ambience[data-density="illustrated"] .pixel-margin-lilac { fill: var(--spatial-lilac); }
+.page-ambience[data-density="illustrated"] .pixel-margin-teal { fill: var(--spatial-teal); }
+.page-ambience[data-density="illustrated"] .pixel-margin-pink { fill: var(--spatial-pink); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .page-ambience[data-density="illustrated"] :is(.margin-motion, .pixel-margin-motion) {
+    animation-duration: var(--margin-art-duration);
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-play-state: var(--ambient-motion, paused);
+  }
+  .page-ambience[data-density="illustrated"] .margin-wave { transform-origin: 124px 100px; animation-name: ambience-sketch-wave; }
+  .page-ambience[data-density="illustrated"] .margin-tail { transform-origin: 168px 168px; animation-name: ambience-sketch-tail; }
+  .page-ambience[data-density="illustrated"] .margin-leaf { transform-origin: 122px 108px; animation-name: ambience-sketch-leaf; animation-duration: var(--margin-art-accent-duration); }
+  .page-ambience[data-density="illustrated"] .margin-note { animation-name: ambience-sketch-note; animation-duration: var(--margin-art-accent-duration); }
+  .page-ambience[data-density="illustrated"] .pixel-margin-tail { animation-name: ambience-pixel-tail; animation-timing-function: steps(2, end); }
+  .page-ambience[data-density="illustrated"] .pixel-margin-flame { transform-origin: 32px 48px; animation-name: ambience-pixel-flame; animation-duration: var(--margin-art-accent-duration); animation-timing-function: steps(3, end); }
+}
+
+@keyframes ambience-sketch-wave {
+  0%, 24%, 80%, 100% { transform: rotate(0); }
+  38%, 62% { transform: rotate(-7deg); }
+  50% { transform: rotate(3deg); }
+}
+@keyframes ambience-sketch-tail {
+  0%, 22%, 82%, 100% { transform: rotate(0); }
+  42% { transform: rotate(-6deg); }
+  62% { transform: rotate(4deg); }
+}
+@keyframes ambience-sketch-leaf {
+  0%, 20%, 84%, 100% { transform: rotate(0); }
+  44% { transform: rotate(-4deg); }
+  64% { transform: rotate(3deg); }
+}
+@keyframes ambience-sketch-note {
+  0%, 18%, 82%, 100% { transform: translateY(0); }
+  48%, 58% { transform: translateY(-5px); }
+}
+@keyframes ambience-pixel-tail {
+  0%, 24%, 80%, 100% { transform: translateY(0); }
+  42%, 58% { transform: translateY(-4px); }
+}
+@keyframes ambience-pixel-flame {
+  0%, 20%, 80%, 100% { transform: scaleY(1); }
+  40%, 60% { transform: scaleY(.8); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-ambience[data-density="illustrated"] :is(.margin-motion, .pixel-margin-motion) { animation: none; transform: none; }
+}

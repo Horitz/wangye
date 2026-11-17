@@ -1,0 +1,83 @@
+/* Business-page typography follows the reading language, not translated string length. */
+.workspace-page.locale-zh {
+  --locale-reading-leading: 1.8;
+  --locale-heading-leading: 1.35;
+  --locale-title-tracking: 0;
+  --locale-card-leading: 1.4;
+  --locale-page-title: 40px;
+  --locale-reader-title: 32px;
+}
+.workspace-page.locale-ru {
+  --locale-reading-leading: 1.65;
+  --locale-heading-leading: 1.25;
+  --locale-title-tracking: -.015em;
+  --locale-card-leading: 1.35;
+  --locale-page-title: 36px;
+  --locale-reader-title: 30px;
+}
+.workspace-page:is(.locale-zh, .locale-ru) { line-height: var(--locale-reading-leading); }
+.workspace-page:is(.locale-zh, .locale-ru) :is(h1, h2, h3) { letter-spacing: var(--locale-title-tracking); }
+.workspace-page:is(.locale-zh, .locale-ru) :is(.workspace-heading h1, .hub-welcome h1, .onboarding-intro h2) {
+  font-size: var(--locale-page-title);
+  line-height: var(--locale-heading-leading);
+}
+.workspace-page:is(.locale-zh, .locale-ru) .guide-reader-title h1 { font-size: var(--locale-reader-title); line-height: var(--locale-heading-leading); }
+.workspace-page:is(.locale-zh, .locale-ru) :is(.content-post-copy h2, .community-card h2, .hub-destination h2, .guide-reader-story h2, .community-featured-main h2) { line-height: var(--locale-card-leading); }
+.workspace-page:is(.locale-zh, .locale-ru) :is(.guide-reader-lead, .guide-reader-story p, .published-step-details, .content-post-copy > p, .community-post-body, .personal-task-next > p) { line-height: var(--locale-reading-leading); }
+
+/* Cyrillic words wrap at word boundaries first; long titles can grow vertically. */
+.workspace-page.locale-ru :is(.workspace-heading, .hub-welcome-copy, .hub-destination, .content-post-copy, .guide-reader-title, .guide-reader-story, .published-step-details, .identity-facts dd, .personal-task-row-title) {
+  word-break: normal;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+.workspace-page.locale-ru :is(.content-post-copy h2, .community-heading-intro h1, .guide-reader-title h1, .community-featured-main h2) { overflow-wrap: break-word; }
+.workspace-page.locale-ru :is(h1, h2, h3, .editorial-post-cover-title, .community-cover-copy) { hyphens: none; }
+.workspace-page.locale-ru :is(.workspace-heading > p, .hub-welcome-copy > p, .explore-heading-lead) { max-width: 58ch; }
+.workspace-page.locale-ru .workspace-nav { gap: var(--space-4); margin-right: var(--space-5); }
+.workspace-page.locale-ru :is(.button, .workspace-back, .workspace-skip, .guide-section-card-action) { white-space: normal; line-height: 1.5; }
+.workspace-page.locale-ru :is(.button, .workspace-back, .workspace-skip) > svg { flex-shrink: 0; }
+.workspace-page.locale-ru :is(.glass-select-value, .glass-select-option > span) { overflow-wrap: break-word; hyphens: auto; }
+
+/* Native dialogs stay descendants of the workspace even in the top layer. */
+.workspace-page:is(.locale-zh, .locale-ru) .workspace-dialog-header > div:first-child { min-width: 0; }
+.workspace-page:is(.locale-zh, .locale-ru) .workspace-dialog-actions { flex-shrink: 0; }
+.workspace-page.locale-ru .workspace-dialog-header h2 { line-height: 1.3; overflow-wrap: break-word; }
+.workspace-page.locale-ru .editorial-editor-heading { align-items: flex-start; flex-wrap: wrap; }
+.workspace-page.locale-ru .editorial-editor-heading h2 { flex: 1 1 240px; }
+.workspace-page.locale-ru .editorial-language { flex: 0 1 var(--editorial-language-width); }
+.workspace-page .editorial-field :is(input, textarea)[lang="zh-CN"] { line-height: 1.8; }
+.workspace-page .editorial-field :is(input, textarea)[lang="ru"] { line-height: 1.65; }
+.workspace-page.locale-ru :is(.personal-task-row-category time, .personal-task-next time) { font-variant-numeric: tabular-nums; }
+
+@media (max-width: 1199px) {
+  .workspace-page.locale-ru .workspace-nav { display: none; }
+  .workspace-page.locale-ru .workspace-menu-toggle { display: inline-flex; }
+  .workspace-page.locale-ru .workspace-mobile-nav:not([hidden]) { display: flex; position: absolute; inset: 100% 0 auto; flex-direction: column; gap: var(--space-1); padding: var(--space-4) var(--page-gutter); background: var(--spatial-stage); border-bottom: 1px solid var(--spatial-line); }
+  .workspace-page.locale-ru .workspace-mobile-nav a { display: flex; align-items: center; min-height: var(--control-min-height); font-size: var(--font-size-control); color: var(--spatial-muted); }
+  .workspace-page.locale-ru .workspace-mobile-nav a[aria-current] { color: var(--spatial-gold); }
+}
+@media (min-width: 700px) and (max-width: 1023px) {
+  .workspace-page:is(.locale-zh, .locale-ru) { --locale-page-title: 32px; }
+  .workspace-page.locale-ru .hub-destinations { grid-template-columns: minmax(0, 1fr); }
+  .workspace-page.locale-ru .hub-destination { display: grid; grid-template-columns: 64px minmax(0, 1fr); column-gap: var(--space-5); }
+  .workspace-page.locale-ru .hub-destination-icon { grid-row: 1 / 4; margin: 0; }
+  .workspace-page.locale-ru .hub-destination > p { margin-bottom: var(--space-4); }
+  .workspace-page.locale-ru .hub-action { grid-column: 2; justify-self: start; }
+  .workspace-page.locale-ru .onboarding-stage-options { grid-template-columns: minmax(0, 1fr); }
+  .workspace-page.locale-ru .stage-choice { flex-direction: row; align-items: center; padding-right: var(--space-7); }
+  .workspace-page.locale-ru .stage-choice .onboarding-radio-mark { top: calc(50% - 10px); }
+}
+@media (max-width: 699px) {
+  .workspace-page.locale-zh { --locale-page-title: 30px; --locale-reader-title: 26px; }
+  .workspace-page.locale-ru { --locale-page-title: 28px; --locale-reader-title: 26px; }
+  .workspace-page.locale-ru .workspace-dialog-header { gap: var(--space-3); }
+  .workspace-page.locale-ru .workspace-dialog-header h2 { font-size: 22px; }
+  .workspace-page.locale-ru .editorial-editor-heading h2 { flex: 0 1 auto; }
+  .workspace-page.locale-ru .editorial-language { flex-basis: auto; }
+  .workspace-page.locale-ru .guide-reader-title-row { grid-template-columns: minmax(0, 1fr); }
+  .workspace-page.locale-ru .guide-reader-companion { display: none; }
+  .workspace-page.locale-ru .editorial-post-footer { flex-wrap: wrap; }
+  .workspace-page.locale-ru .editorial-post-save { margin-left: auto; }
+  .workspace-page.locale-ru .personal-task-list-heading { align-items: flex-start; }
+}
