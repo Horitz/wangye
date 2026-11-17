@@ -78,7 +78,7 @@ export function AccountPanel() {
     logout: t("已退出账号。", "Вы вышли из аккаунта."),
   };
 
-  return <section className="account-panel" id="account" aria-labelledby="account-heading">
+  return <section className="account-panel" aria-labelledby="account-heading">
     <header className="account-heading"><span className="admin-symbol" aria-hidden="true"><UserRound size={28} strokeWidth={1.75} /></span><h2 id="account-heading" ref={heading} tabIndex={-1}>{t("管理员账号", "Аккаунт администратора")}</h2></header>
     <div className="account-content">
     {remote.sessionError ? <section className="workspace-panel admin-card"><p role="alert">{t("暂时无法确认登录状态，请重试。", "Не удалось проверить вход. Попробуйте ещё раз.")}</p><button className="button secondary" onClick={() => void refreshCommunityRemote()}><RefreshCw size={18} />{t("重新连接", "Подключиться снова")}</button></section>
@@ -90,12 +90,12 @@ export function AccountPanel() {
         <button className="button secondary" onClick={() => void logout()} disabled={busy}><LogOut size={18} />{busy ? t("正在退出…", "Выходим…") : t("退出账号", "Выйти из аккаунта")}</button>
       </section>
       : !remote.session.configured ? <section className="workspace-panel admin-card">
-        <h3>{t("账号登录", "Вход в аккаунт")}</h3>
+        <h3>{t("管理员登录", "Вход администратора")}</h3>
         <p>{t("管理账号尚未配置，请联系网站维护者。", "Аккаунт администратора ещё не настроен. Свяжитесь с владельцем сайта.")}</p>
         <button className="button secondary" onClick={() => void refreshCommunityRemote()}><RefreshCw size={18} />{t("刷新登录状态", "Обновить статус входа")}</button>
       </section>
       : <form className="workspace-panel admin-card" onSubmit={login} aria-busy={busy}>
-        <h3>{t("账号登录", "Вход в аккаунт")}</h3>
+        <h3>{t("管理员登录", "Вход администратора")}</h3>
         <label className="admin-field">{t("账号", "Имя пользователя")}<input name="username" autoComplete="username" required maxLength={64} value={username} onChange={event => setUsername(event.target.value)} disabled={busy} autoCapitalize="none" spellCheck={false} /></label>
         <label className="admin-field" htmlFor="admin-password">{t("密码", "Пароль")}</label>
         <div className="admin-password"><input ref={passwordInput} id="admin-password" name="password" type={showPassword ? "text" : "password"} autoComplete="current-password" required maxLength={128} value={password} onChange={event => setPassword(event.target.value)} disabled={busy} /><button className="icon-button" type="button" aria-label={showPassword ? t("隐藏密码", "Скрыть пароль") : t("显示密码", "Показать пароль")} aria-pressed={showPassword} onClick={() => setShowPassword(!showPassword)}>{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}</button></div>

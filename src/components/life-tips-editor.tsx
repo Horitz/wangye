@@ -148,7 +148,7 @@ export function LifeTipsEditor({ tips, locale, canSave, onSave, onCancel }: {
       <button ref={addButton} type="button" className="button secondary life-tips-add" disabled={saving || draft.length >= 20} onClick={addTip}><Plus size={19} />{t("添加提醒", "Добавить подсказку")}</button>
     </fieldset>
     <footer className="editorial-editor-footer material-glass material-glass--raised">
-      {error && <p className="editorial-error" role="alert">{error}{(errorCode === "unauthorized" || !canSave) && <> <Link href="/me#account" target="_blank" rel="noopener noreferrer">{t("在新标签页登录", "Войти в новой вкладке")}</Link></>}</p>}
+      {error && <p className="editorial-error" role="alert">{error}{(errorCode === "unauthorized" || !canSave) && <> <Link href="/me#admin" target="_blank" rel="noopener noreferrer">{t("在新标签页登录管理员账号", "Войти как администратор в новой вкладке")}</Link></>}</p>}
       <div><button type="button" className="button secondary" disabled={saving} onClick={onCancel}>{t("取消", "Отмена")}</button><button type="submit" className="button primary" disabled={saving || !canSave}><Save size={19} />{saving ? t("正在保存…", "Сохранение…") : t("保存提醒", "Сохранить подсказки")}</button></div>
     </footer>
   </form>;

@@ -13,7 +13,7 @@
 - 浏览器中的正式首页正常显示。
 - `GET /api/content` 返回 200，包含 19 条 `summaries`。
 - 抽查一张封面：两次 307 跳转后，Supabase 返回 200、`Content-Type: image/jpeg`，图片为 206194 字节。
-- 不带 Cookie 的 `GET /api/admin/session` 返回 200，状态为 `authenticated:false`、`configured:false`；管理员尚未初始化。
+- 不带 Cookie 的 `GET /api/admin/session` 返回 200，状态为 `authenticated:false`、`configured:false`；这是首次部署时的状态。
 
 上述操作没有创建账号、修改站点内容或发送消息，只确认上线入口和一条图片读取链路，不替代功能及页面总回归。
 
@@ -30,7 +30,7 @@
 | 原站点元数据 | 1 |
 | 上传到 Storage 的图片 | 112 |
 
-迁移另外写入云迁移标记。**管理员目前尚未配置**；没有创建默认账号，需按第 4 节交互创建后才能在网站维护内容。数据保存成功不代表登录、阅读、编辑和聊天已经完成网站运行验收。
+迁移另外写入云迁移标记。目前已单独创建管理员并在正式域名验证登录和退出。通过[个人中心的管理员入口](https://wangye-opal.vercel.app/me#admin)维护内容。数据保存成功不代表登录、阅读、编辑和聊天已经完成网站运行验收。
 
 ## 1. 使用哪些服务
 

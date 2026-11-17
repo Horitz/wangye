@@ -22,21 +22,26 @@ function subscribeToHash(listener: () => void) {
 }
 const readHash = () => window.location.hash;
 const serverHash = () => "";
+const isAccountHash = (hash: string) => hash === "#account" || hash === "#admin";
 
 export function MySpace() {
   const state = useHomeState();
-  const [accountRequested, setAccountRequested] = useState(false);
+  const [accountRequested, setAccountRequested] = useState<"member" | "admin" | null>(null);
   const [libraryView, setLibraryView] = useState<PersonalLibraryView>("notes");
   const hash = useSyncExternalStore(subscribeToHash, readHash, serverHash);
+  const accountMode = hash === "#admin" ? "admin" : hash === "#account" ? "member" : accountRequested;
   const { locale } = state;
   const t = (zh: string, ru: string) => locale === "zh" ? zh : ru;
-  function closeAccount() {
-    setAccountRequested(false);
-    if (window.location.hash === "#account") {
-      // Retain Next's history state and reading position when closing a deep link.
-      window.history.replaceState(window.history.state, "", `${window.location.pathname}${window.location.search}`);
-      window.dispatchEvent(new HashChangeEvent("hashchange"));
+  function changeAccountMode(mode: "member" | "admin" | null) {
+    if (!isAccountHash(window.location.hash)) {
+      setAccountRequested(mode);
+      return;
     }
+    setAccountRequested(null);
+    const nextHash = mode === "admin" ? "#admin" : mode === "member" ? "#account" : "";
+    // Retain Next's history state and reading position when changing a deep link.
+    window.history.replaceState(window.history.state, "", `${window.location.pathname}${window.location.search}${nextHash}`);
+    window.dispatchEvent(new HashChangeEvent("hashchange"));
   }
   return <div className="workspace-container personal-space material-scene">
     <header className="workspace-heading personal-space-heading">
@@ -45,7 +50,7 @@ export function MySpace() {
     </header>
     <div className="personal-space-grid">
       <aside className="personal-space-sidebar" aria-label={t("我的资料与收藏", "Мой профиль и сохранённое")}>
-        <ProfileIdentityCard onOpenAccount={() => setAccountRequested(true)} />
+        <ProfileIdentityCard onOpenAccount={() => changeAccountMode("member")} />
         <section className="personal-social-entry material-glass" aria-labelledby="my-friends-title">
           <h2 id="my-friends-title">{t("我的好友", "Мои друзья")}</h2>
           <p>{t("添加同学，一起聊聊留学日常。", "Найдите однокурсников и общайтесь.")}</p>
@@ -62,8 +67,8 @@ export function MySpace() {
       </div>
     </div>
     <PersonalLibrary view={libraryView} onViewChange={setLibraryView} />
-    <WorkspaceDialog open={accountRequested || hash === "#account"} onClose={closeAccount} title={t("我的账号", "Мой аккаунт")} headerActions={<LanguageMenu tone="light" />}>
-      <AccountCenter />
+    <WorkspaceDialog open={accountMode !== null} onClose={() => changeAccountMode(null)} title={accountMode === "admin" ? t("站点管理", "Управление сайтом") : t("我的账号", "Мой аккаунт")} headerActions={<LanguageMenu tone="light" />}>
+      <AccountCenter mode={accountMode ?? "member"} onModeChange={changeAccountMode} />
     </WorkspaceDialog>
   </div>;
 }

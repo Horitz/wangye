@@ -106,7 +106,7 @@ export function CommunityFeatureManagement({ posts, schoolId, locale }: { posts:
     setConfirmPublish(null);
     requestAnimationFrame(() => document.getElementById(buttonId)?.focus());
   };
-  if (!remote.session?.authenticated) return feedback === "unauthorized" ? <div className="community-session-expired"><p role="status">{t("登录状态已过期，请重新登录后继续。", "Сессия истекла. Войдите снова, чтобы продолжить.")}</p><Link href="/me#account" className="text-button">{t("前往我的页面登录", "Войти в разделе «Моё»")}</Link></div> : null;
+  if (!remote.session?.authenticated) return feedback === "unauthorized" ? <div className="community-session-expired"><p role="status">{t("登录状态已过期，请重新登录后继续。", "Сессия истекла. Войдите снова, чтобы продолжить.")}</p><Link href="/me#admin" className="text-button">{t("前往管理员登录", "Войти как администратор")}</Link></div> : null;
   const available = remote.status === "ready" && remote.sessionStatus === "ready" && !remote.updatingPostId;
   const manageable = posts.filter(post => remote.posts.some(item => item.id === post.id) || state.posts.some(item => item.id === post.id));
   const featuredCount = remote.posts.filter(post => post.schoolId === schoolId && remote.featuredIds.includes(post.id)).length;
@@ -128,7 +128,7 @@ export function CommunityFeatureManagement({ posts, schoolId, locale }: { posts:
         </div>;
       })}</div> : <p>{t("这个学校还没有可加入精选的内容。", "В этом сообществе пока нет записей для подборки.")}</p>}
       <p className={`community-form-feedback${feedback === "updated" || feedback === "published" ? " is-success" : ""}`} role="status">{remote.updatingPostId ? t("正在保存…", "Сохраняем…") : feedback === "limit" ? t("每个学校最多精选 7 条，请先取消一条。", "В подборке вуза может быть до 7 записей. Сначала уберите одну.") : feedback === "failed" ? t("保存失败，请重试。", "Не удалось сохранить. Повторите попытку.") : feedback === "refresh" ? t("已保存，列表更新失败，请重试。", "Сохранено, но список не обновился. Повторите загрузку.") : feedback === "published" ? t("已发布并加入精选。", "Запись опубликована и добавлена в подборку.") : feedback === "updated" ? t("精选已保存。", "Подборка сохранена.") : ""}</p>
-      <Link href="/me#account" className="text-button">{t("账号与登录", "Аккаунт")}</Link>
+      <Link href="/me#admin" className="text-button">{t("管理员账号", "Аккаунт администратора")}</Link>
     </div>
   </details>;
 }
