@@ -4,17 +4,17 @@ import nextEnv from "@next/env";
 import { getPostgres, closePostgres } from "../src/lib/server/postgres-connection.mjs";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
-const migration = new URL("../supabase/migrations/202611170001_studentpath.sql", import.meta.url);
+const migrations = ["202611170001_studentpath.sql", "202611180001_community_comments.sql"];
 
 async function main() {
   nextEnv.loadEnvConfig(projectRoot, false);
-  const source = await readFile(migration, "utf8");
+  const sources = await Promise.all(migrations.map(name => readFile(new URL(`../supabase/migrations/${name}`, import.meta.url), "utf8")));
   try {
     const sql = getPostgres();
     // Only this checked-in file is executed; no user-provided SQL or credentials are printed.
     await sql.begin(async tx => {
       await tx`SELECT pg_advisory_xact_lock(hashtext('studentpath:schema:init'))`;
-      await tx.unsafe(source).simple();
+      for (const source of sources) await tx.unsafe(source).simple();
     });
   } finally {
     await closePostgres();

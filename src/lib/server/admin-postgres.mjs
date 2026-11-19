@@ -1,6 +1,6 @@
 import { randomBytes, createHash, scrypt, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
-import { AdminError, normalizeUsername, validPassword, validatePublishedPost, SESSION_SECONDS } from "./admin-core.mjs";
+import { AdminError, normalizeUsername, sameMemberSubmission, validPassword, validatePublishedPost, SESSION_SECONDS } from "./admin-core.mjs";
 import { getPostgres } from "./postgres-connection.mjs";
 import { COMMUNITY_FEATURED_LIMIT } from "../community-limits.mjs";
 import { preparePublishedCommunityEdit } from "./community-post-schema.mjs";
@@ -58,8 +58,10 @@ export async function openPostgresAdminStore({ now = Date.now } = {}) {
       (SELECT coalesce(json_agg(payload::json ORDER BY is_demo DESC, created_at ASC, id ASC), '[]'::json)
         FROM studentpath.community_posts) AS posts,
       (SELECT coalesce(json_agg(post_id ORDER BY selected_at ASC, post_id ASC), '[]'::json)
-        FROM studentpath.community_featured) AS featured_ids`;
-    return { posts: row.posts, featuredIds: row.featured_ids };
+        FROM studentpath.community_featured) AS featured_ids,
+      (SELECT coalesce(json_object_agg(post_id,total), '{}'::json) FROM
+        (SELECT post_id,count(*) AS total FROM studentpath.community_comments GROUP BY post_id) counts) AS comment_counts`;
+    return { posts: row.posts, featuredIds: row.featured_ids, commentCounts: row.comment_counts };
   };
   const readLifeTips = async (defaults, connection = sql) => {
     const [row] = await connection`SELECT value FROM studentpath.app_meta WHERE key = 'life_tips_v1'`;
@@ -223,6 +225,45 @@ export async function openPostgresAdminStore({ now = Date.now } = {}) {
       });
     },
     catalog,
+    async publishMemberPost(post, authorId) {
+      await transaction(async tx => {
+        const [existing] = await tx`SELECT p.payload,a.author_id FROM studentpath.community_posts p
+          LEFT JOIN studentpath.community_authors a ON a.post_id=p.id WHERE p.id=${post.id}`;
+        if (sameMemberSubmission(existing, authorId, post)) return;
+        const inserted = await tx`INSERT INTO studentpath.community_posts(id,payload,is_demo,created_at)
+          VALUES(${post.id},${JSON.stringify(post)},0,${now()}) ON CONFLICT DO NOTHING RETURNING id`;
+        if (!inserted.length) throw new AdminError("post_exists", 409);
+        await tx`INSERT INTO studentpath.community_authors(post_id,author_id) VALUES(${post.id},${authorId})`;
+      });
+    },
+    async setLike(id, authorId, liked) {
+      if (liked) await sql`INSERT INTO studentpath.community_likes(post_id,author_id) VALUES(${id},${authorId}) ON CONFLICT DO NOTHING`;
+      else await sql`DELETE FROM studentpath.community_likes WHERE post_id=${id} AND author_id=${authorId}`;
+    },
+    async activity(viewerId) {
+      const [row] = await sql`SELECT
+        (SELECT count(*)::int FROM studentpath.community_posts) AS "postCount",
+        (SELECT coalesce(json_object_agg(post_id,n),'{}') FROM (SELECT post_id,count(*) n FROM studentpath.community_likes GROUP BY post_id) t) AS "likeCounts",
+        (SELECT coalesce(json_object_agg(post_id,n),'{}') FROM (SELECT post_id,count(*) n FROM studentpath.community_comments GROUP BY post_id) t) AS "commentCounts",
+        (SELECT coalesce(json_agg(post_id),'[]') FROM studentpath.community_likes WHERE author_id=${viewerId}) AS "likedIds",
+        (SELECT coalesce(json_agg(post_id),'[]') FROM studentpath.community_authors WHERE author_id=${viewerId}) AS "ownIds"`;
+      return { viewerId, ...row };
+    },
+    async hasCommunityPost(id) { return (await sql`SELECT 1 FROM studentpath.community_posts WHERE id=${id}`).length > 0; },
+    async comments(postId) {
+      const rows = await sql`SELECT id,author_id AS "authorId",display_name AS "displayName",body FROM studentpath.community_comments WHERE post_id=${postId} ORDER BY id`;
+      return rows.map(row => ({ ...row, id: Number(row.id) }));
+    },
+    async addComment(postId, author, body, clientId) {
+      const [row] = await sql`INSERT INTO studentpath.community_comments(post_id,author_id,display_name,body,client_id)
+        VALUES(${postId},${author.id},${author.displayName},${body},${clientId})
+        ON CONFLICT(post_id,author_id,client_id) DO UPDATE SET client_id=excluded.client_id RETURNING body`;
+      if (row.body !== body) throw new AdminError("idempotency_conflict", 409);
+    },
+    async removeComment(postId, authorId, id) {
+      const rows = await sql`DELETE FROM studentpath.community_comments WHERE post_id=${postId} AND author_id=${authorId} AND id=${id} RETURNING id`;
+      if (!rows.length) throw new AdminError("not_found", 404);
+    },
     async hasPublishedCommunityImage(src) {
       const rows = await sql`SELECT 1 FROM studentpath.community_posts p,
         LATERAL jsonb_array_elements(coalesce(p.payload::jsonb -> 'images', '[]'::jsonb)) AS images(value)

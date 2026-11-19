@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useLayoutEffect, useRef, useState, type KeyboardEvent } from "react";
 import { ArrowUpRight, Bookmark, NotebookPen, PenLine, Trash2 } from "lucide-react";
 import { CommunityPostCard } from "@/components/community-page";
+import { useMemberSession } from "@/components/member-session";
+import { useCommunityRemoteState } from "@/lib/community-remote-store";
 import { CommunityComposer } from "@/components/community-composer";
 import { GuideCatalogStatus, GuidePostCard } from "@/components/guide-post-card";
 import { GuidanceIllustration } from "@/components/guidance-illustration";
@@ -24,6 +26,12 @@ export function PersonalLibrary({ view, onViewChange }: { view: PersonalLibraryV
   const { guides, loading, error, reload } = useEditorialCatalog();
   const { locale } = home;
   const t = (zh: string, ru: string) => locale === "zh" ? zh : ru;
+  const member = useMemberSession();
+  const remote = useCommunityRemoteState();
+  const ownIds = new Set(member.user && remote.activity?.viewerId === member.user.id ? remote.activity.ownIds : []);
+  const published = remote.posts.filter(post => ownIds.has(post.id)).sort((a, b) => (b.createdAt ?? "").localeCompare(a.createdAt ?? ""));
+  const originals = state.posts.filter(post => !ownIds.has(post.id));
+  const noteCount = published.length + originals.length;
   const savedGuides = guides.filter(guide => home.saved.includes(guide.id));
   const savedCommunity = getCommunityPosts(state).filter(post => state.saved.includes(post.id));
   const [editing, setEditing] = useState<CommunityPost | "new" | null>(null);
@@ -33,7 +41,7 @@ export function PersonalLibrary({ view, onViewChange }: { view: PersonalLibraryV
   const pendingFocus = useRef<{ trigger: HTMLButtonElement; selector: string; index: number } | null>(null);
   const schoolId = home.profileSet ? home.university : "msu";
   const tabs = [
-    { id: "notes" as const, label: t("我的笔记", "Мои записи"), count: state.hydrated ? state.posts.length : null },
+    { id: "notes" as const, label: t("我的笔记", "Мои записи"), count: state.hydrated ? noteCount : null },
     { id: "guides" as const, label: t("收藏的指南与攻略", "Инструкции и статьи"), count: !loading && !error ? savedGuides.length : null },
     { id: "community" as const, label: t("社区收藏", "Из сообщества"), count: state.hydrated ? savedCommunity.length : null },
   ];
@@ -82,7 +90,7 @@ export function PersonalLibrary({ view, onViewChange }: { view: PersonalLibraryV
       {view === "guides" ? <>
         <GuideCatalogStatus loading={loading} error={error} onRetry={reload} />
         {!loading && !error && (savedGuides.length ? <div className="personal-library-grid">{savedGuides.map(guide => <GuidePostCard key={guide.id} guide={guide} locale={locale} returnHref="/me" onUnsave={trigger => beforeUnsave(trigger, "[data-guide-save]")} />)}</div> : <div className="personal-library-empty material-glass material-glass--raised"><Bookmark size={32} aria-hidden="true" /><h3>{t("把有用的攻略留在这里", "Сохраните полезные статьи")}</h3><Link className="button secondary" href="/explore">{t("发现指南", "Найти инструкцию")}<ArrowUpRight size={18} aria-hidden="true" /></Link></div>)}
-      </> : !state.hydrated ? <p role="status">{t("正在读取记录…", "Загружаем записи…")}</p> : view === "notes" ? state.posts.length ? <div className="personal-library-grid">{state.posts.map(post => <CommunityPostCard key={post.id} post={post} locale={locale} localOriginal linear={post.kind === "discussion"} actions={<div className="personal-note-actions"><button type="button" className="text-button" onClick={() => { setFeedback(null); setEditing(post); }} aria-label={t(`编辑笔记：${post.title.zh}`, `Редактировать: ${post.title.ru}`)}><PenLine size={18} aria-hidden="true" />{t("编辑", "Изменить")}</button><button type="button" className="text-button" onClick={() => setDeleting(post)} aria-label={t(`删除笔记：${post.title.zh}`, `Удалить: ${post.title.ru}`)}><Trash2 size={18} aria-hidden="true" />{t("删除", "Удалить")}</button></div>} />)}</div> : <div className="personal-library-empty material-glass material-glass--raised"><NotebookPen size={32} aria-hidden="true" /><h3>{t("留下一段自己的校园日常", "Запишите историю своего дня")}</h3><button type="button" className="button secondary" onClick={writeNote}>{t("写第一篇笔记", "Создать первую запись")}</button></div> : savedCommunity.length ? <div className="personal-library-grid">{savedCommunity.map(post => <CommunityPostCard key={post.id} post={post} locale={locale} linear={post.kind === "discussion"} shared={state.sharedPosts.some(item => item.id === post.id)} onUnsave={trigger => beforeUnsave(trigger, "[data-community-save]")} />)}</div> : <div className="personal-library-empty material-glass material-glass--raised"><Bookmark size={32} aria-hidden="true" /><h3>{t("喜欢的笔记，收藏后在这里重逢", "Возвращайтесь к любимым историям")}</h3><Link className="button secondary" href="/community">{t("逛逛社区", "В сообщество")}<ArrowUpRight size={18} aria-hidden="true" /></Link></div>}
+      </> : !state.hydrated ? <p role="status">{t("正在读取记录…", "Загружаем записи…")}</p> : view === "notes" ? noteCount ? <div className="personal-library-grid">{published.map(post => <CommunityPostCard key={post.id} post={post} locale={locale} shared linear={post.kind === "discussion"} />)}{originals.map(post => <CommunityPostCard key={post.id} post={post} locale={locale} localOriginal linear={post.kind === "discussion"} actions={<div className="personal-note-actions"><button type="button" className="text-button" onClick={() => { setFeedback(null); setEditing(post); }} aria-label={t(`编辑笔记：${post.title.zh}`, `Редактировать: ${post.title.ru}`)}><PenLine size={18} aria-hidden="true" />{t("编辑", "Изменить")}</button><button type="button" className="text-button" onClick={() => setDeleting(post)} aria-label={t(`删除笔记：${post.title.zh}`, `Удалить: ${post.title.ru}`)}><Trash2 size={18} aria-hidden="true" />{t("删除", "Удалить")}</button></div>} />)}</div> : <div className="personal-library-empty material-glass material-glass--raised"><NotebookPen size={32} aria-hidden="true" /><h3>{t("留下一段自己的校园日常", "Запишите историю своего дня")}</h3><button type="button" className="button secondary" onClick={writeNote}>{t("写第一篇笔记", "Создать первую запись")}</button></div> : savedCommunity.length ? <div className="personal-library-grid">{savedCommunity.map(post => <CommunityPostCard key={post.id} post={post} locale={locale} linear={post.kind === "discussion"} shared={state.sharedPosts.some(item => item.id === post.id)} onUnsave={trigger => beforeUnsave(trigger, "[data-community-save]")} />)}</div> : <div className="personal-library-empty material-glass material-glass--raised"><Bookmark size={32} aria-hidden="true" /><h3>{t("喜欢的笔记，收藏后在这里重逢", "Возвращайтесь к любимым историям")}</h3><Link className="button secondary" href="/community">{t("逛逛社区", "В сообщество")}<ArrowUpRight size={18} aria-hidden="true" /></Link></div>}
     </div>
     <WorkspaceDialog open={editing !== null} onClose={() => setEditing(null)} title={editing === "new" ? t("写笔记", "Новая запись") : t("编辑笔记", "Редактировать запись")} headerActions={<LanguageMenu tone="light" />}>
       {editing && <CommunityComposer key={editing === "new" ? "new" : editing.id} schoolId={schoolId} post={editing === "new" ? undefined : editing} onClose={() => setEditing(null)} onSaved={() => { setEditing(null); onViewChange("notes"); setFeedback("saved"); }} />}

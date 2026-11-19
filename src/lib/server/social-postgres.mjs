@@ -1,7 +1,7 @@
 import { randomBytes, randomUUID, createHash, scrypt, timingSafeEqual } from "node:crypto";
 import { promisify } from "node:util";
 import { parseMemberProfile } from "../member-profile.mjs";
-import { SocialError, normalizeMemberUsername, MEMBER_SESSION_SECONDS } from "./social-core.mjs";
+import { SocialError, normalizeMemberUsername, friendSearchTerms, MEMBER_SESSION_SECONDS } from "./social-core.mjs";
 import { getPostgres } from "./postgres-connection.mjs";
 
 const derive = promisify(scrypt);
@@ -186,11 +186,12 @@ export async function openPostgresSocialStore({ now = Date.now } = {}) {
 
     async search(token, query) {
       const user = await requireSession(token);
-      const username = normalizeMemberUsername(query);
-      const [row] = await sql`
+      const { username, displayName } = friendSearchTerms(query);
+      const rows = await sql`
         SELECT id, username, display_name FROM studentpath.member_users
-        WHERE username = ${username} AND id <> ${user.id}`;
-      return { users: row ? [publicUser(row)] : [] };
+        WHERE id <> ${user.id} AND (username = ${username} OR display_name = ${displayName})
+        ORDER BY (username = ${username}) DESC, username LIMIT 30`;
+      return { users: rows.map(publicUser) };
     },
 
     async friends(token) {

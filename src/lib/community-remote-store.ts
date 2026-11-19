@@ -13,6 +13,8 @@ export type CommunityRemoteState = {
   status: RemoteStatus;
   posts: CommunityPost[];
   featuredIds: string[];
+  commentCounts: Record<string, number>;
+  activity: Activity | null;
   error: string | null;
   sessionStatus: RemoteStatus;
   session: AdminSession | null;
@@ -20,7 +22,8 @@ export type CommunityRemoteState = {
   updatingPostId: string | null;
 };
 export type FeaturedUpdateResult = { ok: boolean; error?: string; refreshed?: boolean };
-const initial: CommunityRemoteState = { status: "idle", posts: [], featuredIds: [], error: null, sessionStatus: "idle", session: null, sessionError: null, updatingPostId: null };
+type Activity = { postCount: number; viewerId: string | null; likedIds: string[]; ownIds: string[]; likeCounts: Record<string, number>; commentCounts: Record<string, number> };
+const initial: CommunityRemoteState = { status: "idle", posts: [], featuredIds: [], commentCounts: {}, activity: null, error: null, sessionStatus: "idle", session: null, sessionError: null, updatingPostId: null };
 let current = initial;
 let requestVersion = 0;
 const listeners = new Set<() => void>();
@@ -34,7 +37,7 @@ export function parseAdminSession(value: unknown): AdminSession {
   return value.authenticated ? { authenticated: true, configured: value.configured, username: value.username as string } : { authenticated: false, configured: value.configured };
 }
 
-export function parseRemoteCommunitySnapshot(value: unknown): Pick<CommunityRemoteState, "posts" | "featuredIds"> {
+export function parseRemoteCommunitySnapshot(value: unknown): Pick<CommunityRemoteState, "posts" | "featuredIds" | "commentCounts"> {
   if (!record(value) || !Array.isArray(value.posts) || !Array.isArray(value.featuredIds)) throw new Error("invalid_response");
   const ids = new Set<string>();
   const posts = value.posts.map((item: unknown): CommunityPost => {
@@ -54,10 +57,15 @@ export function parseRemoteCommunitySnapshot(value: unknown): Pick<CommunityRemo
   });
   if (communityDemoPosts.some(post => !ids.has(post.id)) || new Set(value.featuredIds).size !== value.featuredIds.length
     || !value.featuredIds.every(id => typeof id === "string" && ids.has(id))) throw new Error("invalid_response");
-  return { posts, featuredIds: [...value.featuredIds] as string[] };
+  const counts = value.commentCounts ?? {};
+  if (!record(counts) || Object.entries(counts).some(([id, n]) => !ids.has(id) || typeof n !== "number" || !Number.isSafeInteger(n) || n < 0)) throw new Error("invalid_response");
+  return { posts, featuredIds: [...value.featuredIds] as string[], commentCounts: counts as Record<string, number> };
 }
 
 function update(patch: Partial<CommunityRemoteState>) { current = { ...current, ...patch }; listeners.forEach(listener => listener()); }
+export function setPublicCommentCount(id: string, count: number) {
+  if (count !== current.commentCounts[id]) update({ commentCounts: { ...current.commentCounts, [id]: count } });
+}
 async function request(path: string, options: RequestInit = {}): Promise<unknown> {
   const response = await fetch(path, { credentials: "same-origin", cache: "no-store", ...options, signal: AbortSignal.timeout(10000) });
   const value: unknown = await response.json();
@@ -126,13 +134,37 @@ export async function updateRemoteCommunityPost(post: CommunityPost): Promise<Fe
   } finally { update({ updatingPostId: null }); }
 }
 
-function onFocus() { if (current.status !== "loading") void refreshCommunityRemote(); }
+let timer: number | undefined;
+let activityVersion = 0;
+let polling = false;
+function acceptActivity(data: Activity) {
+  update({ activity: data, commentCounts: data.commentCounts });
+}
+async function pollActivity() {
+  if (polling || document.hidden) return;
+  const version = activityVersion;
+  polling = true;
+  try {
+    const data = await request("/api/community/activity") as Activity;
+    if (version !== activityVersion) return;
+    acceptActivity(data);
+    if (current.status === "error" || (current.status === "ready" && data.postCount !== current.posts.length)) void refreshCommunityRemote();
+  } catch { /* Retry the live counts on the next visible tick. */ }
+  finally { polling = false; }
+}
+export async function setCommunityPostLike(postId: string, liked: boolean, userId: string) {
+  const version = ++activityVersion;
+  const activity = await request("/api/community/activity", { method: "PUT", headers: { "Content-Type": "application/json", "X-StudentPath-User": userId }, body: JSON.stringify({ postId, liked }) }) as Activity;
+  if (version === activityVersion) { ++activityVersion; acceptActivity(activity); }
+}
+function onFocus() { if (current.status !== "loading") void refreshCommunityRemote(); void pollActivity(); }
 function onVisibility() { if (document.visibilityState === "visible") onFocus(); }
 function subscribe(listener: () => void) {
   listeners.add(listener);
   if (listeners.size === 1 && typeof window !== "undefined") {
     window.addEventListener("focus", onFocus);
     document.addEventListener("visibilitychange", onVisibility);
+    if (typeof window.setInterval === "function") { void pollActivity(); timer = window.setInterval(pollActivity, 5000); }
     void refreshCommunityRemote();
   }
   return () => {
@@ -140,6 +172,7 @@ function subscribe(listener: () => void) {
     if (!listeners.size && typeof window !== "undefined") {
       window.removeEventListener("focus", onFocus);
       document.removeEventListener("visibilitychange", onVisibility);
+      window.clearInterval?.(timer);
     }
   };
 }

@@ -34,6 +34,15 @@ export function validatePublishedPost(value) {
   catch { throw new AdminError("invalid_request"); }
 }
 
+export function sameMemberSubmission(row, authorId, post) {
+  if (!row) return false;
+  const stored = JSON.parse(row.payload);
+  if (row.author_id !== authorId || stored.title.zh !== post.title.zh || stored.body.zh !== post.body.zh ||
+      stored.schoolId !== post.schoolId || stored.topic !== post.topic || stored.kind !== post.kind ||
+      JSON.stringify(stored.tags ?? []) !== JSON.stringify(post.tags ?? [])) throw new AdminError("post_exists", 409);
+  return true;
+}
+
 /** A connection owns no credentials in globals; callers close it after every operation. */
 export function openAdminStore({ dataDir = process.env.STUDENTPATH_DATA_DIR || resolve(process.cwd(), ".data"), now = Date.now } = {}) {
   const directory = resolve(/* turbopackIgnore: true */ dataDir);
@@ -49,6 +58,16 @@ export function openAdminStore({ dataDir = process.env.STUDENTPATH_DATA_DIR || r
       CREATE TABLE IF NOT EXISTS login_attempts (bucket TEXT PRIMARY KEY, started_at INTEGER NOT NULL, count INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS community_posts (id TEXT PRIMARY KEY, payload TEXT NOT NULL, is_demo INTEGER NOT NULL CHECK(is_demo IN (0,1)), created_at INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS community_featured (post_id TEXT PRIMARY KEY REFERENCES community_posts(id) ON DELETE CASCADE, selected_at INTEGER NOT NULL);
+      CREATE TABLE IF NOT EXISTS community_comments (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, post_id TEXT NOT NULL REFERENCES community_posts(id) ON DELETE CASCADE,
+        author_id TEXT NOT NULL REFERENCES member_users(id), display_name TEXT NOT NULL, body TEXT NOT NULL,
+        client_id TEXT NOT NULL, UNIQUE(post_id,author_id,client_id));
+      CREATE INDEX IF NOT EXISTS community_comments_thread ON community_comments(post_id,id);
+      CREATE TABLE IF NOT EXISTS community_likes (
+        post_id TEXT REFERENCES community_posts(id) ON DELETE CASCADE, author_id TEXT REFERENCES member_users(id),
+        PRIMARY KEY(post_id,author_id));
+      CREATE TABLE IF NOT EXISTS community_authors (
+        post_id TEXT PRIMARY KEY REFERENCES community_posts(id) ON DELETE CASCADE, author_id TEXT NOT NULL REFERENCES member_users(id));
       CREATE TABLE IF NOT EXISTS editorial_content (id TEXT PRIMARY KEY, payload TEXT NOT NULL, updated_at INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS app_meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);`);
   } catch (error) { db.close(); throw error; }
@@ -78,6 +97,7 @@ export function openAdminStore({ dataDir = process.env.STUDENTPATH_DATA_DIR || r
   const catalog = () => ({
     posts: db.prepare("SELECT payload FROM community_posts ORDER BY is_demo DESC, created_at ASC, id ASC").all().map(row => JSON.parse(row.payload)),
     featuredIds: db.prepare("SELECT post_id FROM community_featured ORDER BY selected_at ASC, post_id ASC").all().map(row => row.post_id),
+    commentCounts: Object.fromEntries(db.prepare("SELECT post_id, count(*) AS total FROM community_comments GROUP BY post_id").all().map(r => [r.post_id, r.total])),
   });
   const readLifeTips = defaults => {
     const row = db.prepare("SELECT value FROM app_meta WHERE key='life_tips_v1'").get();
@@ -191,6 +211,38 @@ export function openAdminStore({ dataDir = process.env.STUDENTPATH_DATA_DIR || r
       });
     },
     catalog,
+    publishMemberPost(post, authorId) {
+      return transaction(() => {
+        const existing = db.prepare("SELECT p.payload,a.author_id FROM community_posts p LEFT JOIN community_authors a ON a.post_id=p.id WHERE p.id=?").get(post.id);
+        if (sameMemberSubmission(existing, authorId, post)) return;
+        db.prepare("INSERT INTO community_posts(id,payload,is_demo,created_at) VALUES(?,?,0,?)").run(post.id, JSON.stringify(post), now());
+        db.prepare("INSERT INTO community_authors(post_id,author_id) VALUES(?,?)").run(post.id, authorId);
+      });
+    },
+    setLike(id, authorId, liked) {
+      if (liked) db.prepare("INSERT INTO community_likes(post_id,author_id) VALUES(?,?) ON CONFLICT DO NOTHING").run(id, authorId);
+      else db.prepare("DELETE FROM community_likes WHERE post_id=? AND author_id=?").run(id, authorId);
+    },
+    activity(viewerId) {
+      const counts = rows => Object.fromEntries(rows.map(row => [row.post_id, row.total]));
+      return { viewerId, postCount: db.prepare("SELECT count(*) AS n FROM community_posts").get().n,
+        likeCounts: counts(db.prepare("SELECT post_id,count(*) AS total FROM community_likes GROUP BY post_id").all()),
+        commentCounts: counts(db.prepare("SELECT post_id,count(*) AS total FROM community_comments GROUP BY post_id").all()),
+        likedIds: db.prepare("SELECT post_id FROM community_likes WHERE author_id=?").all(viewerId).map(row => row.post_id),
+        ownIds: db.prepare("SELECT post_id FROM community_authors WHERE author_id=?").all(viewerId).map(row => row.post_id) };
+    },
+    hasCommunityPost(id) { return Boolean(db.prepare("SELECT 1 FROM community_posts WHERE id=?").get(id)); },
+    comments(postId) {
+      return db.prepare("SELECT id,author_id AS authorId,display_name AS displayName,body FROM community_comments WHERE post_id=? ORDER BY id").all(postId);
+    },
+    addComment(postId, author, body, clientId) {
+      const row = db.prepare(`INSERT INTO community_comments(post_id,author_id,display_name,body,client_id) VALUES(?,?,?,?,?)
+        ON CONFLICT(post_id,author_id,client_id) DO UPDATE SET client_id=excluded.client_id RETURNING body`).get(postId, author.id, author.displayName, body, clientId);
+      if (row.body !== body) throw new AdminError("idempotency_conflict", 409);
+    },
+    removeComment(postId, authorId, id) {
+      if (!db.prepare("DELETE FROM community_comments WHERE post_id=? AND author_id=? AND id=?").run(postId, authorId, id).changes) throw new AdminError("not_found", 404);
+    },
     hasPublishedCommunityImage(src) {
       return Boolean(db.prepare("SELECT 1 FROM community_posts p, json_each(p.payload,'$.images') image WHERE p.is_demo=0 AND json_extract(image.value,'$.src')=? LIMIT 1").get(src));
     },

@@ -29,6 +29,7 @@ export function socialErrorCode(error: unknown): string {
 
 export function socialErrorText(code: string, locale: "zh" | "ru"): string {
   const messages: Record<string, [string, string]> = {
+    invalid_search: ["请输入完整的用户名或账号昵称。", "Введите полный логин или отображаемое имя."],
     invalid_credentials: ["用户名或密码不正确。", "Неверное имя пользователя или пароль."],
     username_taken: ["这个用户名已经有人使用，请换一个。", "Это имя пользователя уже занято. Выберите другое."],
     invalid_username: ["用户名需为 3–32 位字母、数字、点、下划线或短横线。", "Имя: 3–32 латинских символа, цифры, точка, дефис или подчёркивание."],

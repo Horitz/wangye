@@ -18,7 +18,10 @@ import type { CommunityPost } from "@/data/community-content";
 import { getCommunityPosts, setCommunitySchool, toggleCommunityLike, toggleCommunitySave, updateCommunityDraft, useCommunityState } from "@/lib/community-store";
 import { CommunityComposer } from "@/components/community-composer";
 import { communityTopics } from "@/data/community-topics";
-import { refreshCommunityRemote, updateRemoteFeatured, useCommunityRemoteState } from "@/lib/community-remote-store";
+import { refreshCommunityRemote, setCommunityPostLike, updateRemoteFeatured, useCommunityRemoteState } from "@/lib/community-remote-store";
+import { useMemberSession } from "@/components/member-session";
+import { MemberAuth } from "@/components/member-auth";
+import { WorkspaceDialog } from "@/components/workspace-dialog";
 import { useHomeState, type Locale } from "@/lib/home-store";
 import { getSchool, isSchoolId, schoolOptions, type SchoolId } from "@/data/school-options";
 import { COMMUNITY_FEATURED_LIMIT } from "@/lib/community-limits.mjs";
@@ -37,17 +40,36 @@ export function communityTagHref(post: CommunityPost, tag: string, query = "") {
   return `/community?${params}`;
 }
 
-export function CommunityActions({ post, locale, showComment = true, onUnsave }: { post: CommunityPost; locale: Locale; showComment?: boolean; onUnsave?: (trigger: HTMLButtonElement) => void }) {
+export function CommunityActions({ post, locale, showComment = true, localOriginal = false, onUnsave }: { post: CommunityPost; locale: Locale; showComment?: boolean; localOriginal?: boolean; onUnsave?: (trigger: HTMLButtonElement) => void }) {
   const state = useCommunityState();
-  const liked = state.liked.includes(post.id);
+  const remote = useCommunityRemoteState();
+  const shared = !localOriginal && (post.demo || state.sharedPosts.some(item => item.id === post.id));
+  const count = shared ? remote.commentCounts[post.id] ?? (remote.status === "ready" ? 0 : "…") : state.comments[post.id]?.length ?? 0;
+  const member = useMemberSession();
+  const [login, setLogin] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const activity = remote.activity;
+  const liked = shared ? Boolean(activity && member.user && activity.viewerId === member.user.id && activity.likedIds.includes(post.id)) : state.liked.includes(post.id);
+  const likes = shared ? activity?.likeCounts[post.id] ?? (activity ? 0 : "…") : Number(liked);
+  async function like() {
+    if (!shared) { toggleCommunityLike(post.id); return; }
+    if (!member.user) { setLogin(true); return; }
+    setBusy(true); setFailed(false);
+    try { await setCommunityPostLike(post.id, !liked, member.user.id); }
+    catch { setFailed(true); void member.refresh(); }
+    finally { setBusy(false); }
+  }
   const saved = state.saved.includes(post.id);
   const t = (zh: string, ru: string) => locale === "zh" ? zh : ru;
   return <div className="community-actions">
-    <button type="button" className={`community-action${liked ? " is-active" : ""}`} aria-pressed={liked} disabled={!state.hydrated}
+    {login && <WorkspaceDialog open={!member.user} onClose={() => setLogin(false)} title={t("登录后点赞", "Войти, чтобы поставить отметку")}><MemberAuth compact onAuthenticated={() => setLogin(false)} /></WorkspaceDialog>}
+    {failed && <span role="alert">{t("点赞未保存，请重试。", "Не удалось сохранить отметку. Попробуйте ещё раз.")}</span>}
+    <button type="button" className={`community-action${liked ? " is-active" : ""}`} aria-pressed={liked} disabled={!state.hydrated || busy || (shared && !member.loaded)}
       aria-label={`${liked ? t("取消喜欢", "Убрать отметку «Нравится»") : t("喜欢", "Нравится")}: ${post.title[locale]}`}
-      onClick={() => toggleCommunityLike(post.id)}><Heart size={20} strokeWidth={1.75} fill={liked ? "currentColor" : "none"} /><span>{liked ? 1 : 0}</span></button>
-    {showComment && <Link className="community-action" href={`/community/${post.id}#comments`} aria-label={t(`查看评论：${post.title.zh}`, `Комментарии: ${post.title.ru}`)}>
-      <MessageCircle size={20} strokeWidth={1.75} /><span>{state.comments[post.id]?.length ?? 0}</span></Link>}
+      onClick={() => void like()}><Heart size={20} strokeWidth={1.75} fill={liked ? "currentColor" : "none"} /><span>{likes}</span></button>
+    {showComment && <Link className="community-action" href={`/community/${post.id}${localOriginal ? "?local=1" : ""}#comments`} aria-label={t(`查看评论：${post.title.zh}`, `Комментарии: ${post.title.ru}`)}>
+      <MessageCircle size={20} strokeWidth={1.75} /><span>{count}</span></Link>}
     <button type="button" data-community-save className={`community-action community-save${saved ? " is-active" : ""}`} aria-pressed={saved} disabled={!state.hydrated}
       aria-label={`${saved ? t("取消收藏", "Убрать из сохранённого") : t("收藏", "Сохранить")}: ${post.title[locale]}`}
       onClick={event => { if (saved) onUnsave?.(event.currentTarget); toggleCommunitySave(post.id); }}><Bookmark size={20} strokeWidth={1.75} fill={saved ? "currentColor" : "none"} /><span>{saved ? t("已收藏", "Сохранено") : t("收藏", "Сохранить")}</span></button>
@@ -58,7 +80,7 @@ export function CommunityPostCard({ post, locale, linear = false, shared = false
   const t = (zh: string, ru: string) => locale === "zh" ? zh : ru;
   return <ContentPostCard className={`community-card${linear ? " community-card--discussion" : ""}`} footer={<>
     <PostByline name={post.author?.[locale] ?? (post.demo ? "StudentPath" : shared && !localOriginal ? t("未署名", "Без подписи") : t("我", "Я"))} avatar={post.demo || shared ? "S" : t("我", "Я")} />
-    <CommunityActions post={post} locale={locale} onUnsave={onUnsave} />
+    <CommunityActions post={post} locale={locale} localOriginal={localOriginal} onUnsave={onUnsave} />
     {actions}
   </>}>
     <Link className="content-post-link" href={`/community/${post.id}${localOriginal ? "?local=1" : ""}`}>
@@ -224,7 +246,8 @@ export function CommunityPage({ initialView = "discover" }: { initialView?: "dis
   const activeSchool = querySchool ?? state.selectedSchool ?? ownSchool;
   const school = schoolOptions.find(option => option.id === activeSchool)!;
   const schoolPosts = getCommunityPosts(state, activeSchool);
-  const topicPosts = schoolPosts.filter(post => topic === "all" || post.topic === topic);
+  const publicPosts = schoolPosts.filter(post => post.demo || state.sharedPosts.some(item => item.id === post.id));
+  const topicPosts = (view === "saved" ? schoolPosts : publicPosts).filter(post => topic === "all" || post.topic === topic);
   const viewPosts = topicPosts.filter(post => view === "saved" ? state.saved.includes(post.id) : post.kind === (view === "discover" ? "note" : "discussion"));
   const tagItems = collectTagCounts(viewPosts);
   const matchesTag = (post: CommunityPost) => !selectedTag || post.tags?.some(tag => tagKey(tag) === tagKey(selectedTag));
@@ -250,6 +273,11 @@ export function CommunityPage({ initialView = "discover" }: { initialView?: "dis
   };
   const openComposer = () => { if (!state.draft.schoolId || (!state.draft.title.trim() && !state.draft.body.trim() && !state.draft.tags?.length)) updateCommunityDraft({ schoolId: activeSchool }); setComposing(true); };
   const closeComposer = () => { setComposing(false); writeButton.current?.focus(); };
+  function openSavedPost(id: string, published?: boolean) {
+    // A live feed refresh can interrupt a soft navigation just after publication.
+    // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+    window.location.assign(`/community/${encodeURIComponent(id)}${published ? "" : "?local=1"}`);
+  }
   const changeTab = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     const next = event.key === "ArrowRight" ? (index + 1) % tabs.length : event.key === "ArrowLeft" ? (index + tabs.length - 1) % tabs.length : event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : null;
     if (next === null) return;
@@ -266,7 +294,7 @@ export function CommunityPage({ initialView = "discover" }: { initialView?: "dis
     <CommunityRemoteNotice locale={locale} />
     {state.storageUnavailable && <p className="community-storage-note" role="status">{t("暂时无法保存，关闭或刷新后可能丢失记录。", "Не удалось сохранить записи. После обновления или закрытия страницы они могут исчезнуть.")}</p>}
 
-    {composing && <CommunityComposer schoolId={activeSchool} onClose={closeComposer} onSaved={id => router.push(`/community/${id}`)} />}
+    {composing && <CommunityComposer schoolId={activeSchool} onClose={closeComposer} onSaved={openSavedPost} />}
 
     <div className="community-directory-layout"><aside className="community-school-rail" aria-label={t("当前学校社区", "Текущее сообщество")}><div className="community-school-card"><GraduationCap size={32} strokeWidth={1.5} /><strong>{school.shortLabel[locale]}</strong><p>{school.label[locale]}</p><span>{t("留学生活，在这里相遇。", "Место для студенческих историй.")}</span></div><div className="community-rail-note"><Sparkles size={22} strokeWidth={1.75} /><p>{t("不同的学校，各自的日常。选一个主题，看看想聊的话。", "У каждого вуза свои будни. Выберите тему для чтения или разговора.")}</p></div></aside><div className="community-content-column">
     <div className="community-tabs" role="tablist" aria-label={t("社区内容", "Разделы сообщества")}>

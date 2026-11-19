@@ -244,6 +244,16 @@ export function updateCommunityDraft(patch: Partial<CommunityDraft>) {
   });
 }
 
+export function clearPublishedDraft(sent: CommunityDraft) {
+  commit(state => {
+    const currentDraft = state.draft;
+    if (currentDraft.title !== sent.title || currentDraft.body !== sent.body || currentDraft.topic !== sent.topic ||
+        currentDraft.kind !== sent.kind || currentDraft.schoolId !== sent.schoolId ||
+        JSON.stringify(currentDraft.tags ?? []) !== JSON.stringify(sent.tags ?? [])) return state;
+    return { ...state, draft: emptyDraft() };
+  });
+}
+
 export function setCommunitySchool(schoolId: SchoolId | null) {
   if (schoolId !== null && !isSchoolId(schoolId)) return;
   commit(state => state.selectedSchool === schoolId ? state : { ...state, selectedSchool: schoolId });

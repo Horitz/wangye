@@ -25,6 +25,13 @@ export function normalizeMemberUsername(value) {
   if (!/^[a-z0-9][a-z0-9._-]{2,31}$/.test(username)) throw new SocialError("invalid_username");
   return username;
 }
+export function friendSearchTerms(value) {
+  const query = typeof value === "string" ? value.trim() : "";
+  const handle = /^[@＠]/.test(query);
+  const term = handle ? query.slice(1).trim() : query;
+  if (!term || term.length > 32) throw new SocialError("invalid_search");
+  return { username: term.toLowerCase(), displayName: handle ? null : term };
+}
 function validateDisplayName(value) {
   if (typeof value !== "string" || !value.trim() || value.trim().length > 32 || /[\u0000-\u001f\u007f]/.test(value)) throw new SocialError("invalid_display_name");
   return value.trim();
@@ -150,9 +157,10 @@ export function openSocialStore({ dataDir = process.env.STUDENTPATH_DATA_DIR || 
     logout(token) { if (tokenValid(token)) db.prepare("DELETE FROM member_sessions WHERE token_hash=?").run(hash(token)); },
     search(token, query) {
       const user = requireSession(token);
-      const username = normalizeMemberUsername(query);
-      const row = db.prepare("SELECT id,username,display_name FROM member_users WHERE username=? AND id<>?").get(username, user.id);
-      return { users: row ? [publicUser(row)] : [] };
+      const { username, displayName } = friendSearchTerms(query);
+      const rows = db.prepare(`SELECT id,username,display_name FROM member_users WHERE id<>? AND (username=? OR display_name=?)
+        ORDER BY (username=?) DESC, username LIMIT 30`).all(user.id, username, displayName, username);
+      return { users: rows.map(publicUser) };
     },
     friends(token) { return friendSnapshot(requireSession(token).id); },
     updateFriend(token, otherId, action) {
