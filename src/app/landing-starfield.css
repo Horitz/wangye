@@ -1,0 +1,157 @@
+/* Fixed star maps keep their positions when the page hydrates, resizes or switches language. */
+.landing-page {
+  --starlight: color-mix(in srgb, var(--spatial-paper) 87%, var(--spatial-gold));
+  --night-zenith: color-mix(in srgb, var(--spatial-night) 90%, var(--spatial-blue));
+  --night-glow: color-mix(in srgb, var(--spatial-blue) 22%, transparent);
+  --distant-stars:
+    radial-gradient(circle at 4% 61%, currentColor .7px, transparent 1.2px),
+    radial-gradient(circle at 16% 14%, currentColor .8px, transparent 1.35px),
+    radial-gradient(circle at 21% 92%, currentColor .5px, transparent 1px),
+    radial-gradient(circle at 30% 44%, currentColor 1px, transparent 1.6px),
+    radial-gradient(circle at 46% 24%, currentColor .65px, transparent 1.25px),
+    radial-gradient(circle at 48% 27%, currentColor .45px, transparent 1px),
+    radial-gradient(circle at 57% 73%, currentColor .7px, transparent 1.2px),
+    radial-gradient(circle at 72% 39%, currentColor .55px, transparent 1.05px),
+    radial-gradient(circle at 83% 87%, currentColor .85px, transparent 1.45px),
+    radial-gradient(circle at 95% 8%, currentColor .55px, transparent 1px);
+}
+
+.landing-page .spatial-hero { background: var(--night-zenith); }
+.landing-page .spatial-hero::before, .landing-page .spatial-hero::after { content: none; }
+.landing-page .hero-grid { position: relative; z-index: 1; }
+
+.hero-starfield {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  pointer-events: none;
+  user-select: none;
+  color: var(--starlight);
+  background:
+    radial-gradient(ellipse at 80% 35%, var(--night-glow), transparent 53%),
+    radial-gradient(ellipse at 97% 70%, color-mix(in srgb, var(--spatial-teal) 9%, transparent), transparent 37%),
+    linear-gradient(to bottom, var(--spatial-night), transparent 24% 71%, var(--spatial-night));
+}
+.hero-starfield-veil {
+  position: absolute;
+  inset: 0;
+  mask-image: radial-gradient(ellipse 36% 42% at 28% 54%, #0003, #000 100%);
+}
+.starfield-depth { position: absolute; inset: -30px; }
+.starfield-depth--far {
+  opacity: .6;
+  background-image: var(--distant-stars);
+  background-size: 347px 237px;
+  background-position: 37px 19px;
+}
+.starfield-depth--near {
+  opacity: .86;
+  background-image:
+    radial-gradient(circle at 8% 28%, currentColor 1px, transparent 1.65px),
+    radial-gradient(circle at 28% 84%, var(--spatial-lilac) .8px, transparent 1.5px),
+    radial-gradient(circle at 38% 37%, currentColor 1.15px, transparent 2px),
+    radial-gradient(circle at 60% 12%, currentColor .8px, transparent 1.45px),
+    radial-gradient(circle at 74% 92%, currentColor 1px, transparent 1.7px),
+    radial-gradient(circle at 91% 56%, var(--spatial-teal) .9px, transparent 1.55px);
+  background-size: 479px 373px;
+  background-position: 83px -37px;
+}
+.sky-constellation {
+  position: absolute;
+  height: auto;
+  opacity: .82;
+  color: var(--starlight);
+  pointer-events: none;
+}
+.sky-constellation--dipper {
+  width: clamp(108px, 12vw, 205px);
+  top: 4%;
+  left: 54%;
+}
+.sky-constellation--cassiopeia {
+  width: clamp(90px, 9vw, 145px);
+  bottom: 5%;
+  right: 46%;
+  color: color-mix(in srgb, var(--spatial-lilac) 48%, var(--spatial-paper));
+}
+.landing-page .journey-chapter { position: relative; }
+.journey-chapter > .sky-constellation {
+  height: clamp(48px, 6vw, 76px);
+  width: auto;
+}
+.sky-constellation--orion {
+  top: var(--space-2);
+  left: 29%;
+  color: color-mix(in srgb, var(--spatial-gold) 28%, var(--spatial-paper));
+}
+.sky-constellation--cygnus {
+  bottom: var(--space-2);
+  right: 24%;
+  color: color-mix(in srgb, var(--spatial-teal) 46%, var(--spatial-paper));
+}
+.sky-constellation--lyra {
+  top: var(--space-4);
+  left: 10%;
+  color: color-mix(in srgb, var(--spatial-lilac) 35%, var(--spatial-paper));
+}
+
+/* A dimmer continuation behind the chapters, with quiet space along the reading column. */
+.landing-page .journey-story {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--spatial-stage);
+}
+.landing-page .journey-story::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: inherit;
+  color: var(--starlight);
+  opacity: .34;
+  background-image: var(--distant-stars);
+  background-size: 481px 367px;
+  mask-image: linear-gradient(90deg, black, #0005 28% 72%, black);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-sky-field] { --star-play: paused; }
+  [data-sky-field][data-playing="true"] { --star-play: running; }
+  .constellation-light {
+    animation: constellation-twinkle var(--twinkle-time) ease-in-out var(--twinkle-delay) infinite;
+    animation-play-state: var(--star-play);
+  }
+  .starfield-depth {
+    animation: starlight-drift 36s ease-in-out infinite alternate, starlight-pulse 9s ease-in-out infinite alternate;
+    animation-play-state: var(--star-play);
+  }
+  .starfield-depth--far { --star-floor: .34; --star-peak: .68; animation-delay: -11s, -5s; }
+  .starfield-depth--near {
+    --star-floor: .53; --star-peak: .95;
+    animation-duration: 23s, 6.5s;
+    animation-delay: -15s, -2s;
+    animation-direction: alternate-reverse, alternate;
+  }
+}
+@keyframes starlight-drift { from { transform: translate(-18px,-12px); } to { transform: translate(18px,12px); } }
+@keyframes starlight-pulse { from { opacity: var(--star-floor); } to { opacity: var(--star-peak); } }
+@keyframes constellation-twinkle { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
+@media (max-width: 899px) {
+  .sky-constellation--dipper { left: auto; right: 7%; top: 4%; width: 96px; }
+  .sky-constellation--cassiopeia { right: 35%; bottom: 2%; width: 83px; }
+}
+@media (max-width: 699px) {
+  .hero-starfield-veil { mask-image: linear-gradient(to bottom, #0005, #0007 40%, black 65%); }
+  .starfield-depth--far { background-size: 393px 273px; }
+  .sky-constellation--dipper { width: 72px; top: var(--space-1); right: var(--page-gutter); }
+  .sky-constellation--cassiopeia { display: none; }
+  .journey-chapter > .sky-constellation { height: 37px; }
+  .sky-constellation--orion { left: 62%; }
+  .sky-constellation--cygnus { right: 40%; }
+  .sky-constellation--lyra { top: var(--space-2); }
+}
+@media (forced-colors: active) {
+  .hero-starfield, .sky-constellation, .landing-page .journey-story::before { display: none; }
+
+}

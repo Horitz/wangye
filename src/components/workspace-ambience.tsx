@@ -132,7 +132,6 @@ export function PageAmbience() {
     <div className="ambience-margin ambience-margin--left">
       <MarginStars />
       <div className="ambience-drawing ambience-drawing--star-one" data-kind="star" data-motion="paused"><SmallStar /></div>
-      <div className="ambience-drawing ambience-drawing--voxel" data-kind="grass" data-motion="paused"><VoxelDecoration kind="grass" /></div>
       <div className="ambience-drawing ambience-drawing--star-three" data-kind="star" data-motion="paused"><SmallStar /></div>
     </div>
     <div className="ambience-margin ambience-margin--right">

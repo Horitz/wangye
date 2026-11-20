@@ -52,7 +52,7 @@ export function LandingNightSky() {
         data-tone={star.tone ?? "paper"}
         style={{ "--sky-x": `${star.x}%`, "--sky-y": `${star.y}%`, "--sky-star-size": `${star.size}px`, "--sky-star-delay": `${-(index * .9 + (side === "right" ? 2.3 : 0))}s`, "--sky-star-duration": `${6.8 + index % 3 * 1.4}s` } as CSSProperties}
       ><span className={star.size > 4 ? "landing-sky-star landing-sky-star--spark" : "landing-sky-star"} /></span>)}
-      {side === "left" ? <span className="landing-sky-planet landing-sky-planet--moon"><NightSkyPlanet kind="moon" /></span> : <>
+      {side === "right" && <>
         <span className="landing-sky-planet landing-sky-planet--ringed"><NightSkyPlanet kind="ringed" /></span>
         <span className="landing-sky-planet landing-sky-planet--striped"><NightSkyPlanet kind="striped" /></span>
       </>}

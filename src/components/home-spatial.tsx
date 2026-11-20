@@ -6,6 +6,7 @@ import { ClayStudent } from "@/components/clay-student";
 import { BoardingPass } from "@/components/boarding-pass";
 import { HeroGardenTitle } from "@/components/hero-garden-title";
 import { UniversityMarquee } from "@/components/university-marquee";
+import { Constellation, HeroStarfield } from "@/components/landing-starfield";
 import { useOrbitalMotion } from "@/lib/use-orbital-motion";
 import { getHomeRevealState } from "@/lib/home-reveal-state";
 import type { Locale } from "@/lib/home-store";
@@ -13,6 +14,7 @@ import type { Locale } from "@/lib/home-store";
 const chapters = [
   {
     id: "chapter-arrival",
+    constellation: "orion",
     title: { zh: "在新城市落脚。", ru: "Первые дни в новом городе." },
     description: {
       zh: "从一张机票开始，认识新的校园、街道和日常。你的留学生活，就从这里展开。",
@@ -21,6 +23,7 @@ const chapters = [
   },
   {
     id: "chapter-settle",
+    constellation: "cygnus",
     title: { zh: "把陌生，变成熟悉。", ru: "Новый город становится своим." },
     description: {
       zh: "慢慢认识这座城市，也慢慢建立属于自己的生活节奏。",
@@ -29,13 +32,14 @@ const chapters = [
   },
   {
     id: "chapter-continue",
+    constellation: "lyra",
     title: { zh: "留学生活，不止一种可能。", ru: "Больше, чем учёба." },
     description: {
       zh: "学习、探索、遇见不同的人。按自己的节奏，走出属于你的留学故事。",
       ru: "Учитесь, исследуйте, знакомьтесь. Создавайте свою историю в собственном темпе.",
     },
   },
-];
+] as const;
 
 function JourneyScene() {
   const scene = useRef<HTMLDivElement>(null);
@@ -165,6 +169,7 @@ export function SpatialHome({ locale, onStart }: {
     <>
       <div className="reading-progress" aria-hidden="true"><span ref={readingProgress} /></div>
       <section className="spatial-hero" ref={hero} aria-labelledby="hero-title">
+        <HeroStarfield />
         <div className="hero-grid page-container">
           <div className="spatial-copy">
             <p className="spatial-kicker">{t("为你的留学生活", "Для вашей студенческой жизни")}</p>
@@ -192,6 +197,7 @@ export function SpatialHome({ locale, onStart }: {
           <div className="page-container">
             {chapters.map((chapter, index) => (
               <article className={`journey-chapter journey-chapter-${index}`} id={chapter.id} key={chapter.id} data-reveal>
+                <Constellation name={chapter.constellation} />
                 <div className="journey-copy">
                 <h2>{chapter.title[locale]}</h2>
                 <p>{chapter.description[locale]}</p>

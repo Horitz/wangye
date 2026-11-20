@@ -1,4 +1,4 @@
-/* The sky spans the page; the original rocket and grass block stay in the first screen. */
+/* The sky spans the page; the rocket stays in the first screen. */
 .landing-page .page-ambience[data-scene="landing"] {
   height: calc(100% - var(--ambient-header-height));
   --sky-star-color: var(--spatial-paper);
