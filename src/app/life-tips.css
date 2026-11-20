@@ -77,7 +77,6 @@
 .life-tips-spark--second { right: 0; bottom: 18%; color: var(--spatial-teal); animation-delay: -3.4s; }
 .life-tips-orbit { position: absolute; inset: 12% 0; animation: life-tips-orbit 14s linear infinite; animation-play-state: var(--life-tips-motion); }
 .life-tips-orbit > span { position: absolute; top: 0; left: 50%; width: 6px; height: 6px; border-radius: 50%; background: var(--spatial-lilac); box-shadow: 0 0 0 4px var(--material-accent-glow); }
-.life-tips-chat-mark { position: absolute; z-index: 2; right: 0; top: 0; display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-pill); color: var(--brand); background: var(--surface); animation: life-tips-chat-float 4.8s ease-in-out infinite; animation-play-state: var(--life-tips-motion); }
 .life-tips-character-shadow { position: absolute; bottom: 0; left: 28%; width: 44%; height: 6px; border-radius: 50%; background: var(--material-accent-glow); animation: life-tips-shadow 6.8s ease-in-out infinite; animation-play-state: var(--life-tips-motion); }
 .workspace-page:has(dialog[open]) .life-tips-companion * { animation-play-state: paused; }
 @keyframes life-tips-character-float { 0%, 100% { transform: translateY(0) rotate(-.8deg); } 50% { transform: translateY(-6px) rotate(.8deg) scale(1.015); } }
@@ -87,7 +86,6 @@
 @keyframes dragon-startle { 35% { transform: translateY(-8px) scale(1.08); } 75% { transform: scale(.97); } }
 @keyframes life-tips-sparkle { 0%, 100% { opacity: .3; transform: scale(.85); } 50% { opacity: 1; transform: scale(1.08); } }
 @keyframes life-tips-orbit { to { transform: rotate(360deg); } }
-@keyframes life-tips-chat-float { 0%, 100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-3px) rotate(6deg); } }
 @keyframes life-tips-shadow { 0%, 100% { opacity: .8; transform: scaleX(1); } 50% { opacity: .4; transform: scaleX(.8); } }
 .life-tips-bubble {
   position: absolute;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState, type CSSProperties } from "react";
-import { ArrowRight, Check, ChevronDown, Copy, ExternalLink, MessageCircle, Pause, Pencil, Play, RefreshCw, Sparkles, X } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Copy, ExternalLink, Pause, Pencil, Play, RefreshCw, Sparkles, X } from "lucide-react";
 import { defaultLifeTips, type LifeTip } from "@/data/life-tips";
 import { useHomeState, type Locale } from "@/lib/home-store";
 import { useCommunityRemoteState } from "@/lib/community-remote-store";
@@ -44,7 +44,6 @@ function LifeTipsCompanion({ paused, mood, pose, reaction }: { paused: boolean; 
     <Sparkles className="life-tips-spark life-tips-spark--first" size={28} />
     <Sparkles className="life-tips-spark life-tips-spark--second" size={20} />
     <span className="life-tips-orbit"><span /></span>
-    <span className="life-tips-chat-mark"><MessageCircle size={22} /></span>
     <span className="life-tips-character-shadow" />
   </span>;
 }
