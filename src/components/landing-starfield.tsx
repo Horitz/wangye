@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, type CSSProperties, type RefObject } from "react";
+import { NightSkyPlanet } from "@/components/night-sky-planet";
 import "@/app/landing-starfield.css";
 
 type Chart = {
@@ -73,13 +74,19 @@ export function useSkyPlayback(root: RefObject<HTMLElement | null>) {
 }
 
 /** A local interpretation of the drifting night sky at github.com/YaoqxCN/star-sky. */
-export function HeroStarfield() {
+export function NightSkyBackdrop() {
   return <div className="hero-starfield" data-sky-field="" aria-hidden="true">
     <div className="hero-starfield-veil">
       <i className="starfield-depth starfield-depth--far" />
       <i className="starfield-depth starfield-depth--near" />
     </div>
+  </div>;
+}
+
+export function HeroStarfield() {
+  return <div className="hero-sky-motifs" data-sky-field="" aria-hidden="true">
     <Constellation name="dipper" />
     <Constellation name="cassiopeia" />
+    <div className="hero-ring-planet"><NightSkyPlanet kind="ringed" /></div>
   </div>;
 }

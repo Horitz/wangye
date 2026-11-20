@@ -1,0 +1,187 @@
+@font-face {
+  font-family: "StudentPath Doodle Han";
+  src: url("/fonts/landing-titles/doodle-zh.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "StudentPath Doodle Cyrillic";
+  src: url("/fonts/landing-titles/doodle-ru.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "StudentPath WenKai";
+  src: url("/fonts/landing-titles/notebook-zh.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "StudentPath Neucha";
+  src: url("/fonts/landing-titles/notebook-ru.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+.landing-page {
+  --sky-nav-height: 72px;
+  --landing-title-face: "StudentPath Doodle Han", var(--font-heading);
+  --landing-reading-face: "StudentPath WenKai", KaiTi, var(--font-body);
+  --landing-reading-size: clamp(17px, 1.4vw, 20px);
+  --landing-editorial-tracking: .012em;
+}
+.landing-page.locale-ru {
+  --landing-title-face: "StudentPath Doodle Cyrillic", var(--font-heading);
+  --landing-reading-face: "StudentPath Neucha", var(--font-body);
+  --landing-reading-size: clamp(19px, 1.5vw, 22px);
+  --landing-editorial-tracking: -.024em;
+}
+.landing-page :is(.tunnel-scene h2, .curtain-content h2) {
+  font-family: var(--landing-title-face);
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: var(--landing-editorial-tracking);
+}
+.landing-page .tunnel-scene h2 { text-wrap: balance; }
+.landing-page.locale-zh :is(.chapter-ink-title > span, .ink-finale-print) { filter: url("#hero-dry-ink"); }
+.landing-page :is(.tunnel-scene .journey-copy, .curtain-content) p {
+  font-family: var(--landing-reading-face);
+  font-size: var(--landing-reading-size);
+  font-weight: 400;
+  line-height: var(--landing-copy-leading);
+  color: color-mix(in srgb, var(--spatial-paper) 80%, var(--spatial-muted));
+}
+.spatial-page.landing-page .landing-header {
+  margin-bottom: calc(-1 * var(--sky-nav-height));
+  background: transparent;
+  border-color: transparent;
+  transition: background .25s ease;
+}
+.spatial-page.landing-page[data-scrolled] .landing-header {
+  background: color-mix(in srgb, var(--spatial-night) 72%, transparent);
+  backdrop-filter: blur(6px);
+}
+.landing-page .landing-menu { position: absolute; inset: 100% 0 auto; }
+.landing-page .spatial-hero { padding-top: var(--sky-nav-height); min-height: max(720px, 100svh); }
+.landing-page .sky-constellation--dipper { top: calc(var(--sky-nav-height) + 1%); }
+.hero-ring-planet {
+  --sky-planet-body: var(--spatial-lilac);
+  --sky-planet-ring: var(--spatial-teal);
+  --sky-planet-light: color-mix(in srgb, var(--spatial-paper) 75%, var(--spatial-lilac));
+  --sky-planet-shadow: color-mix(in srgb, var(--spatial-night) 60%, var(--spatial-lilac));
+  position: absolute; right: 7%; top: calc(var(--sky-nav-height) + 4%);
+  width: clamp(76px, 10vw, 162px); opacity: .86;
+}
+.hero-ring-planet svg { display: block; width: 100%; overflow: visible; }
+.planet-satellite { offset-path: path("M4 64a76 23 0 1 1 152 0a76 23 0 1 1 -152 0"); offset-distance: 8%; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-ring-planet svg, .landing-page .landing-sky-planet--striped svg {
+    animation: planet-float 10s ease-in-out infinite alternate;
+    animation-play-state: var(--star-play, paused);
+  }
+  .planet-satellite { animation: planet-lap 14s linear infinite; animation-play-state: var(--star-play, paused); }
+}
+@keyframes planet-float { from { transform: translateY(-3px) rotate(-5deg); } to { transform: translateY(5px) rotate(4deg); } }
+@keyframes planet-lap { from { offset-distance: 8%; } to { offset-distance: 108%; } }
+
+.landing-page .tunnel-story { padding: 0; border-radius: 0; }
+.landing-page .tunnel-story .tunnel-chapter {
+  display: block; min-height: 125svh; padding: 0; scroll-margin-top: var(--sky-nav-height);
+}
+.tunnel-scene {
+  position: sticky; top: var(--sky-nav-height);
+  display: grid; place-items: center; isolation: isolate; overflow: clip;
+  min-height: max(540px, calc(100svh - var(--sky-nav-height)));
+}
+.tunnel-gallery, .tunnel-camera { position: absolute; inset: 0; }
+.tunnel-gallery { z-index: -1; }
+.tunnel-camera { perspective: 950px; }
+.tunnel-print {
+  position: absolute; left: 50%; top: 50%; width: clamp(190px, 21vw, 360px);
+  margin: 0; aspect-ratio: 4 / 5;
+  transform: translate3d(calc(-50% + var(--orbit-x)), calc(-50% + var(--orbit-y)), calc(var(--travel, 0) * var(--range) + var(--z))) rotate(var(--tilt));
+}
+.tunnel-print--0 { --orbit-x: -35vw; --orbit-y: 3svh; --z: 32px; --range: 730px; --tilt: -7deg; }
+.tunnel-print--1 { --orbit-x: 35vw; --orbit-y: -13svh; --z: -58px; --range: 660px; --tilt: 6deg; width: clamp(180px, 18vw, 295px); }
+.tunnel-print--2 { --orbit-x: 23vw; --orbit-y: 35svh; --z: -210px; --range: 570px; --tilt: -4deg; width: clamp(130px, 14vw, 235px); aspect-ratio: 3 / 2; }
+.tunnel-chapter--1 .tunnel-print--0 { --orbit-x: 35vw; --tilt: 5deg; }
+.tunnel-chapter--1 .tunnel-print--1 { --orbit-x: -36vw; --tilt: -6deg; }
+.tunnel-chapter--1 .tunnel-print--2 { --orbit-x: -22vw; --tilt: 4deg; }
+.tunnel-mount {
+  position: relative; width: 100%; height: 100%; overflow: hidden;
+  border: 1px solid var(--spatial-line); border-radius: 12px;
+  background: var(--spatial-night); box-shadow: 0 18px 54px #0005;
+  transform: translate(var(--pan-x, 0px), var(--pan-y, 0px)); transition: transform 300ms ease-out;
+}
+.tunnel-mount img { object-fit: cover; }
+.landing-page .tunnel-scene .journey-copy {
+  position: relative; width: min(35vw, 540px); max-width: none; margin: auto;
+  padding-block: var(--space-6); text-align: center;
+}
+.landing-page .tunnel-scene h2 { font-size: clamp(38px, 4.2vw, 68px); }
+.landing-page.locale-ru .tunnel-scene h2 { font-size: clamp(34px, 3.6vw, 58px); }
+.landing-page .tunnel-scene p { margin-inline: auto; }
+.tunnel-scene > .sky-constellation { width: auto; height: clamp(40px, 6vw, 72px); }
+.tunnel-scene > .sky-constellation--orion, .tunnel-scene > .sky-constellation--lyra { top: 8%; left: 41%; }
+.tunnel-scene > .sky-constellation--cygnus { right: 42%; bottom: 7%; }
+
+.home-curtain {
+  position: relative; isolation: isolate; display: grid; align-content: center; justify-items: center;
+  min-height: min(850px, 92svh); padding: clamp(130px, 18vh, 205px) var(--page-gutter) clamp(155px, 19vh, 220px);
+  text-align: center; color: var(--spatial-paper); scroll-margin-top: var(--sky-nav-height);
+}
+.curtain-scenery { position: absolute; inset: 0; overflow: clip; z-index: -1; pointer-events: none; }
+.curtain-wordmark {
+  position: absolute; bottom: -2%; left: 50%; transform: translate(-50%, var(--curtain-y, 0px));
+  font: 800 clamp(48px, 16vw, 360px)/.86 "Manrope Variable", sans-serif; letter-spacing: -.065em;
+  color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--spatial-lilac) 31%, transparent);
+}
+.curtain-content { width: min(100%, 960px); transform: translateY(calc(var(--curtain-y, 0px) * .45)); }
+.curtain-content h2 { font-size: clamp(36px, 5.6vw, 84px); line-height: 1.18; text-wrap: balance; }
+.curtain-content p { margin: var(--space-4) auto; max-width: 48ch; color: var(--spatial-muted); line-height: var(--landing-copy-leading); }
+.curtain-actions { display: flex; flex-wrap: wrap; gap: var(--space-3); justify-content: center; margin-top: var(--space-6); }
+.curtain-link, .curtain-top {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); padding: 12px 20px;
+  min-height: var(--control-min-height); border-radius: var(--radius-pill);
+  color: var(--spatial-paper); border: 1px solid var(--spatial-line); background: var(--spatial-glass);
+  transition: transform 220ms ease, border-color 220ms ease;
+}
+.curtain-link--start { color: var(--spatial-ink); background: var(--spatial-gold); font-weight: 650; }
+.curtain-link svg, .curtain-top svg { width: 19px; height: 19px; }
+.home-curtain :focus-visible { outline: 2px solid var(--spatial-gold); outline-offset: 4px; }
+.curtain-base {
+  display: flex; align-items: end; justify-content: space-between; gap: var(--space-3);
+  position: absolute; bottom: var(--space-5); left: 50%; transform: translateX(-50%); z-index: 1;
+}
+.curtain-top { padding: 12px; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .curtain-link:hover, .curtain-top:hover { transform: translate(var(--magnet-x, 0px), calc(-3px + var(--magnet-y, 0px))); border-color: var(--spatial-lilac); }
+}
+@media (max-width: 899px), (max-height: 530px) {
+  .landing-page .tunnel-story .tunnel-chapter { min-height: 0; }
+  .tunnel-scene { position: relative; top: auto; padding-block: var(--space-6) var(--space-8); gap: var(--space-3); min-height: 0; }
+  .tunnel-gallery { position: relative; inset: auto; width: 100%; height: clamp(210px, 43vw, 340px); }
+  .tunnel-print--0, .tunnel-chapter--1 .tunnel-print--0 { width: min(43vw, 268px); aspect-ratio: 4/3; --orbit-x: -14vw; --orbit-y: 0px; --tilt: -5deg; --z: 0px; --range: 220px; }
+  .tunnel-print--1, .tunnel-chapter--1 .tunnel-print--1 { width: min(34vw, 204px); --orbit-x: 22vw; --orbit-y: 3%; --tilt: 7deg; --z: -28px; --range: 160px; }
+  .tunnel-print--2 { display: none; }
+  .landing-page .tunnel-scene .journey-copy { width: min(90%, 530px); padding: 0; }
+  .tunnel-scene > .sky-constellation { height: 30px; top: var(--space-2); bottom: auto; left: 5%; right: auto; }
+  .hero-ring-planet { right: 5%; top: calc(var(--sky-nav-height) + 14%); width: 66px; }
+}
+@media (max-width: 699px) {
+  .landing-page { --sky-nav-height: 64px; }
+  .hero-ring-planet { top: calc(var(--sky-nav-height) - 3px); right: auto; left: 7%; width: 46px; }
+  .landing-page .spatial-hero { padding-top: calc(var(--sky-nav-height) + 36px); }
+  .landing-page .tunnel-scene h2 { font-size: 32px; }
+  .landing-page.locale-ru .tunnel-scene h2 { font-size: 30px; }
+  .curtain-base { flex-wrap: wrap; align-items: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tunnel-scene { position: relative; top: auto; }
+  .landing-page .tunnel-story .tunnel-chapter { min-height: 0; }
+  .tunnel-camera { --travel: 0; }
+  .curtain-wordmark, .tunnel-mount, .curtain-link, .curtain-top, .landing-page .landing-header { transition: none; }
+}
+@media (forced-colors: active) {
+  .hero-ring-planet, .curtain-scenery { display: none; }
+  .landing-page.locale-zh :is(.chapter-ink-title > span, .ink-finale-print) { filter: none; }
+}

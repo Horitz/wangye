@@ -4,12 +4,15 @@ export type NightSkyPlanetKind = "ringed" | "moon" | "striped";
 export function NightSkyPlanet({ kind }: { kind: NightSkyPlanetKind }) {
   return <svg viewBox="0 0 160 128" aria-hidden="true" focusable="false">
     {kind === "ringed" ? <g transform="rotate(-22 80 64)">
+      <ellipse cx="80" cy="64" rx="76" ry="23" fill="none" stroke="var(--sky-planet-ring)" strokeWidth=".85" opacity=".75" />
       <ellipse cx="80" cy="64" rx="69" ry="19" fill="none" stroke="var(--sky-planet-ring)" strokeWidth="9" opacity=".55" />
       <circle cx="80" cy="64" r="36" fill="var(--sky-planet-body)" />
+      <path d="M49 48q24 9 57-7M44 63q38 12 70-5M51 82q25 8 57-3" fill="none" stroke="var(--sky-planet-light)" strokeWidth="2.5" opacity=".28" />
       <path d="M52 50c5-14 22-23 36-17-16 0-27 10-30 24-2 6-8 3-6-7Z" fill="var(--sky-planet-light)" opacity=".7" />
       <path d="M95 31a36 36 0 0 1-34 64c22 3 42-15 42-36 0-11-3-20-8-28Z" fill="var(--sky-planet-shadow)" opacity=".65" />
       <path d="M11 64a69 19 0 0 0 138 0" fill="none" stroke="var(--sky-planet-ring)" strokeWidth="9" strokeLinecap="round" />
       <path d="M17 70c19 14 102 14 126 0" fill="none" stroke="var(--sky-planet-light)" strokeWidth="2" strokeLinecap="round" opacity=".6" />
+      <circle className="planet-satellite" r="3" fill="var(--spatial-gold)" />
     </g> : kind === "moon" ? <>
       <circle cx="80" cy="64" r="39" fill="var(--sky-planet-body)" />
       <path d="M94 28a39 39 0 0 1-34 69c24 3 44-17 44-40 0-12-4-22-10-29Z" fill="var(--sky-planet-shadow)" opacity=".55" />

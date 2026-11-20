@@ -1,5 +1,21 @@
 # 首页实拍图片来源
 
+## 星空首页的莫斯科摄影
+
+九张原作均按 [Unsplash License](https://unsplash.com/license) 使用，供首页测试版三个章节展示。本地 JPEG 位于 `public/images/moscow/`，按屏幕大小等比裁切。作者、作品与文件如下。
+
+| 场景 | 本地文件 | 摄影与原作 |
+| --- | --- | --- |
+| 雪中的圣瓦西里大教堂 | basil.jpg | [Eugeniya Belova](https://unsplash.com/photos/G42-OvxDAn8) |
+| 莫斯科河与克里姆林宫 | kremlin-day.jpg | [Viktor SOLOMONIK](https://unsplash.com/photos/iRLZWPATf-w) |
+| 扎里亚季耶公园 | zaryadye.jpg | [maks_d](https://unsplash.com/photos/KRHwD2G-Plg) |
+| 什柳佐瓦亚河岸的秋天 | autumn.jpg | [Natalia Trofimova](https://unsplash.com/photos/814dhPJRgW4) |
+| 察里津诺公园石塔 | tsaritsyno.jpg | [Oleg Podlesnykh](https://unsplash.com/photos/hcP7_E7ra58) |
+| 春日花园 | spring.jpg | [Yoksel Zok](https://unsplash.com/photos/2tZuY1d5Pfk) |
+| 莫斯科日落 | sunset.jpg | [Anton Savinov](https://unsplash.com/photos/D9tXei8ASh4) |
+| 城市雪夜 | snowfall.jpg | [Ivan Lapyrin](https://unsplash.com/photos/9rGjL68h5N8) |
+| 夜间的克里姆林宫河岸 | kremlin-night.jpg | [Nikolai Kolosov](https://unsplash.com/photos/c1jsNO7W4T8) |
+
 ## 首页校徽带
 
 以下图形取自学校公开页面，用于识别院校。图形等比存为本地 PNG；莫大和友大从校方组合标中提取独立图徽。

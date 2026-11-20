@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { Menu, UserRound, X } from "lucide-react";
 import { Brand } from "@/components/brand";
 import { SpatialHome } from "@/components/home-spatial";
-import { useSkyPlayback } from "@/components/landing-starfield";
+import { MotionFooter } from "@/components/ui/motion-footer";
+import { NightSkyBackdrop, useSkyPlayback } from "@/components/landing-starfield";
 import { PageAmbience } from "@/components/workspace-ambience";
 import { LanguageMenu } from "@/components/language-menu";
 import { useHomeState } from "@/lib/home-store";
@@ -20,16 +21,18 @@ export default function LandingHome() {
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
   const menuToggle = useRef<HTMLButtonElement>(null);
-  const main = useRef<HTMLElement>(null);
-  useSkyPlayback(main);
+  const site = useRef<HTMLDivElement>(null);
+  useSkyPlayback(site);
+  const start = () => router.push(member.user && member.profile ? "/dashboard" : "/onboarding");
 
   useEffect(() => { document.documentElement.lang = locale === "zh" ? "zh-CN" : "ru"; }, [locale]);
 
   return (
-    <div id="top" className={`site landing-page spatial-page locale-${locale}`} onKeyDown={event => {
+    <div id="top" ref={site} className={`site landing-page spatial-page locale-${locale}`} onKeyDown={event => {
       if (event.key !== "Escape") return;
       if (menuOpen) { setMenuOpen(false); menuToggle.current?.focus(); }
     }}>
+      <NightSkyBackdrop />
       <PageAmbience />
       <a className="skip-link" href="#main">{t("跳到主要内容", "Перейти к содержимому")}</a>
       <header className="site-header landing-header">
@@ -52,15 +55,11 @@ export default function LandingHome() {
           <a href="#start" onClick={() => setMenuOpen(false)}>{t("开启旅程", "Начало пути")}</a>
         </nav>
       </header>
-      <main id="main" ref={main}>
+      <main id="main">
         {storageUnavailable && <p className="storage-notice page-container" role="status">{t("语言设置仅在本次浏览中保留。", "Выбранный язык сохранится только до закрытия страницы.")}</p>}
-        <SpatialHome locale={locale} onStart={() => router.push(member.user && member.profile ? "/dashboard" : "/onboarding")} />
+        <SpatialHome locale={locale} onStart={start} />
       </main>
-      <footer className="site-footer landing-footer spatial-footer">
-        <div className="footer-inner page-container">
-          <Brand light />
-        </div>
-      </footer>
+      <MotionFooter locale={locale} onStart={start} />
     </div>
   );
 }

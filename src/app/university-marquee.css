@@ -3,9 +3,12 @@
   --uni-gap: clamp(44px, 5.6vw, 112px);
   --uni-edge: clamp(4px, .65vw, 14px);
   --uni-period: 92s;
+  --uni-tilt: -2deg;
+  --uni-bleed: 8px;
   position: relative;
+  overflow-x: clip;
   scroll-margin-top: 84px;
-  padding-block: clamp(20px, 2.6vw, 42px) clamp(40px, 4.8vw, 66px);
+  padding-block: calc(1.8vw + var(--space-4)) calc(1.8vw + var(--space-7));
   color: var(--spatial-paper);
 }
 
@@ -18,7 +21,14 @@
   width: auto; height: auto; min-height: 44px; align-items: center; gap: 8px; padding: 0 12px; clip-path: none;
   color: var(--spatial-paper); background: var(--spatial-stage); border-radius: 8px; outline: 2px solid var(--spatial-gold);
 }
-.uni-marquee__viewport { overflow-x: auto; }
+.uni-marquee__viewport {
+  margin-inline: calc(-1 * var(--uni-bleed));
+  padding-block: clamp(12px, 1.3vw, 20px);
+  overflow-x: auto;
+  border-block: 1px solid color-mix(in srgb, var(--spatial-lilac) 32%, transparent);
+  background: color-mix(in srgb, var(--spatial-lilac) 10%, transparent);
+  transform: rotate(var(--uni-tilt));
+}
 .uni-marquee__track { display: flex; width: max-content; }
 .uni-marquee__group {
   display: flex; flex: none; align-items: center; gap: var(--uni-gap);
@@ -50,7 +60,7 @@
 .uni-marquee[data-enhanced="true"] .uni-marquee__track { animation: uni-drift var(--uni-period) linear infinite paused; }
 .uni-marquee[data-enhanced="true"] .uni-marquee__group {
   /* An entire cycle always covers the viewport, including ultrawide displays. */
-  min-width: 100vw; justify-content: space-around; padding-inline: calc(var(--uni-gap) / 2);
+  min-width: calc(100vw + 2 * var(--uni-bleed)); justify-content: space-around; padding-inline: calc(var(--uni-gap) / 2);
 }
 .uni-marquee[data-enhanced="true"] .uni-marquee__group[aria-hidden="true"] { display: flex; }
 .uni-marquee[data-running="true"] .uni-marquee__track { animation-play-state: running; }
@@ -63,7 +73,7 @@
   .uni-marquee[data-running="true"] .uni-marquee__viewport:hover .uni-marquee__track { animation-play-state: paused; }
 }
 @media (max-width: 699px) {
-  .landing-page .uni-marquee { --uni-mark: 52px; --uni-gap: 42px; scroll-margin-top: 68px; padding-bottom: 50px; }
+  .landing-page .uni-marquee { --uni-mark: 52px; --uni-gap: 42px; --uni-tilt: -1.5deg; scroll-margin-top: 68px; padding-bottom: 50px; }
 }
 @media (prefers-reduced-motion: reduce), (scripting: none) {
   .uni-marquee[data-enhanced] .uni-marquee__control,

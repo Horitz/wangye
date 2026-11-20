@@ -58,11 +58,6 @@
 .fan-center { z-index: 3; left: 29%; background: var(--spatial-lilac); transform: translateY(-8%); }
 .continue-bookmark { bottom: 0; right: 5%; background: var(--spatial-gold); transform: rotate(10deg); }
 .art-2 .art-spark { top: 3%; left: 11%; }
-.spatial-page[data-motion="enabled"] .journey-chapter[data-reveal] { opacity: 1; transform: none; transition: none; }
-.spatial-page[data-motion="enabled"] .journey-chapter :is(.journey-copy, .chapter-art) { transition: opacity var(--spatial-reveal-time) var(--ease), transform var(--spatial-reveal-time) var(--ease); }
-.spatial-page[data-motion="enabled"] .journey-chapter[data-in-view] .chapter-art { transition-delay: var(--motion-stagger); }
-.spatial-page[data-motion="enabled"] .journey-chapter:not([data-in-view]):not(:focus-within) :is(.journey-copy, .chapter-art) { opacity: 0; transform: translateY(var(--reveal-offset, 24px)); }
-.spatial-page[data-motion="enabled"] .journey-chapter:focus-within :is(.journey-copy, .chapter-art) { opacity: 1; transform: none; transition: none; }
 @media (max-width: 1199px) { .journey-chapter { gap: var(--space-7); min-height: 600px; } }
 @media (max-width: 1023px) {
   .journey-chapter { gap: var(--space-6); min-height: 560px; padding-block: var(--space-8); }
@@ -80,6 +75,4 @@
 @media (prefers-reduced-motion: reduce) {
   .people-scene, .art-canvas { transform: none; }
   .orbit-object, .portrait-friend { will-change: auto; }
-  .spatial-page[data-motion="enabled"] .journey-chapter :is(.journey-copy, .chapter-art),
-  .spatial-page[data-motion="enabled"] .journey-chapter:not([data-in-view]):not(:focus-within) :is(.journey-copy, .chapter-art) { opacity: 1; transform: none; transition: none; }
 }

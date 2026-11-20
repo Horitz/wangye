@@ -7,6 +7,7 @@ import "./boarding-pass.css";
 import "./pixel-landing.css";
 import "./landing-locale.css";
 import "./university-marquee.css";
+import "./landing-journey.css";
 
 export default function Home() {
   return <LandingHome />;
