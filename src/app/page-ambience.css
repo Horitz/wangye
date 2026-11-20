@@ -35,6 +35,24 @@
 .ambience-drawing--rocket { top: 62%; width: min(var(--ambient-rocket-size), calc(100% - 16px)); }
 .ambience-star, .ambience-rocket { display: block; width: 100%; height: auto; }
 .ambience-star { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; }
+.ambience-drawing.margin-stars { width: min(var(--star-span, 42px), 84%); color: var(--spatial-lilac); pointer-events: none; }
+.margin-stars svg { display: block; width: 100%; overflow: visible; }
+.margin-stars--high { top: 19%; left: 77%; rotate: 8deg; }
+.margin-stars--middle { top: 58%; left: 30%; --star-span: 58px; --star-delay: -3.5s; }
+.margin-stars--low { top: 86%; left: 58%; --star-span: 29px; --star-delay: -1s; }
+.ambience-margin--right .margin-stars--high { top: 13%; left: 29%; --star-span: 34px; --star-delay: -4s; }
+.ambience-margin--right .margin-stars--middle { top: 47%; left: 68%; --star-span: 44px; --star-delay: -2s; }
+.ambience-margin--right .margin-stars--low { top: 74%; left: 37%; --star-span: 50px; }
+.margin-stars .margin-star-main { fill: color-mix(in srgb, var(--spatial-gold) 20%, transparent); }
+.margin-stars .margin-star-friend { stroke: var(--spatial-gold); }
+@media (prefers-reduced-motion: no-preference) {
+  .margin-stars .margin-star-main, .margin-stars .margin-star-friend { animation: ambience-twinkle 6.4s ease-in-out var(--star-delay, -2s) infinite; animation-play-state: var(--ambient-motion, paused); }
+  .margin-stars .margin-star-friend { animation-duration: 8.3s; }
+}
+@media (max-width: 699px) {
+  .ambience-drawing.margin-stars { width: 13px; left: 50%; }
+  .margin-stars--middle { display: none; }
+}
 .ambience-rocket-body { fill: color-mix(in srgb, var(--spatial-lilac) 30%, var(--spatial-paper)); }
 .ambience-rocket-fin { fill: var(--spatial-lilac); }
 .ambience-rocket-tip { fill: var(--spatial-pink); }
@@ -123,6 +141,17 @@ body:has(dialog[open]) .page-ambience .ambience-drawing { --ambient-motion: paus
 .page-ambience[data-density="illustrated"] .ambience-art--voxel-accent { display: none; --art-size: 80px; --art-x: var(--scatter-token-x); --art-y: var(--scatter-token-y); --art-angle: -9deg; }
 .page-ambience[data-density="illustrated"] .ambience-art--creature { display: none; --art-size: 88px; --art-x: var(--scatter-creature-x); --art-y: var(--scatter-creature-y); --art-angle: 5deg; }
 /* Route-specific shifts break the repeated left/right vertical rhythm. */
+.page-ambience[data-density="illustrated"] .ambience-art--vignette { display: none; --art-size: clamp(56px, 39cqw, 152px); --art-x: .17; --art-y: .31; --art-angle: -7deg; }
+.page-ambience[data-density="illustrated"] .ambience-art[data-behind-companion] { opacity: 0; }
+.page-ambience:is([data-scene="guides"], [data-scene="notice"]) .ambience-margin--left .ambience-art--vignette { --art-y: .82; }
+.page-ambience[data-density="illustrated"] .ambience-margin--right .ambience-art--vignette { --art-x: .73; --art-y: .09; --art-angle: 5deg; }
+@container ambience-rail (min-width: 80px) and (min-height: 450px) {
+  .page-ambience[data-density="illustrated"] .ambience-art--vignette { display: block; }
+  .page-ambience[data-density="illustrated"] .ambience-margin--right .ambience-art--primary { --art-y: .4; }
+}
+@container ambience-rail (min-width: 128px) and (max-height: 959px) {
+  .page-ambience[data-density="illustrated"] .ambience-art--primary { --art-size: min(145px, 24cqh); }
+}
 .page-ambience:is([data-scene="community"], [data-scene="personal"]) .ambience-margin--left { --scatter-primary-x: .14; --scatter-primary-y: .16; --scatter-token-x: .86; --scatter-token-y: .53; --scatter-creature-x: .3; --scatter-creature-y: .88; }
 .page-ambience:is([data-scene="guides"], [data-scene="notice"]) .ambience-margin--left { --scatter-primary-y: .05; --scatter-token-y: .61; --scatter-creature-y: .32; }
 .page-ambience:is([data-scene="guides"], [data-scene="onboarding"]) .ambience-margin--right { --scatter-primary-x: .56; --scatter-primary-y: .12; --scatter-token-x: .08; --scatter-token-y: .5; }
@@ -145,6 +174,7 @@ body:has(dialog[open]) .page-ambience .ambience-drawing { --ambient-motion: paus
 }
 @media (max-width: 1199px) {
   .page-ambience[data-density="illustrated"] .ambience-art { display: none; }
+  .page-ambience[data-density="illustrated"] .ambience-art--vignette { display: none; }
   .page-ambience[data-density="illustrated"] { height: min(calc(100svh - var(--ambient-header-height)), calc(100% - var(--ambient-header-height))); }
   .page-ambience[data-density="illustrated"] .ambience-drawing--star-one { top: 18%; }
   .page-ambience[data-density="illustrated"] .ambience-drawing--star-two { top: 28%; }

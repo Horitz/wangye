@@ -36,21 +36,25 @@ const marginScenes: Record<Exclude<ReturnType<typeof sceneForPath>, "landing">, 
 function IllustratedMargins({ scene }: { scene: MarginScene }) {
   return <>
     <div className="ambience-margin ambience-margin--left">
+      <MarginStars />
       <div className="ambience-drawing ambience-drawing--star-one" data-kind="star" data-motion="paused"><SmallStar /></div>
       <div className="ambience-drawing ambience-art ambience-art--primary" data-kind={scene.left[0]} data-motion="paused">
         <MarginDrawing kind={scene.left[0]} />
         <VoxelDecoration kind={scene.left[1]} />
       </div>
       <div className="ambience-drawing ambience-art ambience-art--souvenir" data-kind={scene.left[1]} data-motion="paused"><VoxelDecoration kind={scene.left[1]} /></div>
+      <div className="ambience-drawing ambience-art ambience-art--vignette" data-motion="paused"><MarginDrawing kind={scene.left[0] === "reader" ? "fireflies" : "sky-mail"} /></div>
       <div className="ambience-drawing ambience-art ambience-art--creature" data-kind={scene.creature} data-motion="paused"><PixelCreature kind={scene.creature} animated /></div>
     </div>
     <div className="ambience-margin ambience-margin--right">
+      <MarginStars />
       <div className="ambience-drawing ambience-drawing--star-two" data-kind="star" data-motion="paused"><SmallStar /></div>
       <div className="ambience-drawing ambience-art ambience-art--primary" data-kind={scene.right[0]} data-motion="paused">
         <MarginDrawing kind={scene.right[0]} />
         <VoxelDecoration kind={scene.accent} />
       </div>
       <div className="ambience-drawing ambience-art ambience-art--voxel-accent" data-kind={scene.accent} data-motion="paused"><VoxelDecoration kind={scene.accent} /></div>
+      <div className="ambience-drawing ambience-art ambience-art--vignette" data-motion="paused"><MarginDrawing kind={scene.left[0] === "reader" ? "sky-mail" : "fireflies"} /></div>
       <div className="ambience-drawing ambience-art ambience-art--secondary" data-kind={scene.right[1]} data-motion="paused"><MarginDrawing kind={scene.right[1]} /></div>
     </div>
   </>;
@@ -60,6 +64,19 @@ function SmallStar() {
   return <svg className="ambience-star" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
     <path d="m12 2 2.8 7.2L22 12l-7.2 2.8L12 22l-2.8-7.2L2 12l7.2-2.8Z" />
   </svg>;
+}
+
+function MarginStars() {
+  return <>{["high", "middle", "low"].map(position =>
+    <span key={position} className={`ambience-drawing margin-stars margin-stars--${position}`} data-motion="paused">
+      <svg viewBox="0 0 56 44" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" strokeLinecap="round">
+        <path className="margin-star-main" d="M23 6q.6 10 6 13l8 2-10 3q-4 3-6 13l-2-12-11-4q10-2 12-5Z"/>
+        <path className="margin-star-friend" d="m42 2 1.7 6 6 1.6-6 2.5-1.5 5-1.9-5.4-5-1.7 5.4-2.4Z"/>
+        <path d="m4 29 3-2m27 6 1.5 2.5" opacity=".7"/>
+        <circle cx="49" cy="24" r="1.2" stroke="none" fill="currentColor"/>
+      </svg>
+    </span>
+  )}</>;
 }
 
 function SmallRocket() {
@@ -113,11 +130,13 @@ export function PageAmbience() {
     <LandingNightSky />
     <div className="landing-first-sky">
     <div className="ambience-margin ambience-margin--left">
+      <MarginStars />
       <div className="ambience-drawing ambience-drawing--star-one" data-kind="star" data-motion="paused"><SmallStar /></div>
       <div className="ambience-drawing ambience-drawing--voxel" data-kind="grass" data-motion="paused"><VoxelDecoration kind="grass" /></div>
       <div className="ambience-drawing ambience-drawing--star-three" data-kind="star" data-motion="paused"><SmallStar /></div>
     </div>
     <div className="ambience-margin ambience-margin--right">
+      <MarginStars />
       <div className="ambience-drawing ambience-drawing--star-two" data-kind="star" data-motion="paused"><SmallStar /></div>
       <div className="ambience-drawing ambience-drawing--rocket" data-kind="rocket" data-motion="paused"><SmallRocket /></div>
     </div>

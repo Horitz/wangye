@@ -1,5 +1,9 @@
 # 生活小提醒 · 龙娘配图
 
+互动姿势 `dragon-coin.webp` 和 `dragon-castle.webp` 用同一原图作角色参考，由内置 imagegen 生成透明双格插画后切分。前者抱着星纹金币，后者坐在三块城垛上向下张望。角色的翼尖直接从当前姿势图分层绘制。
+
+2026-11-20 使用内置 imagegen，以原透明角色图为参考生成四格表情图，分别裁为 `public/illustrations/dragon-{happy,pout,sleepy,surprised}.webp`。四种透明 WebP 对应挥手笑、鼓脸抱书、闭眼打呵欠和星星眼惊讶。网页按当前对白切换，原 PNG 用于待机与讲解生活提醒。
+
 - 资产：`public/illustrations/life-tips-dragon.png`
 - 生成方式：内置 `image_gen`，2026-11-17；透明 PNG，保留原始 alpha。
 - 原始尺寸：1199 × 1312px，1,632,221 字节；原图复制到公开资产目录，未做裁切或二次压缩。

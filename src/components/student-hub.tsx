@@ -13,6 +13,7 @@ import { HubEditor } from "@/components/hub-editor";
 import { LanguageMenu } from "@/components/language-menu";
 import { WorkspaceDialog } from "@/components/workspace-dialog";
 import { LifeTipsCompanionDock } from "@/components/life-tips-panel";
+import { DragonLandmarks } from "@/components/dragon-landmarks";
 import { CityMapSection } from "@/components/city-map";
 import { FrameCreature } from "@/components/frame-creature";
 
@@ -38,6 +39,7 @@ export function StudentHub() {
       <div className="hub-welcome-copy">{content.eyebrow[locale] && <span className="hub-city">{content.eyebrow[locale]}</span>}<h1 id="hub-title">{content.title[locale]}{content.highlight[locale] && <><br /><span className="sketch-highlight">{content.highlight[locale]}<svg viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true"><path d="M3 8Q110 0 295 6M22 12Q176 5 276 11" /></svg></span></>}</h1>{content.description[locale] && <p>{content.description[locale]}</p>}</div>
       <HubWelcomeCharacter />
     </section>
+    <DragonLandmarks />
     <section className="hub-destinations" aria-label={t("选择一个去向", "Выберите раздел")}>
       {destinations.map((item, index) => { const entry = content.entries[index]; return <article key={entry.id} className={`hub-destination hub-destination--sketch hub-tone-${item.tone} creature-frame`}>
         {index === 0 && <FrameCreature kind="fox" placement="top-right" />}

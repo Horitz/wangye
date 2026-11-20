@@ -1,4 +1,4 @@
-export type MarginDrawingKind = "reader" | "traveler" | "cat" | "plant" | "camera" | "headphones";
+export type MarginDrawingKind = "reader" | "traveler" | "cat" | "plant" | "camera" | "headphones" | "fireflies" | "sky-mail";
 
 function Reader() {
   return <>
@@ -158,7 +158,47 @@ function Headphones() {
   </>;
 }
 
-const drawings = { reader: Reader, traveler: Traveler, cat: Cat, plant: Plant, camera: Camera, headphones: Headphones };
+function FireflyJar() {
+  return <g transform="rotate(9 120 125)">
+    <path className="margin-soft" d="M49 177c-20-56 9-116 57-129s99 22 94 88-36 93-87 89-57-27-64-48Z" />
+    <path className="margin-paper" d="m89 79 59-3 1 19c0 9 22 15 26 40l7 58q2 18-18 22l-71 7q-20 1-21-17l-4-66c-2-19 17-31 21-40Z" />
+    <path className="margin-teal" d="m89 76 56-4 4 15-60 5Z" />
+    <path className="margin-gold" d="m85 70 62-4 3 10-65 5Z" />
+    <path className="margin-line" d="m82 143 2 31m1 8 1 10m73-57 2 13m-71-57 56-5m-49 122q25-1 43-4" />
+    <path className="margin-lilac" d="M144 89q14-13 17-6t-14 10q20 2 17 10t-20-10l9 24-8-3-4-19Z" />
+    <path className="margin-line" strokeDasharray="2 6" d="M92 172q45 32 60-11t-45-20q-22 12-10-15" />
+    <g className="margin-motion margin-note">
+      <path className="margin-gold" d="m110 124 3-9 4 8 10 3-9 4-4 10-3-10-9-3Zm28 46 3-8 4 7 7 3-8 4-3 7-3-8-7-3Z" />
+      <circle className="margin-pink" cx="98" cy="169" r="4" />
+    </g>
+    <path className="margin-line" d="m71 85-13-2m16-8-6-10m116 93 6-5m-5 13 9 1" />
+    <path className="margin-gold" d="m163 55 3-8 4 8 8 3-8 3-4 9-3-9-8-3Z" />
+  </g>;
+}
+
+function SkyMail() {
+  return <g>
+    <path className="margin-soft" d="M33 146Q16 91 75 67t99 6q44 36 22 85t-92 51q-54-2-71-63Z" />
+    <g strokeLinejoin="miter">
+      <path className="margin-teal" d="m28 157 83-36 92 28-84 43Z" />
+      <path className="margin-lilac" d="m28 157 91 35v36l-22-8-1-10-29-11v-8l-23-8v-10l-16-6Z" />
+      <path className="margin-pink" d="m119 192 84-43v13l-18 10v11l-25 12v10l-18 9v6l-23 10Z" />
+      <path className="margin-line" d="m41 161 17 6m5 2 21 8m67 2 20-10m-19 29 8-4m-66-4 11 4" />
+      <path className="margin-gold" d="m105 104 10-3 3 56-12 4Z" />
+      <path className="margin-paper" d="M77 90q-2-15 14-21l38-10q17-4 24 13l5 29-75 21Z" />
+      <path className="margin-lilac" d="M78 88q-1-14 10-17 13-2 16 14l5 30-26 7Z" />
+      <path className="margin-line" d="m84 89 14-4m13 17 39-11" />
+      <path className="margin-pink" d="m125 88-3-39 23-6 2 13-17 5 2 25Z" />
+      <path className="margin-teal" d="M61 154v-11h-9v-9h9v6h7v-16h7v27Z" />
+      <path className="margin-gold" d="M68 122v-6h6v-6h7v7h5v6h-6v6h-7v-7Z" />
+    </g>
+    <path className="margin-line" strokeDasharray="3 6" d="M173 129q32-18 12-31-20-12-17 4t39-19" />
+    <g className="margin-motion margin-note"><path className="margin-paper" d="m180 65 36-11-10 24-8-8-6 10 1-14Z" /><path className="margin-line" d="m195 67 17-10" /></g>
+    <path className="margin-line" d="m49 210 13 4m-26-1 6 2m131-8 8-4" />
+  </g>;
+}
+
+const drawings = { reader: Reader, traveler: Traveler, cat: Cat, plant: Plant, camera: Camera, headphones: Headphones, fireflies: FireflyJar, "sky-mail": SkyMail };
 
 export function MarginDrawing({ kind, className = "" }: { kind: MarginDrawingKind; className?: string }) {
   const Drawing = drawings[kind];
