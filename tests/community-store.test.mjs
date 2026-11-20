@@ -38,10 +38,15 @@ function memoryStorage(entries = {}) {
   };
 }
 
+const accountId = "alice";
+const storageKey = `studentpath:community:v2:${accountId}`;
+const legacyKey = `studentpath:community:v1:${accountId}`;
 function environment(storage = memoryStorage()) {
   const handlers = new Map();
   const browser = { localStorage: storage, addEventListener: (name, handler) => handlers.set(name, handler) };
-  return { store: loadStore(browser), storage, event: event => handlers.get("storage")?.({ storageArea: storage, ...event }) };
+  const store = loadStore(browser);
+  store.setCommunityOwner(accountId);
+  return { store, storage, event: event => handlers.get("storage")?.({ storageArea: storage, ...event }) };
 }
 
 function validDraft(store, patch = {}) {
@@ -80,10 +85,10 @@ test("invalid tags cannot replace a valid draft or stored note and old records k
   }
   const id = store.createCommunityPost("msu");
   assert.equal(store.updateCommunityPost(id, { ...before, tags: ["🚀".repeat(25)] }), false);
-  const validRaw = storage.getItem(store.COMMUNITY_STORAGE_KEY);
+  const validRaw = storage.getItem(storageKey);
   const malformed = JSON.parse(validRaw); malformed.posts[0].tags = [false];
   assert.throws(() => store.parseCommunityState(JSON.stringify(malformed)));
-  assert.equal(storage.getItem(store.COMMUNITY_STORAGE_KEY), validRaw);
+  assert.equal(storage.getItem(storageKey), validRaw);
   const old = JSON.parse(validRaw); delete old.posts[0].tags; delete old.draft.tags;
   const parsed = store.parseCommunityState(JSON.stringify(old));
   assert.equal(Object.hasOwn(parsed.posts[0], "tags"), false);
@@ -192,7 +197,7 @@ test("refresh keeps the complete local workflow, independently of guide/profile 
   assert.deepEqual(refreshed, store.useCommunityState());
   assert.equal(storage.getItem("studentpath:home:v2"), homeRaw);
   assert.equal(storage.getItem("studentpath:home:v1"), "legacy backup");
-  assert.ok(storage.writes.every(key => key === store.COMMUNITY_STORAGE_KEY));
+  assert.ok(storage.writes.every(key => key === storageKey));
 });
 
 test("read-before-write preserves another tab's latest independent likes and comments", () => {
@@ -214,14 +219,14 @@ test("storage events sync relevant changes and ignore other keys and storage are
   const { store, storage, event } = environment();
   store.useCommunityState();
   const external = { ...store.createInitialCommunityState(), liked: [demoId] };
-  storage.setItem(store.COMMUNITY_STORAGE_KEY, JSON.stringify(external));
+  storage.setItem(storageKey, JSON.stringify(external));
   event({ key: "studentpath:home:v2" });
   assert.deepEqual(store.useCommunityState().liked, []);
-  event({ key: store.COMMUNITY_STORAGE_KEY, storageArea: memoryStorage() });
+  event({ key: storageKey, storageArea: memoryStorage() });
   assert.deepEqual(store.useCommunityState().liked, []);
-  event({ key: store.COMMUNITY_STORAGE_KEY });
+  event({ key: storageKey });
   assert.deepEqual(store.useCommunityState().liked, [demoId]);
-  storage.data.delete(store.COMMUNITY_STORAGE_KEY);
+  storage.data.delete(storageKey);
   event({ key: null });
   assert.deepEqual(store.useCommunityState().liked, []);
 });
@@ -252,28 +257,28 @@ test("invalid schema, cross references and duplicate IDs are rejected rather tha
 
 test("corrupt stored bytes are retained while new actions continue in memory", () => {
   const raw = "{broken user record";
-  const { store, storage, event } = environment(memoryStorage({ "studentpath:community:v2": raw }));
+  const { store, storage, event } = environment(memoryStorage({ [storageKey]: raw }));
   assert.equal(store.useCommunityState().storageUnavailable, true);
   validDraft(store);
   const id = store.createCommunityPost("msu");
   assert.ok(id);
   store.toggleCommunitySave(id);
   assert.equal(store.addCommunityComment(id, "内存里的评论"), true);
-  event({ key: store.COMMUNITY_STORAGE_KEY });
+  event({ key: storageKey });
   assert.equal(store.useCommunityState().posts.length, 1);
-  assert.equal(storage.getItem(store.COMMUNITY_STORAGE_KEY), raw);
+  assert.equal(storage.getItem(storageKey), raw);
   assert.equal(storage.writes.length, 0);
 });
 
 test("corruption discovered just before a write preserves existing memory and raw storage", () => {
   const { store, storage } = environment();
   validDraft(store);
-  storage.data.set(store.COMMUNITY_STORAGE_KEY, "unsupported data");
+  storage.data.set(storageKey, "unsupported data");
   const writesBefore = storage.writes.length;
   const id = store.createCommunityPost("msu");
   assert.ok(id);
   assert.equal(store.useCommunityState().storageUnavailable, true);
-  assert.equal(storage.getItem(store.COMMUNITY_STORAGE_KEY), "unsupported data");
+  assert.equal(storage.getItem(storageKey), "unsupported data");
   assert.equal(storage.writes.length, writesBefore);
 });
 
@@ -295,6 +300,7 @@ test("quota failure retains accepted records and subsequent changes in memory", 
 
 test("blocked localStorage access supports the complete flow in memory", () => {
   const store = loadStore({ addEventListener() {}, get localStorage() { throw new Error("Storage blocked"); } });
+  store.setCommunityOwner(accountId);
   validDraft(store);
   const id = store.createCommunityPost("msu");
   assert.ok(id);
@@ -591,35 +597,35 @@ test("v1 migration preserves posts and interactions in MSU and retains the untou
   const seed = environment().store;
   const legacy = makeLegacyCommunity(seed);
   const raw = JSON.stringify(legacy);
-  const storage = memoryStorage({ [seed.LEGACY_COMMUNITY_STORAGE_KEY]: raw });
+  const storage = memoryStorage({ [legacyKey]: raw });
   const migrated = environment(storage).store.useCommunityState();
   assert.equal(migrated.version, 2);
   assert.equal(migrated.selectedSchool, null);
   assert.equal(migrated.posts[0].schoolId, "msu");
   assert.equal(migrated.draft.schoolId, "msu");
   for (const key of ["liked", "saved", "comments"]) assert.deepEqual(migrated[key], legacy[key]);
-  assert.equal(storage.getItem(seed.LEGACY_COMMUNITY_STORAGE_KEY), raw);
-  assert.equal(JSON.parse(storage.getItem(seed.COMMUNITY_STORAGE_KEY)).posts[0].id, legacy.posts[0].id);
-  assert.deepEqual(storage.writes, [seed.COMMUNITY_STORAGE_KEY]);
+  assert.equal(storage.getItem(legacyKey), raw);
+  assert.equal(JSON.parse(storage.getItem(storageKey)).posts[0].id, legacy.posts[0].id);
+  assert.deepEqual(storage.writes, [storageKey]);
 });
 
 test("corrupt v2 does not fall back to v1 and no corrupt record is overwritten", () => {
   const seed = environment().store;
   const legacy = JSON.stringify(makeLegacyCommunity(seed));
-  const storage = memoryStorage({ [seed.LEGACY_COMMUNITY_STORAGE_KEY]: legacy, [seed.COMMUNITY_STORAGE_KEY]: "bad v2" });
+  const storage = memoryStorage({ [legacyKey]: legacy, [storageKey]: "bad v2" });
   const { store } = environment(storage);
   assert.equal(store.useCommunityState().storageUnavailable, true);
   assert.equal(store.useCommunityState().posts.length, 0);
   store.setCommunitySchool("hse");
-  assert.equal(storage.getItem(seed.COMMUNITY_STORAGE_KEY), "bad v2");
-  assert.equal(storage.getItem(seed.LEGACY_COMMUNITY_STORAGE_KEY), legacy);
+  assert.equal(storage.getItem(storageKey), "bad v2");
+  assert.equal(storage.getItem(legacyKey), legacy);
   assert.equal(storage.writes.length, 0);
 });
 
 test("migration quota failure keeps the migrated records usable in memory", () => {
   const seed = environment().store;
   const legacy = JSON.stringify(makeLegacyCommunity(seed));
-  const storage = memoryStorage({ [seed.LEGACY_COMMUNITY_STORAGE_KEY]: legacy });
+  const storage = memoryStorage({ [legacyKey]: legacy });
   storage.setItem = () => { throw new Error("full"); };
   const { store } = environment(storage);
   const state = store.useCommunityState();
@@ -627,7 +633,7 @@ test("migration quota failure keeps the migrated records usable in memory", () =
   assert.equal(state.posts.length, 1);
   assert.equal(state.posts[0].schoolId, "msu");
   assert.equal(state.draft.schoolId, "msu");
-  assert.equal(storage.getItem(seed.LEGACY_COMMUNITY_STORAGE_KEY), legacy);
+  assert.equal(storage.getItem(legacyKey), legacy);
   store.setCommunitySchool("rudn");
   assert.equal(store.useCommunityState().selectedSchool, "rudn");
   assert.equal(store.useCommunityState().posts.length, 1);
@@ -648,13 +654,12 @@ test("v2 rejects invalid schools in posts, drafts, and selected community", () =
 });
 
 test("corrupt legacy bytes are not overwritten or silently migrated", () => {
-  const seed = environment().store;
-  const storage = memoryStorage({ [seed.LEGACY_COMMUNITY_STORAGE_KEY]: "{broken old data" });
+  const storage = memoryStorage({ [legacyKey]: "{broken old data" });
   const { store } = environment(storage);
   assert.equal(store.useCommunityState().storageUnavailable, true);
   store.setCommunitySchool("hse");
-  assert.equal(storage.getItem(seed.LEGACY_COMMUNITY_STORAGE_KEY), "{broken old data");
-  assert.equal(storage.getItem(seed.COMMUNITY_STORAGE_KEY), null);
+  assert.equal(storage.getItem(legacyKey), "{broken old data");
+  assert.equal(storage.getItem(storageKey), null);
   assert.equal(storage.writes.length, 0);
 });
 
@@ -662,9 +667,29 @@ test("current v2 selection takes priority over a retained v1 backup", () => {
   const seed = environment().store;
   const legacy = JSON.stringify(makeLegacyCommunity(seed));
   const current = { ...seed.createInitialCommunityState(), selectedSchool: "rudn" };
-  const storage = memoryStorage({ [seed.LEGACY_COMMUNITY_STORAGE_KEY]: legacy, [seed.COMMUNITY_STORAGE_KEY]: JSON.stringify(current) });
+  const storage = memoryStorage({ [legacyKey]: legacy, [storageKey]: JSON.stringify(current) });
   const { store } = environment(storage);
   assert.equal(store.useCommunityState().selectedSchool, "rudn");
   assert.equal(store.useCommunityState().posts.length, 0);
   assert.equal(storage.writes.length, 0);
+});
+
+test("switching members hides private drafts and notes, even when older shared keys remain", () => {
+  const seed = environment().store;
+  const original = JSON.stringify(makeLegacyCommunity(seed));
+  const storage = memoryStorage({ [seed.LEGACY_COMMUNITY_STORAGE_KEY]: original });
+  const { store } = environment(storage);
+  validDraft(store, { schoolId: "msu" });
+  const post = store.createCommunityPost("msu");
+  store.updateCommunityDraft({ title: "Alice draft" });
+  store.setCommunityOwner(null);
+  assert.deepEqual(store.useCommunityState().posts, []);
+  assert.equal(store.useCommunityState().draft.title, "");
+  store.setCommunityOwner("bob");
+  assert.equal(store.deleteCommunityPost(post), false);
+  store.updateCommunityDraft({ title: "Bob draft" });
+  store.setCommunityOwner(accountId);
+  assert.equal(store.useCommunityState().posts[0].id, post);
+  assert.equal(store.useCommunityState().draft.title, "Alice draft");
+  assert.equal(storage.getItem(seed.LEGACY_COMMUNITY_STORAGE_KEY), original);
 });

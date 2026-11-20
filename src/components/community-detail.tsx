@@ -14,6 +14,7 @@ import { SocialLauncher } from "@/components/social-panel";
 import { PublicComments } from "@/components/public-comments";
 import { WorkspaceDialog } from "@/components/workspace-dialog";
 import { LanguageMenu } from "@/components/language-menu";
+import { useMemberSession } from "@/components/member-session";
 import { CommunityComposer } from "@/components/community-composer";
 import { PublishedCommunityEditor } from "@/components/published-community-editor";
 import type { CommunityPost } from "@/data/community-content";
@@ -22,6 +23,10 @@ import { getSchool } from "@/data/school-options";
 import { refreshCommunityRemote, updateRemoteCommunityPost, useCommunityRemoteState } from "@/lib/community-remote-store";
 
 export function CommunityDetail({ id }: { id: string }) {
+  const member = useMemberSession();
+  return <MemberCommunityDetail key={member.user?.id ?? "guest"} id={id} />;
+}
+function MemberCommunityDetail({ id }: { id: string }) {
   const { locale } = useHomeState();
   const state = useCommunityState();
   const remote = useCommunityRemoteState();

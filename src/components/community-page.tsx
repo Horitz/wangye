@@ -217,7 +217,11 @@ function CommunityFeatured({ posts, locale }: { posts: CommunityPost[]; locale: 
   </section></div>;
 }
 
-export function CommunityPage({ initialView = "discover" }: { initialView?: "discover" | "discussion" | "saved"; initialSchool?: SchoolId }) {
+export function CommunityPage(props: Parameters<typeof MemberCommunityPage>[0]) {
+  const member = useMemberSession();
+  return <MemberCommunityPage key={member.user?.id ?? "guest"} {...props} />;
+}
+function MemberCommunityPage({ initialView = "discover" }: { initialView?: "discover" | "discussion" | "saved"; initialSchool?: SchoolId }) {
   const home = useHomeState();
   const { locale } = home;
   const state = useCommunityState();

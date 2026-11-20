@@ -50,6 +50,7 @@ export function openSocialStore({ dataDir = process.env.STUDENTPATH_DATA_DIR || 
     if (process.platform !== "win32") chmodSync(filename, 0o600);
     db.exec(`PRAGMA busy_timeout=5000; PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL; PRAGMA trusted_schema=OFF;
       CREATE TABLE IF NOT EXISTS member_users (id TEXT PRIMARY KEY, username TEXT NOT NULL UNIQUE, display_name TEXT NOT NULL, salt TEXT NOT NULL, password_hash TEXT NOT NULL, created_at INTEGER NOT NULL);
+      CREATE TABLE IF NOT EXISTS member_plans (user_id TEXT PRIMARY KEY REFERENCES member_users(id) ON DELETE CASCADE, revision INTEGER NOT NULL, plan_json TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS member_profiles (user_id TEXT PRIMARY KEY REFERENCES member_users(id) ON DELETE CASCADE, profile_json TEXT NOT NULL, updated_at INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS member_sessions (token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES member_users(id) ON DELETE CASCADE, expires_at INTEGER NOT NULL, created_at INTEGER NOT NULL);
       CREATE INDEX IF NOT EXISTS member_sessions_user ON member_sessions(user_id);
@@ -116,6 +117,18 @@ export function openSocialStore({ dataDir = process.env.STUDENTPATH_DATA_DIR || 
     close: () => db.close(),
     session,
     requireSession,
+    readPlan(userId) {
+      const row = db.prepare("SELECT plan_json,revision FROM member_plans WHERE user_id=?").get(userId);
+      return row ? { revision: row.revision, plan: JSON.parse(row.plan_json) } : { revision: 0, plan: null };
+    },
+    savePlan(userId, revision, plan) {
+      const json = JSON.stringify(plan);
+      const result = revision === 0
+        ? db.prepare("INSERT INTO member_plans(user_id,revision,plan_json) VALUES(?,1,?) ON CONFLICT DO NOTHING").run(userId, json)
+        : db.prepare("UPDATE member_plans SET revision=revision+1,plan_json=? WHERE user_id=? AND revision=?").run(json, userId, revision);
+      if (!result.changes) throw new SocialError("plan_changed", 409);
+      return { revision: revision + 1, plan };
+    },
     profile(token) { return readProfile(requireSession(token).id); },
     saveProfile(token, input) {
       const user = requireSession(token);

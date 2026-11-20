@@ -53,6 +53,9 @@ function harness() {
   const require = name => {
     if (name === 'react') return react;
     if (name === 'react/jsx-runtime') return { jsx: (type, props) => ({ type, props }) };
+    if (name === '@/lib/community-store') return { setCommunityOwner() {} };
+    if (name === '@/lib/personal-plan-store') return { setPersonalPlanOwner() {} };
+    if (name === '@/lib/community-remote-store') return { resetCommunityViewer() {} };
     if (name === '@/lib/home-store') return { applyMemberProfile: (...args) => applied.push(args) };
     if (name === '@/lib/social-client') return { SOCIAL_SESSION_EVENT: 'session-changed', socialRequest, socialErrorCode: error => error.message };
     throw new Error(`Unexpected import: ${name}`);

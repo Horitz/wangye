@@ -138,17 +138,38 @@ export function getCommunityFeaturedPosts(state: Pick<CommunityState, "posts" | 
 const initial = createInitialCommunityState();
 let current = initial;
 let initialized = false;
+let owner: string | null | undefined;
+const scopedKey = (key = COMMUNITY_STORAGE_KEY) => `${key}:${owner ?? "guest"}`;
+export function communityOwnerIs(id: string) { return owner === id; }
+
+export function setCommunityOwner(id: string | null | undefined) {
+  if (owner === id) return;
+  const sharedPosts = current.sharedPosts;
+  owner = id;
+  current = { ...createInitialCommunityState(), sharedPosts };
+  if (id !== undefined) readStorage();
+  notify();
+}
 const listeners = new Set<() => void>();
 function notify() { listeners.forEach(listener => listener()); }
 
 function readStorage() {
   if (typeof window === "undefined") return;
-  try { current = loadCommunityState(window.localStorage, current); }
+  if (owner === undefined) return;
+  try {
+    const stored = loadCommunityState({
+      getItem: key => window.localStorage.getItem(scopedKey(key)),
+      setItem: (key, value) => window.localStorage.setItem(scopedKey(key), value),
+    }, current);
+    const cache = new Map(stored.sharedPosts.map(post => [post.id, post]));
+    for (const post of current.sharedPosts) cache.set(post.id, post);
+    current = { ...stored, sharedPosts: [...cache.values()] };
+  }
   catch { current = { ...current, storageUnavailable: true, hydrated: true }; }
 }
 
 function handleStorage(event: StorageEvent) {
-  if (typeof window === "undefined" || (event.key !== COMMUNITY_STORAGE_KEY && event.key !== LEGACY_COMMUNITY_STORAGE_KEY && event.key !== null)) return;
+  if (typeof window === "undefined" || (event.key !== scopedKey() && event.key !== null)) return;
   // Once in memory-only mode, keep accepted local edits instead of discarding them on an external event.
   if (current.storageUnavailable) return;
   try {
@@ -184,10 +205,10 @@ function commit(update: (state: CommunityState) => CommunityState) {
   const next = update(current);
   if (next !== current) {
     current = next;
-    if (!current.storageUnavailable) {
+    if (owner !== undefined && !current.storageUnavailable) {
       try {
         const { version, selectedSchool, liked, saved, featuredIds, comments, posts, sharedPosts, draft } = current;
-        window.localStorage.setItem(COMMUNITY_STORAGE_KEY, JSON.stringify({ version, selectedSchool, liked, saved, featuredIds, comments, posts, sharedPosts, draft }));
+        window.localStorage.setItem(scopedKey(), JSON.stringify({ version, selectedSchool, liked, saved, featuredIds, comments, posts, sharedPosts, draft }));
       } catch { current = { ...current, storageUnavailable: true }; }
     }
   }
@@ -238,6 +259,7 @@ export function setCommunityFeatured(id: string, selected: boolean): boolean {
 }
 
 export function updateCommunityDraft(patch: Partial<CommunityDraft>) {
+  if (!owner) return;
   commit(state => {
     const draft = { ...state.draft, ...patch };
     return validDraft(draft) ? { ...state, draft: { ...draft, ...normalizedTagField(draft) } } : state;
@@ -261,7 +283,7 @@ export function setCommunitySchool(schoolId: SchoolId | null) {
 
 /** Success accepts a local record; storageUnavailable separately reports whether it persisted. */
 export function createCommunityPost(schoolId: SchoolId): string | null {
-  if (!isSchoolId(schoolId)) return null;
+  if (!owner || !isSchoolId(schoolId)) return null;
   let result: string | null = null;
   commit(state => {
     const title = state.draft.title.trim();

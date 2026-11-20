@@ -157,6 +157,18 @@ export async function setCommunityPostLike(postId: string, liked: boolean, userI
   const activity = await request("/api/community/activity", { method: "PUT", headers: { "Content-Type": "application/json", "X-StudentPath-User": userId }, body: JSON.stringify({ postId, liked }) }) as Activity;
   if (version === activityVersion) { ++activityVersion; acceptActivity(activity); }
 }
+export async function refreshCommunityActivity() {
+  const version = ++activityVersion;
+  try {
+    const data = await request("/api/community/activity") as Activity;
+    if (version === activityVersion) acceptActivity(data);
+  } catch { /* The visible polling loop retries. */ }
+}
+export function resetCommunityViewer() {
+  ++activityVersion;
+  update({ activity: null });
+  if (listeners.size) void refreshCommunityActivity();
+}
 function onFocus() { if (current.status !== "loading") void refreshCommunityRemote(); void pollActivity(); }
 function onVisibility() { if (document.visibilityState === "visible") onFocus(); }
 function subscribe(listener: () => void) {

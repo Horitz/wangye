@@ -1,6 +1,8 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { isPreparationDate } from "./preparation-date";
+export { isPreparationDate } from "./preparation-date";
 import { preparationItemIds } from "../data/preparation-content";
 
 export type PreparationReminder = { id: string; title: string; date: string; note: string; done: boolean };
@@ -24,13 +26,6 @@ function isRecord(value: unknown): value is Record<string, unknown> { return val
 function validId(value: unknown): value is string { return typeof value === "string" && /^reminder-[a-z0-9-]{1,100}$/i.test(value); }
 function validText(value: unknown, minimum: number, maximum: number): value is string { return typeof value === "string" && value === value.trim() && value.length >= minimum && value.length <= maximum; }
 
-/** Validate date-only values without browser parsing or UTC-to-local conversion. */
-export function isPreparationDate(value: unknown): value is string {
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
-  const [year, month, day] = value.split("-").map(Number);
-  if (year < 1900 || year > 9999 || month < 1 || month > 12 || day < 1) return false;
-  return day <= new Date(Date.UTC(year, month, 0)).getUTCDate();
-}
 export function localPreparationDate(now = new Date()): string {
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useSyncExternalStore } from "react";
+import { useMemberSession } from "@/components/member-session";
 import { AccountCenter } from "@/components/account-center";
 import { SocialLauncher } from "@/components/social-panel";
 import { LanguageMenu } from "@/components/language-menu";
@@ -26,6 +27,8 @@ const isAccountHash = (hash: string) => hash === "#account" || hash === "#admin"
 
 export function MySpace() {
   const state = useHomeState();
+  const member = useMemberSession();
+  const owner = member.user?.id ?? "guest";
   const [accountRequested, setAccountRequested] = useState<"member" | "admin" | null>(null);
   const [libraryView, setLibraryView] = useState<PersonalLibraryView>("notes");
   const hash = useSyncExternalStore(subscribeToHash, readHash, serverHash);
@@ -63,10 +66,13 @@ export function MySpace() {
         </nav>
       </aside>
       <div className="personal-space-content">
-        <PersonalTaskBoard />
+        {member.user ? <PersonalTaskBoard key={owner} /> : <section className="personal-task-list-card material-glass material-glass--raised">
+          <h2>{t("我的清单与日期", "Мои дела и даты")}</h2>
+          {member.loaded && <button type="button" className="button secondary" onClick={() => changeAccountMode("member")}>{t("登录查看我的待办", "Войти и открыть мои дела")}</button>}
+        </section>}
       </div>
     </div>
-    <PersonalLibrary view={libraryView} onViewChange={setLibraryView} />
+    <PersonalLibrary key={owner} view={libraryView} onViewChange={setLibraryView} />
     <WorkspaceDialog open={accountMode !== null} onClose={() => changeAccountMode(null)} title={accountMode === "admin" ? t("站点管理", "Управление сайтом") : t("我的账号", "Мой аккаунт")} headerActions={<LanguageMenu tone="light" />}>
       <AccountCenter mode={accountMode ?? "member"} onModeChange={changeAccountMode} />
     </WorkspaceDialog>

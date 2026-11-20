@@ -13,7 +13,8 @@ import { useEditorialDocument } from "@/lib/editorial-store";
 import { useHomeState, type Locale } from "@/lib/home-store";
 import { formatCalendarDate } from "@/lib/locale-format";
 import { localCalendarToday } from "@/lib/personal-plan-calendar";
-import { clearRecoveredPlanDraft, deletePlanTask, savePlanTask, togglePlanTask, usePersonalPlan, type PlanGroup, type PlanTask } from "@/lib/personal-plan-store";
+import { PlanSyncFeedback } from "@/components/plan-sync-feedback";
+import { deletePlanTask, savePlanTask, togglePlanTask, usePersonalPlan, type PlanGroup, type PlanTask } from "@/lib/personal-plan-store";
 import "@/app/personal-task-board.css";
 
 type TaskFilter = "pending" | "completed" | "all";
@@ -36,14 +37,13 @@ function PersonalTaskEditor({ editor, locale, onClose }: { editor: Editor; local
   const nameInput = useRef<HTMLInputElement>(null);
   const titleChanged = useRef(false);
   useLayoutEffect(() => { nameInput.current?.focus(); }, []);
-  function submit(event: FormEvent<HTMLFormElement>) {
+  async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const trimmedTitle = title.trim();
     if (!trimmedTitle) { setError("title"); nameInput.current?.focus(); return; }
     const date = String(new FormData(event.currentTarget).get("date") ?? "");
-    savePlanTask(editor.groupId, { id: editor.draft?.id, title: !titleChanged.current && originalTitle.current ? originalTitle.current : { zh: trimmedTitle, ru: trimmedTitle }, date, note: note.trim() });
-    if (editor.recovered) clearRecoveredPlanDraft();
-    onClose(true, date);
+    const saved = await savePlanTask(editor.groupId, { id: editor.draft?.id, title: !titleChanged.current && originalTitle.current ? originalTitle.current : { zh: trimmedTitle, ru: trimmedTitle }, date, note: note.trim() }, editor.recovered);
+    if (saved) onClose(true, date);
   }
   return <form className="personal-plan-editor material-glass" onSubmit={submit} onKeyDown={event => { if (event.key === "Escape") { event.stopPropagation(); onClose(false); } }}>
     <h4>{editor.draft?.id ? t("编辑我的安排", "Изменить мой план") : t("添加我的安排", "Добавить мой план")}</h4>
@@ -182,8 +182,8 @@ export function PersonalTaskBoard() {
   }
   const groupActions = {
     locale, filter, onEdit: edit,
-    onToggle: (groupId: string, task: PlanTask, trigger: HTMLInputElement) => { rememberFocus(trigger); togglePlanTask(groupId, task.id); setMessage(task.done ? "pending" : "done"); },
-    onDelete: (groupId: string, task: PlanTask, trigger: HTMLButtonElement) => { rememberFocus(trigger); deletePlanTask(groupId, task.id); setMessage("deleted"); },
+    onToggle: async (groupId: string, task: PlanTask, trigger: HTMLInputElement) => { rememberFocus(trigger); if (await togglePlanTask(groupId, task.id)) setMessage(task.done ? "pending" : "done"); },
+    onDelete: async (groupId: string, task: PlanTask, trigger: HTMLButtonElement) => { rememberFocus(trigger); if (await deletePlanTask(groupId, task.id)) setMessage("deleted"); },
   };
 
   return <section className="personal-task-board" aria-labelledby={`${id}-title`}>
@@ -198,21 +198,21 @@ export function PersonalTaskBoard() {
       </div>
     </div>
     <div className="personal-task-list-card material-glass material-glass--raised">
-      <header className="personal-task-list-heading"><h3>{t("我的清单与日期", "Мои дела и даты")}</h3>{state.groups.length > 0 ? <button type="button" className="button secondary" onClick={event => edit("personal", undefined, event.currentTarget)}><Plus size={18} aria-hidden="true" />{t("添加安排", "Добавить план")}</button> : <ClipboardCheck size={24} aria-hidden="true" />}</header>
+      <header className="personal-task-list-heading"><h3>{t("我的清单与日期", "Мои дела и даты")}</h3>{state.hydrated ? <button type="button" className="button secondary" disabled={state.saving} onClick={event => edit("personal", undefined, event.currentTarget)}><Plus size={18} aria-hidden="true" />{t("添加安排", "Добавить план")}</button> : <ClipboardCheck size={24} aria-hidden="true" />}</header>
       <div className="personal-plan-view material-switch" role="group" aria-label={t("清单显示方式", "Вид личного плана")}><button type="button" aria-pressed={view === "list"} onClick={() => changeView("list")}><ListTodo size={18} aria-hidden="true" />{t("清单", "Список")}</button><button type="button" aria-pressed={view === "calendar"} onClick={() => changeView("calendar")}><CalendarDays size={18} aria-hidden="true" />{t("日历", "Календарь")}</button></div>
       {state.recoveredDraft && !editor && <button type="button" className="button secondary personal-plan-recover" onClick={event => { editorTrigger.current = event.currentTarget; setEditor({ groupId: "personal", draft: state.recoveredDraft, recovered: true, key: ++editorSequence.current }); }}>{t("继续未保存的安排", "Продолжить черновик плана")}</button>}
       {editor && <PersonalTaskEditor key={editor.key} editor={editor} locale={locale} onClose={closeEditor} />}
       <div className="personal-task-tabs material-switch" role="tablist" aria-label={t("筛选个人待办", "Фильтр личных дел")}>{tabs.map((tab, index) => <button type="button" key={tab.id} id={`${id}-${tab.id}`} ref={element => { tabRefs.current[tab.id] = element; }} role="tab" aria-controls={`${id}-tasks`} aria-selected={filter === tab.id} tabIndex={filter === tab.id ? 0 : -1} onClick={() => setFilter(tab.id)} onKeyDown={event => navigateTabs(event, index)}><span>{tab.label}</span><span className="personal-task-tab-count">{state.hydrated ? tab.count : "—"}</span></button>)}</div>
       <div id={`${id}-tasks`} ref={listRef} role="tabpanel" aria-labelledby={`${id}-${filter}`} className="personal-task-list-panel" tabIndex={0} aria-busy={!state.hydrated}>
-        {!state.hydrated ? <p className="personal-task-loading" role="status">{t("正在读取个人清单…", "Загружаем личный список…")}</p> : <>
+        {!state.hydrated ? state.error ? null : <p className="personal-task-loading" role="status">{t("正在读取个人清单…", "Загружаем личный список…")}</p> : <>
           {view === "calendar" && <><PersonalPlanCalendar locale={locale} tasks={filteredTasks} selectedDate={calendarDate} onSelectDate={setCalendarDate} /><h4 className="personal-calendar-agenda-title">{calendarDate ? formatCalendarDate(calendarDate, locale) : t("未安排日期", "Без даты")}<span className="personal-task-tab-count">{visibleTasks.length}</span></h4></>}
           {displayedGroups.map(group => group.sourceId ? <SourcePlanGroup key={group.id} group={group} {...groupActions} /> : <PlanGroupRows key={group.id} group={group} {...groupActions} />)}
           {!visibleTasks.length && <div className="personal-task-empty"><CheckCheck size={32} aria-hidden="true" /><h4>{!total ? t("还没有加入清单", "Список пока пуст") : view === "calendar" ? calendarEmptyMessage : filter === "completed" ? t("完成的事项会留在这里", "Готовые дела появятся здесь") : t("当前待办已完成", "Все дела выполнены")}</h4>{!total ? <button type="button" className="button primary" aria-haspopup="dialog" onClick={() => setNoticeOpen(true)}><BookOpen size={18} aria-hidden="true" />{t("查看入学必看", "Открыть памятку")}</button> : view === "calendar" ? <button type="button" className="button secondary" onClick={event => edit("personal", undefined, event.currentTarget)}><Plus size={18} aria-hidden="true" />{calendarDate ? t("在这一天添加安排", "Добавить дело на эту дату") : t("添加安排", "Добавить план")}</button> : <button type="button" className="button secondary" onClick={() => { setFilter(filter === "completed" ? "pending" : "all"); tabRefs.current[filter === "completed" ? "pending" : "all"]?.focus(); }}>{filter === "completed" ? t("查看待办", "К планам") : t("查看全部", "Посмотреть все")}</button>}</div>}
         </>}
       </div>
-      <p className="personal-plan-feedback" role="status" aria-live="polite">{message === "saved" ? t("安排已更新", "План обновлён") : message === "done" ? t("已完成一项", "Дело выполнено") : message === "pending" ? t("已恢复为待办", "Возвращено в планы") : message === "deleted" ? t("已删除这条安排", "План удалён") : ""}</p>
+      <p className="personal-plan-feedback" role="status" aria-live="polite">{state.error || state.saving ? "" : message === "saved" ? t("安排已更新", "План обновлён") : message === "done" ? t("已完成一项", "Дело выполнено") : message === "pending" ? t("已恢复为待办", "Возвращено в планы") : message === "deleted" ? t("已删除这条安排", "План удалён") : ""}</p>
     </div>
-    {state.storageUnavailable && <p className="personal-task-storage is-unavailable" role="status">{t("浏览器暂时无法保存，当前操作仅在本次浏览中保留。", "Хранилище недоступно. Изменения останутся только в этом сеансе.")}</p>}
+    <PlanSyncFeedback plan={state} locale={locale} />
     <EssentialsDialog open={noticeOpen} onClose={() => setNoticeOpen(false)} />
   </section>;
 }

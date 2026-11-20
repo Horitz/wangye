@@ -7,6 +7,7 @@ import { DatabaseSync } from "node:sqlite";
 import { openSocialStore, MEMBER_SESSION_COOKIE, MEMBER_SESSION_SECONDS } from "../src/lib/server/social-core.mjs";
 import { handleSocialRequest } from "../src/lib/server/social-http.mjs";
 import { handleAdminRequest } from "../src/lib/server/admin-http.mjs";
+import { handleCommunityComments, handleActivity, handlePublish } from "../src/lib/server/community-comments-http.mjs";
 import { openAdminStore, SESSION_COOKIE } from "../src/lib/server/admin-core.mjs";
 
 const origin = "http://127.0.0.1:3000";
@@ -41,6 +42,36 @@ async function connect(f, a, b) {
 }
 const send = (f, a, b, body = "你好 / Привет!", clientId = "message-0001") => call(f, "messages-write", { cookie: a.cookie, body: { friendId: b.user.id, body, clientId } });
 const messages = (f, a, b, before) => call(f, "messages-read", { cookie: a.cookie, query: `?friendId=${b.user.id}${before === undefined ? "" : `&before=${before}`}` });
+
+test("members publish to a shared school feed, comment and count unique likes across sessions", async t => {
+  const f = fixture(t);
+  const a = await member(f, "author"), b = await member(f, "reader");
+  const id = "community-12345678";
+  const draft = { id, schoolId: "msu", topic: "daily", kind: "note", title: "校园里的周末", body: "图书馆门口的花开了，周末散步可以来看看。" };
+  const req = (viewer, method, body) => request("community", { cookie: viewer?.cookie, method, body });
+  assert.equal((await handlePublish(req(null, "POST", draft), f.options)).status, 401);
+  for (let attempt = 0; attempt < 2; attempt++) assert.equal((await handlePublish(req(a, "POST", draft), f.options)).status, 200);
+  const site = openAdminStore(f.options);
+  try { const { posts, featuredIds } = site.catalog(); assert.equal(posts.length, 1); assert.equal(posts[0].author.zh, a.user.displayName); assert.equal(featuredIds.length, 0); } finally { site.close(); }
+  assert.equal((await handlePublish(req(b, "POST", draft), f.options)).status, 409);
+  const like = (who, liked) => handleActivity(req(who, "PUT", { postId: id, liked }), f.options);
+  await like(a, true); await like(a, true); await like(b, true);
+  const comment = { body: "周末见！", clientId: crypto.randomUUID() };
+  const thread = (who, method, body) => handleCommunityComments(req(who, method, body), id, f.options);
+  await thread(a, "POST", comment); await thread(a, "POST", comment);
+  await thread(b, "POST", { body: "好呀！", clientId: crypto.randomUUID() });
+  const { comments } = await (await thread(null, "GET")).json();
+  assert.deepEqual(comments.map(row => row.authorId), [a.user.id, b.user.id]);
+  const stats = async who => (await handleActivity(req(who, "GET"), f.options)).json();
+  assert.equal((await stats(null)).likeCounts[id], 2);
+  assert.equal((await stats(b)).commentCounts[id], 2);
+  assert.deepEqual((await stats(a)).ownIds, [id]);
+  assert.deepEqual((await stats(b)).ownIds, []);
+  assert.equal((await thread(b, "DELETE", { commentId: comments[0].id })).status, 404);
+  await thread(a, "DELETE", { commentId: comments[0].id }); await like(b, false);
+  const final = await stats(b);
+  assert.deepEqual([final.likeCounts[id], final.commentCounts[id], final.likedIds.length], [1, 1, 0]);
+});
 
 test("no seeded members; signup creates a protected member session and stores hashes only", async t => {
   const f = fixture(t);
@@ -170,13 +201,39 @@ test("profile writes reject unknown choices, foreign faculties and account imper
   assert.deepEqual(await (await call(f, "profile-write", { cookie: b.cookie, body: { profile: otherSchool } })).json(), { profile: { ...otherSchool, interests: ["living"] } });
 });
 
+test("plans follow the signed-in member and reject stale account and revision writes", async t => {
+  const f = fixture(t);
+  const a = await member(f, "alice"), b = await member(f, "bob");
+  const plan = { version: 1, groups: [] };
+  const read = cookie => call(f, "plan-read", { method: "GET", cookie });
+  const save = (viewer, expected, revision) => handleSocialRequest(request("plan-write", {
+    method: "PUT", cookie: viewer.cookie, headers: { "x-studentpath-user": expected },
+    body: { revision, plan },
+  }), "plan-write", { ...f.options, normalizePlan: value => value });
+  assert.equal((await read()).status, 401);
+  assert.equal((await save(a, a.user.id, 0)).status, 200);
+  assert.equal((await save(a, a.user.id, 0)).status, 409);
+  assert.equal((await save(b, a.user.id, 0)).status, 401);
+  assert.deepEqual(await (await read(b.cookie)).json(), { revision: 0, plan: null });
+  const login = await call(f, "login", { body: { username: "alice", password } });
+  const freshCookie = login.headers.get("set-cookie").split(";")[0];
+  assert.deepEqual(await (await read(freshCookie)).json(), { revision: 1, plan });
+  await call(f, "logout", { cookie: a.cookie });
+  assert.equal((await read(a.cookie)).status, 401);
+});
+
 test("exact username search is authenticated and exposes no password or other accounts", async t => {
   const f = fixture(t); const a = await member(f, "alice"); const b = await member(f, "bob");
   assert.equal((await call(f, "users", { query: "?q=bob" })).status, 401);
   assert.deepEqual(await (await call(f, "users", { cookie: a.cookie, query: "?q=BOB" })).json(), { users: [b.user] });
   assert.deepEqual(await (await call(f, "users", { cookie: a.cookie, query: "?q=alice" })).json(), { users: [] });
   assert.deepEqual(await (await call(f, "users", { cookie: a.cookie, query: "?q=bob2" })).json(), { users: [] });
-  assert.equal((await call(f, "users", { cookie: a.cookie, query: "?q=%25" })).status, 400);
+  assert.deepEqual(await (await call(f, "users", { cookie: a.cookie, query: "?q=%25" })).json(), { users: [] });
+  await connect(f, a, b);
+  const c = await member(f, "carol");
+  for (const [viewer, target, term] of [[a,c,"＠CAROL"], [c,a,"@alice"], [a,c,c.user.displayName], [c,a,a.user.displayName]]) {
+    assert.deepEqual(await (await call(f, "users", { cookie: viewer.cookie, query: "?q=" + encodeURIComponent(term) })).json(), { users: [target.user] });
+  }
 });
 
 test("friend requests require recipient approval and reject self, third-party and reciprocal shortcuts", async t => {

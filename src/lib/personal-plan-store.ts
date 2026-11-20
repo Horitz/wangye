@@ -2,58 +2,102 @@
 
 import { useSyncExternalStore } from "react";
 import type { EditorialDocument } from "../data/editorial-content";
+import { socialRequest } from "./social-client";
 import {
-  createInitialPersonalPlan, loadPersonalPlan, PERSONAL_PLAN_STORAGE_KEY, serializePersonalPlan,
+  createInitialPersonalPlan, parsePersonalPlan, serializePersonalPlan,
   withDocumentInPlan, withToggledPlanTask, withSavedPlanTask, withDeletedPlanTask,
   type PersonalPlanState, type PlanTaskInput,
-} from "./personal-plan-model";
+} from "./personal-plan-data";
 
-export type { PersonalPlanState, PlanTask, PlanGroup, PlanTaskInput } from "./personal-plan-model";
-export { PERSONAL_PLAN_STORAGE_KEY } from "./personal-plan-model";
+export type { PersonalPlanState, PlanTask, PlanGroup, PlanTaskInput } from "./personal-plan-data";
+type Snapshot = PersonalPlanState & { saving: boolean; error: "read" | "write" | "conflict" | null };
+type Reply = { revision: number; plan: unknown };
 
-const initial = createInitialPersonalPlan();
+const initial: Snapshot = { ...createInitialPersonalPlan(), saving: false, error: null };
 let current = initial;
-let initialized = false;
+let owner: string | null | undefined;
+let revision = 0;
+let generation = 0;
 const listeners = new Set<() => void>();
-function notify() { listeners.forEach(listener => listener()); }
-function readStorage() {
-  try { current = loadPersonalPlan(window.localStorage, current); }
-  catch { current = { ...current, hydrated: true, storageUnavailable: true }; }
+
+function update(patch: Partial<Snapshot>) {
+  current = { ...current, ...patch };
+  listeners.forEach(listener => listener());
 }
-function onStorage(event: StorageEvent) {
-  if (current.storageUnavailable || (event.key !== PERSONAL_PLAN_STORAGE_KEY && event.key !== null)) return;
-  try { if (event.storageArea !== null && event.storageArea !== window.localStorage) return; }
-  catch { current = { ...current, hydrated: true, storageUnavailable: true }; notify(); return; }
-  readStorage(); notify();
+function accept(result: Reply) {
+  const state = result.plan === null ? createInitialPersonalPlan() : parsePersonalPlan(JSON.stringify(result.plan));
+  revision = result.revision;
+  update({ ...state, hydrated: true, saving: false, error: null });
 }
-function initialize() {
-  if (initialized || typeof window === "undefined") return;
-  initialized = true;
-  window.addEventListener("storage", onStorage);
-  readStorage(); notify();
-}
-function subscribe(listener: () => void) { listeners.add(listener); initialize(); return () => { listeners.delete(listener); }; }
-function commit(update: (state: PersonalPlanState) => PersonalPlanState) {
-  if (typeof window === "undefined") return;
-  initialize();
-  if (!current.storageUnavailable) readStorage();
-  const next = update(current);
-  if (next !== current) {
-    current = next;
-    if (!current.storageUnavailable) {
-      try { window.localStorage.setItem(PERSONAL_PLAN_STORAGE_KEY, serializePersonalPlan(current)); }
-      catch { current = { ...current, storageUnavailable: true }; }
-    }
+export async function refreshPersonalPlan() {
+  if (!owner || current.saving) return;
+  const version = ++generation;
+  try {
+    const result = await socialRequest<Reply>("plan", {}, owner);
+    if (version === generation) accept(result);
+  } catch {
+    if (version === generation) update({ error: "read" });
   }
-  notify();
+}
+export function setPersonalPlanOwner(id: string | null | undefined) {
+  if (owner === id) return;
+  generation++;
+  revision = 0;
+  owner = id;
+  update({ ...initial, hydrated: id === null });
+  if (id && listeners.size) void refreshPersonalPlan();
+}
+function onFocus() { if (!document.hidden) void refreshPersonalPlan(); }
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  if (listeners.size === 1) {
+    void refreshPersonalPlan();
+    window.addEventListener("focus", onFocus);
+    document.addEventListener("visibilitychange", onFocus);
+  }
+  return () => {
+    listeners.delete(listener);
+    if (!listeners.size) {
+      window.removeEventListener("focus", onFocus);
+      document.removeEventListener("visibilitychange", onFocus);
+    }
+  };
 }
 export function usePersonalPlan() { return useSyncExternalStore(subscribe, () => current, () => initial); }
-export function addDocumentToPlan(document: EditorialDocument) { commit(state => withDocumentInPlan(state, document)); }
-export function togglePlanTask(groupId: string, taskId: string) { commit(state => withToggledPlanTask(state, groupId, taskId)); }
-export function savePlanTask(groupId: string, task: PlanTaskInput) {
-  commit(state => withSavedPlanTask(state, groupId, task, task.id ?? `task-${crypto.randomUUID()}`));
+
+async function commit(change: (state: PersonalPlanState) => PersonalPlanState) {
+  if (!owner || !current.hydrated || current.saving || current.error === "read") return false;
+  const next = change(current);
+  if (next === current) return true;
+  const version = ++generation;
+  update({ saving: true, error: null });
+  try {
+    const result = await socialRequest<Reply>("plan", {
+      method: "PUT", body: JSON.stringify({ revision, plan: JSON.parse(serializePersonalPlan(next)) }),
+    }, owner);
+    if (generation !== version) return false;
+    accept(result);
+    return true;
+  } catch (error) {
+    if (generation === version) {
+      const code = error instanceof Error && error.message === "plan_changed" ? "conflict" : "write";
+      update({ saving: false });
+      await refreshPersonalPlan();
+      if (generation === version + 1 && !current.error) {
+        // The write may have succeeded even if its response was lost.
+        if (serializePersonalPlan(current) === serializePersonalPlan(next)) return true;
+        update({ error: code });
+      }
+    }
+    return false;
+  }
 }
-export function deletePlanTask(groupId: string, taskId: string) { commit(state => withDeletedPlanTask(state, groupId, taskId)); }
-export function clearRecoveredPlanDraft() {
-  commit(state => state.recoveredDraft ? { ...state, recoveredDraft: undefined } : state);
+export function addDocumentToPlan(document: EditorialDocument) { return commit(state => withDocumentInPlan(state, document)); }
+export function togglePlanTask(groupId: string, taskId: string) { return commit(state => withToggledPlanTask(state, groupId, taskId)); }
+export function savePlanTask(groupId: string, task: PlanTaskInput, clearDraft = false) {
+  return commit(state => {
+    const next = withSavedPlanTask(state, groupId, task, task.id ?? `task-${crypto.randomUUID()}`);
+    return clearDraft ? { ...next, recoveredDraft: undefined } : next;
+  });
 }
+export function deletePlanTask(groupId: string, taskId: string) { return commit(state => withDeletedPlanTask(state, groupId, taskId)); }

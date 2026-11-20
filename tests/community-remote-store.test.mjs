@@ -34,11 +34,16 @@ function environment() {
     if (cache.has(filename)) return cache.get(filename).exports;
     const mod = { exports: {} }; cache.set(filename, mod);
     const output = ts.transpileModule(readFileSync(filename, "utf8"), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
-    const require = name => name === "react" ? { useSyncExternalStore: (subscribe, snapshot) => { subscribe(() => {}); return snapshot(); } } : load(resolve(dirname(filename), name.endsWith('.mjs') ? name : `${name}.ts`));
+    const require = name => {
+      if (name === "react") return { useSyncExternalStore: (subscribe, snapshot) => { subscribe(() => {}); return snapshot(); } };
+      const path = name.startsWith("@/") ? resolve(root, "src", name.slice(2)) : resolve(dirname(filename), name);
+      return load(name.endsWith(".mjs") ? path : `${path}.ts`);
+    };
     new Function("require", "module", "exports", "window", "document", "fetch", output)(require, mod, mod.exports, browser, document, fetch);
     return mod.exports;
   }
   const store = load(resolve(root, "src/lib/community-store.ts"));
+  store.setCommunityOwner("member-a");
   const remote = load(resolve(root, "src/lib/community-remote-store.ts"));
   const demos = load(resolve(root, "src/data/community-content.ts")).communityDemoPosts;
   server.posts = copy(demos); server.featuredIds = [demos[0].id];
@@ -151,7 +156,7 @@ test("explicit publication includes normalized tags in the server payload and re
   assert.deepEqual(await remote.updateRemoteFeatured(id, true, post), { ok: true, refreshed: true });
   assert.deepEqual(JSON.parse(calls.find(call => call.options.method === "PUT").options.body).post.tags, ["校园", "МОСКВА"]);
   assert.deepEqual(remote.getCommunityRemoteSnapshot().posts.find(item => item.id === id).tags, ["校园", "МОСКВА"]);
-  assert.deepEqual(store.parseCommunityState(storage.get(store.COMMUNITY_STORAGE_KEY)).sharedPosts.find(item => item.id === id).tags, ["校园", "МОСКВА"]);
+  assert.deepEqual(store.parseCommunityState(storage.get(`${store.COMMUNITY_STORAGE_KEY}:member-a`)).sharedPosts.find(item => item.id === id).tags, ["校园", "МОСКВА"]);
 });
 
 test("unauthorized mutations do not optimistically change featured state", async () => {

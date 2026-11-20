@@ -7,18 +7,16 @@ import { collectTagCounts, TagEditor, type TagEditorHandle } from "@/components/
 import { communityTopics } from "@/data/community-topics";
 import type { CommunityPost } from "@/data/community-content";
 import { getSchool, schoolOptions, type SchoolId } from "@/data/school-options";
-import { clearPublishedDraft, createCommunityPost, getCommunityPosts, updateCommunityDraft, updateCommunityPost, useCommunityState, type CommunityDraft } from "@/lib/community-store";
+import { communityOwnerIs, clearPublishedDraft, createCommunityPost, getCommunityPosts, updateCommunityDraft, updateCommunityPost, useCommunityState, type CommunityDraft } from "@/lib/community-store";
 import { useHomeState } from "@/lib/home-store";
 import { useMemberSession } from "@/components/member-session";
 import { MemberAuth } from "@/components/member-auth";
-import { WorkspaceDialog } from "@/components/workspace-dialog";
-import { refreshCommunityRemote } from "@/lib/community-remote-store";
+import { refreshCommunityRemote, refreshCommunityActivity } from "@/lib/community-remote-store";
 
 /** The community and personal library use one editor and the same browser-owned records. */
 export function CommunityComposer({ schoolId, post, onClose, onSaved }: { schoolId: SchoolId; post?: CommunityPost; onClose: () => void; onSaved: (id: string, published?: boolean) => void }) {
   const state = useCommunityState();
   const member = useMemberSession();
-  const [login, setLogin] = useState(false);
   const [publishing, setPublishing] = useState(false);
   const publishId = useRef<string | null>(null);
   const canPublish = !post || !state.sharedPosts.some(item => item.id === post.id);
@@ -48,19 +46,20 @@ export function CommunityComposer({ schoolId, post, onClose, onSaved }: { school
     if (!event.currentTarget.checkValidity()) { event.currentTarget.reportValidity(); return; }
     const trigger = (event.nativeEvent as SubmitEvent).submitter;
     if (canPublish && trigger?.getAttribute("value") === "publish") {
-      if (!member.user) { setLogin(true); return; }
+      if (!member.user) return;
       const id = post?.id ?? (publishId.current ??= `community-${crypto.randomUUID()}`);
       setPublishing(true);
       try {
         const response = await fetch("/api/community/posts", { method: "POST", signal: AbortSignal.timeout(12000),
           headers: { "Content-Type": "application/json", "X-StudentPath-User": member.user.id },
           body: JSON.stringify({ id, ...draft, schoolId: draftSchool, tags }) });
-        if (response.status === 401) { await member.refresh(); setLogin(true); return; }
+        if (response.status === 401) { await member.refresh(); return; }
         if (!response.ok) throw new Error();
+        if (!communityOwnerIs(member.user.id)) return;
         if (post) updateCommunityPost(post.id, { ...draft, tags, schoolId: draftSchool });
         else clearPublishedDraft({ ...draft, tags, schoolId: draftSchool });
-        await refreshCommunityRemote();
-        onSaved(id, true);
+        await Promise.all([refreshCommunityRemote(), refreshCommunityActivity()]);
+        if (communityOwnerIs(member.user.id)) onSaved(id, true);
       } catch { setError("save"); }
       finally { setPublishing(false); }
       return;
@@ -68,9 +67,10 @@ export function CommunityComposer({ schoolId, post, onClose, onSaved }: { school
     const id = post ? updateCommunityPost(post.id, { ...draft, tags, schoolId: draftSchool }) ? post.id : null : createCommunityPost(draftSchool);
     if (id) onSaved(id); else setError("save");
   }
-  return <section className="workspace-panel community-composer" id="community-composer" aria-labelledby={`${formId}-heading`} onKeyDown={event => { if (event.key === "Escape" && !publishing && !login) onClose(); }}>
+  if (!member.loaded) return null;
+  if (!member.user) return <section className="workspace-panel community-composer"><MemberAuth compact /></section>;
+  return <section className="workspace-panel community-composer" id="community-composer" aria-labelledby={`${formId}-heading`} onKeyDown={event => { if (event.key === "Escape" && !publishing) onClose(); }}>
     <div className="community-composer-heading"><h2 id={`${formId}-heading`}>{post ? t("编辑我的笔记", "Редактировать запись") : t("记下你的留学日常", "Запишите свою историю")}</h2><button type="button" className="icon-button" disabled={publishing} onClick={onClose} aria-label={post ? t("取消编辑", "Отменить изменения") : t("收起编辑器，保留草稿", "Свернуть редактор и оставить черновик")}><X size={20} /></button></div>
-    {login && <WorkspaceDialog open={!member.user} onClose={() => setLogin(false)} title={t("登录后发布", "Вход для публикации")}><MemberAuth compact onAuthenticated={() => setLogin(false)} /></WorkspaceDialog>}
     <form onSubmit={submit} noValidate><fieldset className="community-compose-fields" disabled={publishing}>
       <div className="community-draft-school"><GraduationCap size={20} /><p>{t("所属学校：", "Вуз: ")}<strong>{getSchool(draftSchool).label[locale]}</strong></p><GlassSelect value={draftSchool} onChange={value => update({ schoolId: value as SchoolId })} options={schoolOptions.map(option => ({ value: option.id, label: option.label[locale] }))} ariaLabel={t("更改草稿所属学校", "Изменить вуз записи")} /></div>
       <div className="community-form-row">

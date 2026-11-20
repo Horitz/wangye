@@ -127,6 +127,20 @@ export async function openPostgresSocialStore({ now = Date.now } = {}) {
     session: token => session(token),
     requireSession: token => requireSession(token),
 
+    async readPlan(userId) {
+      const [row] = await sql`SELECT revision,plan_json FROM studentpath.member_plans WHERE user_id=${userId}`;
+      return row ? { revision: row.revision, plan: JSON.parse(row.plan_json) } : { revision: 0, plan: null };
+    },
+    async savePlan(userId, revision, plan) {
+      const json = JSON.stringify(plan);
+      const rows = revision === 0
+        ? await sql`INSERT INTO studentpath.member_plans(user_id,revision,plan_json) VALUES(${userId},1,${json})
+                    ON CONFLICT DO NOTHING RETURNING revision`
+        : await sql`UPDATE studentpath.member_plans SET revision=revision+1,plan_json=${json}
+                    WHERE user_id=${userId} AND revision=${revision} RETURNING revision`;
+      if (!rows.length) throw new SocialError("plan_changed", 409);
+      return { revision: rows[0].revision, plan };
+    },
     async profile(token) {
       const user = await requireSession(token);
       return readProfile(user.id);

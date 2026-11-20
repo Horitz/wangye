@@ -14,8 +14,8 @@ export function readMemberCookie(request) {
 function cookie(token, secure, clear = false) {
   return `${MEMBER_SESSION_COOKIE}=${clear ? "" : token}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${clear ? 0 : MEMBER_SESSION_SECONDS}${secure ? "; Secure" : ""}`;
 }
-const methods = { session: "GET", register: "POST", login: "POST", logout: "POST", "profile-write": "PUT", users: "GET", "friends-read": "GET", "friends-write": "POST", "messages-read": "GET", "messages-write": "POST" };
-export async function handleSocialRequest(request, action, { dataDir, now, env = process.env } = {}) {
+const methods = { "plan-read": "GET", "plan-write": "PUT", session: "GET", register: "POST", login: "POST", logout: "POST", "profile-write": "PUT", users: "GET", "friends-read": "GET", "friends-write": "POST", "messages-read": "GET", "messages-write": "POST" };
+export async function handleSocialRequest(request, action, { dataDir, now, env = process.env, normalizePlan } = {}) {
   let store;
   try {
     const method = methods[action];
@@ -47,6 +47,14 @@ export async function handleSocialRequest(request, action, { dataDir, now, env =
     const user = await store.requireSession(token);
     const expectedUser = request.headers.get("x-studentpath-user");
     if (expectedUser && user.id !== expectedUser) throw new SocialError("session_changed", 401);
+    if (action === "plan-read") return response(await store.readPlan(user.id));
+    if (action === "plan-write") {
+      const input = await readJson(request, 1024 * 1024, "content_size");
+      if (!expectedUser || !shape(input, ["revision", "plan"]) || !Number.isSafeInteger(input.revision) || input.revision < 0) throw new SocialError("invalid_request");
+      let plan;
+      try { plan = normalizePlan(input.plan); } catch { throw new SocialError("invalid_plan"); }
+      return response(await store.savePlan(user.id, input.revision, plan));
+    }
     if (action === "profile-write") {
       const input = await readJson(request, 2048);
       if (!shape(input, ["profile"])) throw new SocialError("invalid_request");

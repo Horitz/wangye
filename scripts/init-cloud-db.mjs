@@ -4,7 +4,7 @@ import nextEnv from "@next/env";
 import { getPostgres, closePostgres } from "../src/lib/server/postgres-connection.mjs";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
-const migrations = ["202611170001_studentpath.sql", "202611180001_community_comments.sql"];
+const migrations = ["202611170001_studentpath.sql", "202611180001_community_comments.sql", "202611200001_member_plans.sql"];
 
 async function main() {
   nextEnv.loadEnvConfig(projectRoot, false);
